@@ -1,4 +1,6 @@
-package entity;
+package entity.split;
+
+import entity.GenerateId;
 
 import java.util.Random;
 
@@ -6,7 +8,7 @@ import java.util.Random;
  *  The representation of a split in our program.
  *  Splits are a specific amount of money owed by a user from one item in some bill
  */
-public class Split implements GenerateId{
+public class Split implements GenerateId {
     private float amount;
     private final int billId;
     private final int itemId;

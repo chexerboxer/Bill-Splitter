@@ -1,4 +1,8 @@
-package entity;
+package entity.bill;
+
+import entity.GenerateId;
+import entity.item.Item;
+import entity.users.User;
 
 import java.util.HashMap;
 import java.util.Random;

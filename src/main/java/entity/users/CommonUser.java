@@ -1,4 +1,7 @@
-package entity;
+package entity.users;
+
+import entity.GenerateId;
+import entity.split.Split;
 
 import java.util.ArrayList;
 import java.util.Random;

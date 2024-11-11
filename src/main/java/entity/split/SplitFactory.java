@@ -1,4 +1,4 @@
-package entity;
+package entity.split;
 
 /**
  * Factory for creating Split objects.

@@ -1,4 +1,6 @@
-package entity;
+package entity.item;
+
+import entity.GenerateId;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package entity;
+package entity.bill;
 
 /**
  * Factory for creating Bill objects.

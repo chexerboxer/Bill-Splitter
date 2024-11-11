@@ -1,6 +1,6 @@
 package use_case.login;
 
-import entity.User;
+import entity.users.User;
 
 /**
  * DAO for the Login Use Case.
