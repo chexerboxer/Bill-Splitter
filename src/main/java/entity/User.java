@@ -12,6 +12,12 @@ public interface User {
     String getName();
 
     /**
+     * Returns the ID of the user.
+     * @return the ID of the user.
+     */
+    int getId();
+
+    /**
      * Returns the password of the user.
      * @return the password of the user.
      */
