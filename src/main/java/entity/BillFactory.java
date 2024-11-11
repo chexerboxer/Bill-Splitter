@@ -5,7 +5,7 @@ package entity;
  */
 public class BillFactory {
 
-    public Bill create(String name, int id) {
-        return new Bill(name, id);
+    public Bill create(String name) {
+        return new Bill(name);
     }
 }
