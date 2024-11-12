@@ -1,4 +1,4 @@
-package entity;
+package entity.users;
 
 /**
  * Factory for creating CommonUser objects.
