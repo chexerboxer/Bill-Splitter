@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -41,22 +41,23 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         signupViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
+        title.setFont(new Font("Arial",Font.BOLD, 25));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.USERNAME_LABEL), usernameInputField);
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
-        final LabelTextPanel repeatPasswordInfo = new LabelTextPanel(
-                new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField);
 
+        final JPanel loginButtons = new JPanel();
         final JPanel buttons = new JPanel();
-        toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
-        buttons.add(toLogin);
+
         signUp = new JButton(SignupViewModel.SIGNUP_BUTTON_LABEL);
         buttons.add(signUp);
         cancel = new JButton(SignupViewModel.CANCEL_BUTTON_LABEL);
         buttons.add(cancel);
+        toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
+        loginButtons.add(toLogin);
 
         signUp.addActionListener(
                 // This creates an anonymous subclass of ActionListener and instantiates it.
@@ -94,7 +95,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         this.add(title);
         this.add(usernameInfo);
         this.add(passwordInfo);
-        this.add(repeatPasswordInfo);
+        this.add(loginButtons);
         this.add(buttons);
     }
 
