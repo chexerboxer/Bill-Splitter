@@ -15,7 +15,7 @@ public class Bill implements GenerateId {
     private String name;
     private final int id;
     private HashMap<Integer, User> users = new HashMap<>();
-    private HashMap<Item, Integer> items = new HashMap<>();
+    private HashMap<Integer, Item> items = new HashMap<>();
     private float totalAmount = 0;
 
     // set bounds when generating an ID so it'll always be 6 digits
@@ -48,7 +48,7 @@ public class Bill implements GenerateId {
     public HashMap<Integer, User> getUsers() {
         return users;
     }
-    public HashMap<Item, Integer> getItems() {
+    public HashMap<Integer, Item> getItems() {
         return items;
     }
 
@@ -60,14 +60,7 @@ public class Bill implements GenerateId {
     }
 
     public void addItem(Item newItem) {
-        // TODO: add logic so adding occurrences isn't capital sensitive
-        if (items.containsKey(newItem)) {
-            items.put(newItem, items.get(newItem) + 1);
-        }
-        // TODO**: add elif to create new items not in database with Item constructor before adding to map
-        else {
-            items.put(newItem, 1);
-        }
+        items.put(newItem.getId(), newItem);
         totalAmount = totalAmount + newItem.getCost();
     }
     public void removeItem(Item oldItem) {
