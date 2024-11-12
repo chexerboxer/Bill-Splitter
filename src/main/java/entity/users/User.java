@@ -1,5 +1,9 @@
 package entity.users;
 
+import entity.split.Split;
+
+import java.util.ArrayList;
+
 /**
  * The representation of a user in our program.
  */
@@ -23,4 +27,5 @@ public interface User {
      */
     String getPassword();
 
+    ArrayList<Split> getSplits();
 }

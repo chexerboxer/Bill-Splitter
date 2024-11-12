@@ -42,7 +42,7 @@ public interface FileDAOInterface {
      * Return all users in file.
      * @return Map of all the users with their id corresponding to the user.
      */
-    public Map<Integer, Bill> getAllUsers();
+    public Map<Integer, User> getAllUsers();
 
     /**
      * Update or create user with given id with given user.

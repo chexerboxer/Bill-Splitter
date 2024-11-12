@@ -29,6 +29,19 @@ public class Bill implements GenerateId {
         this.id = generateId();
     }
 
+    public Bill(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){
+        this.name = name;
+        this.id = id;
+        this.users = users;
+        this.items = items;
+        this.totalAmount = totalAmount;
+    }
+
+    public boolean equals(Bill bill){
+        return this.name.equals(bill.getName()) && this.id == bill.getId() && this.users == bill.getUsers()
+                && this.items == bill.getItems() && totalAmount == bill.totalAmount;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
