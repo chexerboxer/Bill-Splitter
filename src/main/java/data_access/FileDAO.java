@@ -10,10 +10,7 @@ import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,8 +22,8 @@ public class FileDAO implements FileDAOInterface{
 
     private final File csvFile;
     private final Map<String, Integer> headers = new LinkedHashMap<>();
-    private final Map<Integer, Bill> bills = new HashMap<>();
-    private final Map<Integer, User> users = new HashMap<>();
+    private Map<Integer, Bill> bills = new HashMap<>();
+    private Map<Integer, User> users = new HashMap<>();
 
 
 
@@ -115,7 +112,83 @@ public class FileDAO implements FileDAOInterface{
 
     @Override
     public void save() {
-    //TODO
+        final BufferedWriter writer;
+        try{
+            writer = new BufferedWriter(new FileWriter(csvFile));
+            writer.write(HEADER);
+            writer.newLine();
+
+            for(Bill bill : bills.values()){
+                final String name = bill.getName();
+                final int id = bill.getId();
+
+                ArrayList<Integer> userIdOG = bill.getUsers();
+                String users = "";
+                if (!userIdOG.isEmpty()){
+                    String[] userList = new String[userIdOG.size()];
+
+                    for (int i = 0; i < userIdOG.size(); i++) {
+                        userList[i] = String.valueOf(userIdOG.get(i));
+
+                    }
+                    users = String.join(";", userList);
+
+                }
+                users = String.format("[%s]", users);
+
+                String items = "";
+                HashMap<Integer, Item> itemsOG = bill.getItems();
+                if (!itemsOG.isEmpty()) {
+                    String[] itemList = new String[itemsOG.size()];
+                    int index = 0;
+                    for (int i : itemsOG.keySet()) {
+                        Item item = itemsOG.get(i);
+                        itemList[index] = String.format("[%s;%d;%f]", item.getName(), item.getId(), item.getCost());
+                        index++;
+                    }
+                    items = String.join("/", itemList);
+
+                }
+                items = String.format("[%s]", items);
+
+                final float totalAmount = bill.getTotalAmount();
+
+
+                writer.write(String.format("%s,%s,%d,%s,%s,%f",
+                        "Bill",name, id, users, items, totalAmount));
+                writer.newLine();
+            }
+
+            for (User user : users.values()){
+                final String name = user.getName();
+                final int id = user.getId();
+                final String password = user.getPassword();
+
+                ArrayList<Split> splitsOG = user.getSplits();
+                String splits = "";
+
+                if (!splitsOG.isEmpty()) {
+                    String[] splitsString = new String[splitsOG.size()];
+                    for (int i = 0; i < splitsOG.size(); i++) {
+                        Split split = splitsOG.get(i);
+                        splitsString[i] =
+                                String.format("[%f;%d;%d]", split.getAmount(), split.getBillId(), split.getItemId());
+                    }
+                    splits = String.join("/", splitsString);
+
+                }
+                splits = String.format("[%s]", splits);
+
+
+                writer.write(String.format("%s,%s,%d,%s,%s", "User", name, id, password, splits));
+                writer.newLine();
+
+
+            }
+            writer.close();
+        }catch (IOException ex){
+            throw new RuntimeException(ex);
+        }
 
     }
 
@@ -142,10 +215,26 @@ public class FileDAO implements FileDAOInterface{
     @Override
     public void setUser(int id, User user) {
         users.put(id, user);
+        save();
     }
 
     @Override
     public void setBill(int id, Bill bill) {
         bills.put(id, bill);
+        save();
     }
+
+    @Override
+    public void setUsers(HashMap<Integer, User> users) {
+        this.users = users;
+        save();
+    }
+
+    @Override
+    public void setBills(HashMap<Integer, Bill> bills) {
+        this.bills = bills;
+        save();
+    }
+
+
 }

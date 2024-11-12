@@ -13,7 +13,7 @@ public class DAOhelper {
     public ArrayList<Integer> UserIdExtraction(String userIdsString){
         ArrayList<Integer> userIds = new ArrayList<>();
 
-        if (!userIdsString.isEmpty()){
+        if (!userIdsString.equals("[]")){
         userIdsString = userIdsString.substring(1, userIdsString.length() - 1);
 
             String[] userIdsArr = userIdsString.split(";");
@@ -24,7 +24,7 @@ public class DAOhelper {
 
     public HashMap<Integer, Item> ItemsExtraction (String itemsString, ItemFactory itemFactory){
         HashMap<Integer, Item> items = new HashMap<>();
-        if (!itemsString.equals("")){
+        if (!itemsString.equals("[]")){
         itemsString = itemsString.substring(1, itemsString.length() - 1);
 
             String[] unparsedItems= itemsString.split("/");
@@ -44,7 +44,7 @@ public class DAOhelper {
 
     public ArrayList<Split> SplitsExtraction(String splitsString, SplitFactory splitFactory) {
         ArrayList<Split> splits = new ArrayList<>();
-        if (!splitsString.equals("")){
+        if (!splitsString.equals("[]")){
             splitsString = splitsString.substring(1, splitsString.length() - 1);
 
             String[] unparsedSplits= splitsString.split("/");

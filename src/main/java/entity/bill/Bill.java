@@ -15,7 +15,7 @@ public class Bill implements GenerateId {
 
     private String name;
     private final int id;
-    private ArrayList<Integer> users;
+    private ArrayList<Integer> users = new ArrayList<>();
     private HashMap<Integer, Item> items = new HashMap<>();
     private float totalAmount = 0;
 
@@ -39,7 +39,7 @@ public class Bill implements GenerateId {
 
     public boolean equals(Bill bill){
         return this.name.equals(bill.getName()) && this.id == bill.getId() && this.users == bill.getUsers()
-                && this.items == bill.getItems() && totalAmount == bill.totalAmount;
+                && this.items == bill.getItems() && totalAmount == bill.getTotalAmount();
     }
 
     public void setName(String name) {
@@ -59,12 +59,11 @@ public class Bill implements GenerateId {
     public int getId() {
         return id;
     }
-    public ArrayList<Integer> getUsers() {
-        return users;
-    }
+    public ArrayList<Integer> getUsers() {return users;}
     public HashMap<Integer, Item> getItems() {
         return items;
     }
+    public float getTotalAmount(){return totalAmount;}
 
     public void addUser(User newUser) {
         users.add(newUser.getId());
