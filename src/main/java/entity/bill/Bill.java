@@ -4,6 +4,7 @@ import entity.GenerateId;
 import entity.item.Item;
 import entity.users.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -14,8 +15,8 @@ public class Bill implements GenerateId {
 
     private String name;
     private final int id;
-    private HashMap<Integer, User> users = new HashMap<>();
-    private HashMap<Item, Integer> items = new HashMap<>();
+    private ArrayList<Integer> users;
+    private HashMap<Integer, Item> items = new HashMap<>();
     private float totalAmount = 0;
 
     // set bounds when generating an ID so it'll always be 6 digits
@@ -45,15 +46,15 @@ public class Bill implements GenerateId {
     public int getId() {
         return id;
     }
-    public HashMap<Integer, User> getUsers() {
+    public ArrayList<Integer> getUsers() {
         return users;
     }
-    public HashMap<Item, Integer> getItems() {
+    public HashMap<Integer, Item> getItems() {
         return items;
     }
 
     public void addUser(User newUser) {
-        users.put(newUser.getId(), newUser);
+        users.add(newUser.getId());
     }
     public void removeUser (User oldUser) {
         users.remove(oldUser.getId());
@@ -61,12 +62,12 @@ public class Bill implements GenerateId {
 
     public void addItem(Item newItem) {
         // TODO: add logic so adding occurrences isn't capital sensitive
-        if (items.containsKey(newItem)) {
-            items.put(newItem, items.get(newItem) + 1);
+        if (items.containsKey(newItem.getId())) {
+            items.put(newItem.getId() + 1, newItem);
         }
         // TODO**: add elif to create new items not in database with Item constructor before adding to map
         else {
-            items.put(newItem, 1);
+            items.put(1, newItem);
         }
         totalAmount = totalAmount + newItem.getCost();
     }

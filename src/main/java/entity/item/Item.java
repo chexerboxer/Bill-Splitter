@@ -20,6 +20,16 @@ public class Item implements GenerateId {
         this.cost = cost;
     }
 
+    public Item(String name, int id, float cost) {
+        this.name = name;
+        this.id = id;
+        this.cost = cost;
+    }
+
+    public boolean equals(Item item){
+        return this.name.equals(item.getName()) && this.id == item.getId() && this.cost == item.getCost();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
