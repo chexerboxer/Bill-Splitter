@@ -9,6 +9,12 @@ import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
+import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.login.LoginUserDataAccessInterface;
+import use_case.logout.LogoutUserDataAccessInterface;
+import use_case.signup.SignupInputBoundary;
+import use_case.signup.SignupInputData;
+import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,7 +22,11 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class FileDAO implements FileDAOInterface{
+public class FileDAO implements FileDAOInterface,
+                                SignupUserDataAccessInterface,
+                                LoginUserDataAccessInterface,
+                                LogoutUserDataAccessInterface,
+                                ChangePasswordUserDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -48,9 +58,11 @@ public class FileDAO implements FileDAOInterface{
         headers.put("splits", 4);
         headers.put("total", 5);
         DAOhelper helper = new DAOhelper();
+
         if (csvFile.length() == 0){
             save();
         }
+
         else{
             try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
                 final String header = reader.readLine();
@@ -236,5 +248,39 @@ public class FileDAO implements FileDAOInterface{
         save();
     }
 
+    // TODO: added to implement existing interfaces
+    @Override
+    public boolean existsByName(String username) {
+        for (User user: users.values()) {
+            if (user.getName().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    @Override
+    public User get(String username) {
+        for (User user: users.values()) {
+            if (user.getName().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getCurrentUsername() {
+        return "";
+    }
+
+    @Override
+    public void setCurrentUsername(String username) {
+
+    }
+
+    @Override
+    public void changePassword(User user) {
+
+    }
 }
