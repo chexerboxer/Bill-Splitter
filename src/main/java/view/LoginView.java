@@ -92,8 +92,17 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 }
         );
 
+        forgotPass.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        loginController.switchToChangePasswordView();
+                    }
+                }
+        );
+
         signUp.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent evt) {
                         loginController.switchToSignUpView();
                     }

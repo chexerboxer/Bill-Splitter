@@ -20,4 +20,6 @@ public interface LoginOutputBoundary {
      * Switches to the Signup View.
      */
     void switchToSignUpView();
+
+    void switchToChangePasswordView();
 }

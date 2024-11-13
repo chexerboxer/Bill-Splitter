@@ -10,6 +10,7 @@ public class LoginController {
 
     private final LoginInputBoundary loginUseCaseInteractor;
 
+
     public LoginController(LoginInputBoundary loginUseCaseInteractor) {
         this.loginUseCaseInteractor = loginUseCaseInteractor;
     }
@@ -33,4 +34,7 @@ public class LoginController {
         loginUseCaseInteractor.switchtoSignUpView();
     }
 
+    public void switchToChangePasswordView() {
+        loginUseCaseInteractor.switchtoChangePasswordView();
+    }
 }

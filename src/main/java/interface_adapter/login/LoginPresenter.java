@@ -1,9 +1,11 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.change_password.ChangePasswordState;
 import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.signup.SignupViewModel;
+import interface_adapter.change_password.ChangePasswordViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 
@@ -16,15 +18,19 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final LoggedInViewModel loggedInViewModel;
     private final ViewManagerModel viewManagerModel;
     private final SignupViewModel signupViewModel;
+    private final ChangePasswordViewModel changePasswordViewModel;
+
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
                           LoggedInViewModel loggedInViewModel,
                           LoginViewModel loginViewModel,
-                          SignupViewModel signupViewModel) {
+                          SignupViewModel signupViewModel,
+                          ChangePasswordViewModel changePasswordViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.loggedInViewModel = loggedInViewModel;
         this.loginViewModel = loginViewModel;
         this.signupViewModel = signupViewModel;
+        this.changePasswordViewModel = changePasswordViewModel;
     }
 
     @Override
@@ -50,6 +56,17 @@ public class LoginPresenter implements LoginOutputBoundary {
     @Override
     public void switchToSignUpView() {
         viewManagerModel.setState(signupViewModel.getViewName());
+        viewManagerModel.firePropertyChanged();
+    }
+
+    @Override
+    public void switchToChangePasswordView() {
+
+        final ChangePasswordState changePasswordState = changePasswordViewModel.getState();
+        this.changePasswordViewModel.setState(changePasswordState);
+        this.changePasswordViewModel.firePropertyChanged();
+
+        viewManagerModel.setState(changePasswordViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
     }
 }
