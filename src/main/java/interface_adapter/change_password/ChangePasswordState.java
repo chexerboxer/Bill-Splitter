@@ -2,9 +2,9 @@ package interface_adapter.change_password;
 
 
 public class ChangePasswordState {
-    private String newPassword;
-    private String confirmPassword;
-    private String errorMessage;
+    private String newPassword = "";
+    private String confirmPassword = "";
+    private String errorMessage = "";
 
     public String getNewPassword() {
         return newPassword;

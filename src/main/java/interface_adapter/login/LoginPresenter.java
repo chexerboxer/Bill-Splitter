@@ -1,7 +1,6 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.change_password.ChangePasswordState;
 import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.signup.SignupViewModel;
@@ -61,10 +60,6 @@ public class LoginPresenter implements LoginOutputBoundary {
 
     @Override
     public void switchToChangePasswordView() {
-
-        final ChangePasswordState changePasswordState = changePasswordViewModel.getState();
-        this.changePasswordViewModel.setState(changePasswordState);
-        this.changePasswordViewModel.firePropertyChanged();
 
         viewManagerModel.setState(changePasswordViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
