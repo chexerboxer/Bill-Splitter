@@ -248,7 +248,25 @@ public class FileDAO implements FileDAOInterface,
         save();
     }
 
-    // TODO: added to implement existing interfaces
+    @Override
+    public boolean removeUser(int id) {
+        if (users.keySet().contains(id)){
+            users.remove(id);
+            return true;
+        }
+            return false;
+
+    }
+
+    @Override
+    public boolean removeBill(int id) {
+        if (bills.keySet().contains(id)){
+            bills.remove(id);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public boolean existsByName(String username) {
         for (User user: users.values()) {

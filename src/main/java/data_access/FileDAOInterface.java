@@ -70,4 +70,19 @@ public interface FileDAOInterface {
      * @param bills is the final bills.
      */
     public void setBills(HashMap<Integer, Bill> bills);
+
+    /**
+     * remove users with given id.
+     * @param id is the id of the user being removed.
+     * @return whether user is removed or not.
+     */
+    public boolean removeUser(int id);
+
+    /**
+     * remove bill with given id.
+     * @param id is the id of the bill being removed.
+     * @return whether bill is removed or not.
+     */
+    public boolean removeBill(int id);
+
 }
