@@ -149,10 +149,15 @@ public class AppBuilder {
     public AppBuilder addChangePasswordUseCase() {
         final ChangePasswordOutputBoundary changePasswordOutputBoundary =
                 new ChangePasswordPresenter(
-                        viewManagerModel, changePasswordViewModel);
+                        viewManagerModel, changePasswordViewModel, loginViewModel);
+
+        final ChangePasswordPresenter changePasswordPresenter =
+                new ChangePasswordPresenter(
+                        viewManagerModel, changePasswordViewModel, loginViewModel);
 
         final ChangePasswordInputBoundary changePasswordInteractor =
-                new ChangePasswordInteractor(userDataAccessObject, changePasswordOutputBoundary, userFactory);
+                new ChangePasswordInteractor(userDataAccessObject, changePasswordOutputBoundary, userFactory,
+                        changePasswordPresenter);
 
         final ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);

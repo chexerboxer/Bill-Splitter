@@ -48,6 +48,9 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 new JLabel(SignupViewModel.USERNAME_LABEL), usernameInputField);
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
+        final LabelTextPanel repeatInfo = new LabelTextPanel(
+                new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField
+        );
 
         final JPanel loginButtons = new JPanel();
         final JPanel buttons = new JPanel();
@@ -102,6 +105,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         this.add(title);
         this.add(usernameInfo);
         this.add(passwordInfo);
+        this.add(repeatInfo);
         this.add(loginButtons);
         this.add(buttons);
     }

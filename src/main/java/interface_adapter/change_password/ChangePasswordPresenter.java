@@ -1,6 +1,7 @@
 package interface_adapter.change_password;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.login.LoginViewModel;
 import use_case.change_password.ChangePasswordOutputBoundary;
 import use_case.change_password.ChangePasswordOutputData;
 
@@ -11,10 +12,14 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
 
     private final ChangePasswordViewModel changePasswordViewModel;
     private final ViewManagerModel viewManagerModel;
+    private final LoginViewModel loginViewModel;
 
-    public ChangePasswordPresenter(ViewManagerModel viewManagerModel, ChangePasswordViewModel changePasswordViewModel) {
+    public ChangePasswordPresenter(ViewManagerModel viewManagerModel,
+                                   ChangePasswordViewModel changePasswordViewModel,
+                                   LoginViewModel loginViewModel) {
        this.changePasswordViewModel = changePasswordViewModel;
        this.viewManagerModel = viewManagerModel;
+       this.loginViewModel = loginViewModel;
     }
 
     @Override
@@ -30,5 +35,10 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
     @Override
     public void prepareFailView(String error) {
         // note: this use case currently can't fail
+    }
+
+    public void switchToLoginView() {
+        viewManagerModel.setState(loginViewModel.getViewName());
+        viewManagerModel.firePropertyChanged();
     }
 }

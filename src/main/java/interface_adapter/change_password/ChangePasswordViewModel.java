@@ -5,10 +5,10 @@ import interface_adapter.ViewModel;
 /**
  * The View Model for the ChangePassword View.
  */
-public class ChangePasswordViewModel extends ViewModel {
+public class ChangePasswordViewModel extends ViewModel<ChangePasswordState> {
 
     public ChangePasswordViewModel() {
-        super("Change Password");
+        super("change password");
         setState(new ChangePasswordState());
     }
 }
