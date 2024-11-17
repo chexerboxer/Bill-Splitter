@@ -1,6 +1,7 @@
 package entity.split;
 
 import entity.GenerateId;
+import entity.item.Item;
 
 import java.util.Random;
 
@@ -21,6 +22,11 @@ public class Split implements GenerateId {
         this.amount = amount;
         this.billId = billId;
         this.itemId = itemId;
+    }
+
+
+    public boolean equals(Split split){
+        return this.amount == split.getAmount() && this.billId == split.getBillId() && this.itemId == split.getItemId();
     }
 
     public void setAmount(float amount) {

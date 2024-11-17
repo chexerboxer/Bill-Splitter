@@ -1,6 +1,7 @@
 package entity.users;
 
 import entity.GenerateId;
+import entity.bill.Bill;
 import entity.split.Split;
 
 import java.util.ArrayList;
@@ -33,6 +34,18 @@ public class CommonUser implements User, GenerateId {
         this.splits = splits;
     }
 
+    public CommonUser(String name, int id, String password, ArrayList<Split> splits) {
+        this.name = name;
+        this.id = id;
+        this.password = password;
+        this.splits = splits;
+    }
+
+    public boolean equals(User user){
+        return this.name.equals(user.getName()) && this.id == user.getId() && this.password.equals(user.getPassword())
+                && this.splits.equals(user.getSplits());
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -62,6 +75,7 @@ public class CommonUser implements User, GenerateId {
     public String getPassword() {
         return password;
     }
+    @Override
     public ArrayList<Split> getSplits() {
         return splits;
     }

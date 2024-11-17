@@ -2,6 +2,7 @@ package data_access;
 
 import java.io.IOException;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import entity.bill.Bill;
@@ -42,18 +43,46 @@ public interface FileDAOInterface {
      * Return all users in file.
      * @return Map of all the users with their id corresponding to the user.
      */
-    public Map<Integer, Bill> getAllUsers();
+    public Map<Integer, User> getAllUsers();
 
     /**
      * Update or create user with given id with given user.
      * @param id is the id of the user.
+     * @param user is the given user
      */
     public void setUser(int id, User user);
 
     /**
      * Update or create bill with given id with given bill.
      * @param id is the id of the bill.
+     * @param bill is the given bill.
      */
     public void setBill(int id, Bill bill);
+
+    /**
+     * Update or create users with given users.
+     * @param users is the final users.
+     */
+    public void setUsers(HashMap<Integer, User> users);
+
+    /**
+     * Update or create bill with given id with given bill.
+     * @param bills is the final bills.
+     */
+    public void setBills(HashMap<Integer, Bill> bills);
+
+    /**
+     * remove users with given id.
+     * @param id is the id of the user being removed.
+     * @return whether user is removed or not.
+     */
+    public boolean removeUser(int id);
+
+    /**
+     * remove bill with given id.
+     * @param id is the id of the bill being removed.
+     * @return whether bill is removed or not.
+     */
+    public boolean removeBill(int id);
 
 }

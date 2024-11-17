@@ -25,4 +25,14 @@ public interface UserFactory {
      */
     User create(String name, String password, ArrayList<Split> splits);
 
+    /**
+     * Creates a new User.
+     * @param name the name of the new user
+     * @param id the id of the user.
+     * @param password the password of the new user
+     * @param splits the list of split being intialized.
+     * @return the new user
+     */
+    User create(String name, int id, String password, ArrayList<Split> splits);
+
 }
