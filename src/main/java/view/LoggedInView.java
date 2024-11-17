@@ -62,7 +62,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         final JLabel usernameInfo = new JLabel("[insert username here]");
         username = new JLabel();
 
-        final JPanel buttons = new JPanel(new BorderLayout());
+        final JPanel buttons = new JPanel(new BorderLayout(100, 100));
 
         changePassword = new JButton("Change Password");
         addBill = new JButton("Add Bill");
