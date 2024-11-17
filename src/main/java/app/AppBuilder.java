@@ -63,7 +63,7 @@ public class AppBuilder {
     private final BillFactory billFactory = new BillFactory();
     private final ItemFactory itemFactory = new ItemFactory();
     private final SplitFactory splitFactory = new SplitFactory();
-    private final String filePath = "src/test/java/DAO/test.csv";
+    private final String filePath = "src/main/java/data_access/test.csv";
 
     private final FileDAO userDataAccessObject = new FileDAO(filePath, billFactory, userFactory, itemFactory, splitFactory);
 

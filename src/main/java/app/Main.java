@@ -14,8 +14,8 @@ public class Main {
     public static void main(String[] args) throws IOException {
         final AppBuilder appBuilder = new AppBuilder();
         final JFrame application = appBuilder
-                                            .addChangePasswordView()
-                                            .addLoginView()
+//                                            .addChangePasswordView()
+//                                            .addLoginView()
                                             .addSignupView()
                                             .addLoggedInView()
                                             .addChangePasswordUseCase()
