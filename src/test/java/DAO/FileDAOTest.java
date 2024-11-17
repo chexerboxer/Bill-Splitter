@@ -123,6 +123,7 @@ public class FileDAOTest {
         splits.add(splitFactory.create(123,10,11));
         User user1 = userFactory.create("test", 12,"asd2123",splits);
         User user2 = userFactory.create("test2", "tasd");
+        User user3 = userFactory.create("test", 13,"asd2123",splits);
 
         HashMap<Integer, Bill> bills = new HashMap<>();
         bills.put(bill1.getId(), bill1);
@@ -131,7 +132,10 @@ public class FileDAOTest {
         users.put(user1.getId(), user1);
         users.put(user2.getId(), user2);
 
+
         fileTest.setBills(bills);
+        fileTest.setUsers(users);
+        users.put(user3.getId(), user3);
         fileTest.setUsers(users);
 
         FileDAO fileTest2 = new FileDAO(System.getProperty("user.dir") + "\\src\\test\\java\\DAO\\test2.csv"

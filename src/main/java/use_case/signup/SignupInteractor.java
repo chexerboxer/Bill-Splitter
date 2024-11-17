@@ -1,5 +1,6 @@
 package use_case.signup;
 
+import data_access.FileDAO;
 import entity.users.User;
 import entity.users.UserFactory;
 
@@ -7,11 +8,11 @@ import entity.users.UserFactory;
  * The Signup Interactor.
  */
 public class SignupInteractor implements SignupInputBoundary {
-    private final SignupUserDataAccessInterface userDataAccessObject;
+    private final FileDAO userDataAccessObject;
     private final SignupOutputBoundary userPresenter;
     private final UserFactory userFactory;
 
-    public SignupInteractor(SignupUserDataAccessInterface signupDataAccessInterface,
+    public SignupInteractor(FileDAO signupDataAccessInterface,
                             SignupOutputBoundary signupOutputBoundary,
                             UserFactory userFactory) {
         this.userDataAccessObject = signupDataAccessInterface;
@@ -29,7 +30,8 @@ public class SignupInteractor implements SignupInputBoundary {
         }
         else {
             final User user = userFactory.create(signupInputData.getUsername(), signupInputData.getPassword());
-            userDataAccessObject.save();
+            userDataAccessObject.addUser(user);
+
 
             final SignupOutputData signupOutputData = new SignupOutputData(user.getName(), false);
             userPresenter.prepareSuccessView(signupOutputData);
