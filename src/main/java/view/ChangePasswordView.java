@@ -38,14 +38,16 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
         this.changePasswordViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel("Change Password");
-        title.setFont(new Font("Arial", Font.BOLD, 25));
+        title.setFont(new Font("Arial", Font.BOLD, 50));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(title);
 
         final LabelTextPanel newPasswordInfo = new LabelTextPanel(
                 new JLabel("New Password"), newPasswordField);
+        newPasswordInfo.setPreferredSize(new Dimension(150, 30));
         final LabelTextPanel confirmPasswordInfo = new LabelTextPanel(
                 new JLabel("Confirm Password"), confirmPasswordField);
+        confirmPasswordInfo.setPreferredSize(new Dimension(150, 30));
         final JPanel buttons = new JPanel();
         clear = new JButton("Clear");
         confirm = new JButton("Confirm");

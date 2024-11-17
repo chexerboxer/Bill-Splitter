@@ -41,25 +41,35 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         signupViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
-        title.setFont(new Font("Arial",Font.BOLD, 25));
+        title.setFont(new Font("Arial",Font.BOLD, 50));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        usernameInputField.setPreferredSize(new Dimension(100, 25));
+        passwordInputField.setPreferredSize(new Dimension(100, 25));
+        repeatPasswordInputField.setPreferredSize(new Dimension(100, 25));
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.USERNAME_LABEL), usernameInputField);
+        usernameInfo.setPreferredSize(new Dimension(100, 25));
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
+        passwordInfo.setPreferredSize(new Dimension(100, 25));
         final LabelTextPanel repeatInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField
         );
+        repeatInfo.setPreferredSize(new Dimension(100, 25));
 
         final JPanel loginButtons = new JPanel();
         final JPanel buttons = new JPanel();
 
         signUp = new JButton(SignupViewModel.SIGNUP_BUTTON_LABEL);
         buttons.add(signUp);
+        signUp.setPreferredSize(new Dimension(100, 30));
         cancel = new JButton(SignupViewModel.CANCEL_BUTTON_LABEL);
+        cancel.setPreferredSize(new Dimension(100, 30));
         buttons.add(cancel);
         toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
+        toLogin.setPreferredSize(new Dimension(300, 30));
         loginButtons.add(toLogin);
 
         signUp.addActionListener(
@@ -101,6 +111,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         addRepeatPasswordListener();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.setPreferredSize(new Dimension(700, 400)); // Set your desired dimensions
 
         this.add(title);
         this.add(usernameInfo);
@@ -108,6 +119,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         this.add(repeatInfo);
         this.add(loginButtons);
         this.add(buttons);
+
     }
 
     private void addUsernameListener() {
