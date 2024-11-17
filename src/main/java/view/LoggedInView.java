@@ -1,7 +1,6 @@
 package view;
 
-import java.awt.Component;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -68,6 +67,11 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         addBill = new JButton("Add Bill");
         logOut = new JButton("Log Out");
         toIOUs = new JButton("To IOUs");
+
+        changePassword.setPreferredSize(new Dimension(100, 100));
+        addBill.setPreferredSize(new Dimension(100, 100));
+        logOut.setPreferredSize(new Dimension(100, 100));
+        toIOUs.setPreferredSize(new Dimension(100, 100));
 
         buttons.add(changePassword, BorderLayout.NORTH);
         buttons.add(toIOUs, BorderLayout.WEST);
