@@ -52,6 +52,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         this.setLayout(new BorderLayout(20, 20));
 
         final JLabel title = new JLabel("Dashboard");
+        title.setFont(new Font("Arial", Font.BOLD, 50));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LoggedInState currentState = loggedInViewModel.getState();
@@ -59,6 +60,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 //        final LabelTextPanel passwordInfo = new LabelTextPanel(
 //                new JLabel("Password"), passwordInputField);
         final JLabel usernameInfo = new JLabel("[insert username here]");
+        usernameInfo.setFont(new Font("Arial", Font.BOLD, 20));
         username = new JLabel();
 
         final JPanel buttons = new JPanel(new BorderLayout(100, 100));
@@ -67,6 +69,11 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         addBill = new JButton("Add Bill");
         logOut = new JButton("Log Out");
         toIOUs = new JButton("To IOUs");
+
+        changePassword.setFont(new Font("Arial",Font.CENTER_BASELINE, 20));
+        addBill.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
+        logOut.setFont(new Font("Arial",Font.CENTER_BASELINE, 20));
+        toIOUs.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
 
         changePassword.setPreferredSize(new Dimension(100, 100));
         addBill.setPreferredSize(new Dimension(100, 100));
