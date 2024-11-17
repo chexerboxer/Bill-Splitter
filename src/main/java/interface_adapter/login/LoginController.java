@@ -10,6 +10,7 @@ public class LoginController {
 
     private final LoginInputBoundary loginUseCaseInteractor;
 
+
     public LoginController(LoginInputBoundary loginUseCaseInteractor) {
         this.loginUseCaseInteractor = loginUseCaseInteractor;
     }
@@ -24,5 +25,16 @@ public class LoginController {
                 username, password);
 
         loginUseCaseInteractor.execute(loginInputData);
+    }
+
+    /**
+     * Executes the "switch to signupview" Use Case.
+     */
+    public void switchToSignUpView() {
+        loginUseCaseInteractor.switchtoSignUpView();
+    }
+
+    public void switchToChangePasswordView() {
+        loginUseCaseInteractor.switchtoChangePasswordView();
     }
 }

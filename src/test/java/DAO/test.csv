@@ -1,0 +1,4 @@
+type,name,id,users/password,items/splits,total
+Bill,test,10,[11;12],[[test;10;54.4]/[test2;11;55.4]],109.8
+User,test2,11,123,[[22.5;20;54]/[22.5;11;55]]
+User,test3,12,1243,[[21.2;10;52]/[20.5;10;59]]

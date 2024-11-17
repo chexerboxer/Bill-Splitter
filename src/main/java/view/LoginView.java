@@ -1,6 +1,6 @@
 package view;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -35,7 +35,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
     private final JButton logIn;
     private final JButton cancel;
-    private final JButton api;
+    private final JButton signUp;
+    private final JButton forgotPass;
     private LoginController loginController;
 
     public LoginView(LoginViewModel loginViewModel) {
@@ -43,7 +44,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         this.loginViewModel = loginViewModel;
         this.loginViewModel.addPropertyChangeListener(this);
 
-        final JLabel title = new JLabel("Login Screen");
+        final JLabel title = new JLabel("Login");
+        title.setFont(new Font("Arial", Font.BOLD, 50));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
@@ -51,14 +53,21 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel("Password"), passwordInputField);
 
+        final JPanel forgotButton = new JPanel();
+        final JPanel signUpButton = new JPanel();
+        signUp = new JButton("Don't have an account? Sign up here!");
+        signUpButton.add(signUp);
+
+        forgotPass = new JButton("Forgot Password?");
+        forgotButton.add(forgotPass);
+
         final JPanel buttons = new JPanel();
         logIn = new JButton("log in");
         buttons.add(logIn);
         cancel = new JButton("cancel");
         buttons.add(cancel);
-        api = new JButton("api");
-        buttons.add(api);
-
+        usernameInputField.setPreferredSize(new Dimension(150, 30));
+        passwordInputField.setPreferredSize(new Dimension(150, 30));
         logIn.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -74,10 +83,33 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 }
         );
 
-        cancel.addActionListener(this);
 
-        api.addActionListener(this);
+        cancel.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        usernameInputField.setText("");
+                        passwordInputField.setText("");
+                    }
+                }
+        );
 
+        forgotPass.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        loginController.switchToChangePasswordView();
+                    }
+                }
+        );
+
+        signUp.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        loginController.switchToSignUpView();
+                    }
+                }
+        );
         usernameInputField.getDocument().addDocumentListener(new DocumentListener() {
 
             private void documentListenerHelper() {
@@ -132,6 +164,9 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         this.add(usernameInfo);
         this.add(usernameErrorField);
         this.add(passwordInfo);
+        this.add(passwordErrorField);
+        this.add(forgotButton);
+        this.add(signUpButton);
         this.add(buttons);
     }
 
