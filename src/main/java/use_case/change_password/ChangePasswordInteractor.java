@@ -1,5 +1,6 @@
 package use_case.change_password;
 
+import interface_adapter.change_password.ChangePasswordPresenter;
 import entity.users.User;
 import entity.users.UserFactory;
 
@@ -10,13 +11,16 @@ public class ChangePasswordInteractor implements ChangePasswordInputBoundary {
     private final ChangePasswordUserDataAccessInterface userDataAccessObject;
     private final ChangePasswordOutputBoundary userPresenter;
     private final UserFactory userFactory;
+    private final ChangePasswordPresenter presenter;
 
     public ChangePasswordInteractor(ChangePasswordUserDataAccessInterface changePasswordDataAccessInterface,
                                     ChangePasswordOutputBoundary changePasswordOutputBoundary,
-                                    UserFactory userFactory) {
+                                    UserFactory userFactory,
+                                    ChangePasswordPresenter presenter) {
         this.userDataAccessObject = changePasswordDataAccessInterface;
         this.userPresenter = changePasswordOutputBoundary;
         this.userFactory = userFactory;
+        this.presenter = presenter;
     }
 
     @Override
@@ -28,5 +32,10 @@ public class ChangePasswordInteractor implements ChangePasswordInputBoundary {
         final ChangePasswordOutputData changePasswordOutputData = new ChangePasswordOutputData(user.getName(),
                                                                                   false);
         userPresenter.prepareSuccessView(changePasswordOutputData);
+    }
+
+    @Override
+    public void switchToLoginView() {
+        presenter.switchToLoginView();
     }
 }

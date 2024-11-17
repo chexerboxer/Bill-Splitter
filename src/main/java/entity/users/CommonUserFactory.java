@@ -18,4 +18,9 @@ public class CommonUserFactory implements UserFactory {
     public User create(String name, String password, ArrayList<Split> splits) {
         return new CommonUser(name, password, splits);
     }
+
+    @Override
+    public User create(String name, int id, String password, ArrayList<Split> splits) {
+        return new CommonUser(name, id, password, splits);
+    }
 }
