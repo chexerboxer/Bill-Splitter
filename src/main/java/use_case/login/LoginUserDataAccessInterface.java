@@ -1,6 +1,6 @@
 package use_case.login;
 
-import entity.User;
+import entity.users.User;
 
 /**
  * DAO for the Login Use Case.
@@ -16,9 +16,8 @@ public interface LoginUserDataAccessInterface {
 
     /**
      * Saves the user.
-     * @param user the user to save
      */
-    void save(User user);
+    void save();
 
     /**
      * Returns the user with the given username.
@@ -28,7 +27,7 @@ public interface LoginUserDataAccessInterface {
     User get(String username);
 
     /**
-     * Returns the username of the curren user of the application.
+     * Returns the username of the current user of the application.
      * @return the username of the current user; null indicates that no one is logged into the application.
      */
     String getCurrentUsername();

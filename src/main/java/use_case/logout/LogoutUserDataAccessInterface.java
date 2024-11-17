@@ -6,7 +6,7 @@ package use_case.logout;
 public interface LogoutUserDataAccessInterface {
 
     /**
-     * Returns the username of the curren user of the application.
+     * Returns the username of the current user of the application.
      * @return the username of the current user
      */
     String getCurrentUsername();
