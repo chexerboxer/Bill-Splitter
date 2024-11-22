@@ -2,6 +2,7 @@ package entity.users;
 
 import entity.GenerateId;
 import entity.bill.Bill;
+import entity.item.Item;
 import entity.split.Split;
 
 import java.util.ArrayList;
@@ -81,12 +82,31 @@ public class CommonUser implements User, GenerateId {
     }
 
     public void addSplit(Split newSplit) {
+        for (int i = 0; i < splits.size(); i++){
+            Split split = splits.get(i);
+            if (split.getBillId() == newSplit.getBillId() && split.getItemId() == newSplit.getItemId()){
+                splits.get(i).setAmount(split.getAmount() + newSplit.getAmount());
+                return;
+            }
+        }
+
         splits.add(newSplit);
     }
     public void removeSplit(Split oldSplit) {
         splits.remove(oldSplit);
     }
 
+    @Override
+    public float distributedAmount(int itemId, int billId){
+
+        for (Split split : splits){
+            if (split.getItemId() == itemId && split.getBillId() == billId){
+                return split.getAmount();
+            }
+        }
+
+
+    }
 
 
 }

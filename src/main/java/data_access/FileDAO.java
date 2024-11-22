@@ -4,16 +4,14 @@ import entity.bill.Bill;
 import entity.bill.BillFactory;
 import entity.split.Split;
 import entity.split.SplitFactory;
-import entity.users.CommonUserFactory;
 import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
+import use_case.modify_split.ModifySplitDataAccessInterface;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
-import use_case.signup.SignupInputBoundary;
-import use_case.signup.SignupInputData;
 import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.*;
@@ -26,7 +24,8 @@ public class FileDAO implements FileDAOInterface,
                                 SignupUserDataAccessInterface,
                                 LoginUserDataAccessInterface,
                                 LogoutUserDataAccessInterface,
-                                ChangePasswordUserDataAccessInterface {
+                                ChangePasswordUserDataAccessInterface,
+        ModifySplitDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -313,4 +312,37 @@ public class FileDAO implements FileDAOInterface,
         bills.put(bill.getId(), bill);
         save();
     }
+
+    @Override
+    public void modifySplit(float amountSplitted, int billId, int itemId, int userId) {
+        SplitFactory splitFactory = new SplitFactory();
+        Split newSplit = splitFactory.create(amountSplitted, billId, itemId);
+        User user = users.get(userId);
+        user.addSplit(newSplit);
+        setUser(userId, user);
+    }
+
+    /**
+     * Return the undistrubted money on the item
+     * @param itemId is the id of the item.
+     * @param billId is the id of the bill of the item.
+     * @return amount of money yet to be distributed.
+     */
+    public float undistributedOnItem(int itemId, int billId){
+        Bill bill = bills.get(billId);
+        Item item = bill.getItems().get(itemId);
+        float total = item.getCost();
+        for(User user : users.values()){
+            for(Split split : user.getSplits()){
+                if (split.getItemId() == itemId && split.getBillId() == billId){
+                    total -= split.getAmount();
+                }
+            }
+        }
+
+        return total;
+
+    }
+
+
 }
