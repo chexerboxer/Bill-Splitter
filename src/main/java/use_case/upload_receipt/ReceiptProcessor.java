@@ -10,17 +10,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static app.Constants.*;
+
 /**
  *
  */
 public class ReceiptProcessor {
-    private static final String BASE_URL = "https://api.veryfi.com";
     private static final String CREATED_DATE_KEY = "date";
     private static final String CURRENCY_TYPE_KEY = "currency_code";
     private static final String ITEM_LIST_KEY = "line_items";
     private static final String ITEM_NAME_KEY = "description";
     private static final String ITEM_QUANTITY_KEY = "quantity";
     private static final String ITEM_PRICE_KEY = "total";
+    public static final String FILE_DATA = "file_data";
 
     public static void main(String[] args) throws IOException {
         final String filename = "C:\\Users\\andre\\OneDrive\\Pictures\\Documents" +
@@ -46,8 +48,7 @@ public class ReceiptProcessor {
     public ReceiptData retrieveOcrData(String data) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Map<String,String> dataRequest = new HashMap<>();
-        dataRequest.put("file_data", data);
-
+        dataRequest.put(FILE_DATA, data);
 
         JSONObject jo = new JSONObject(dataRequest);
         String json = jo.toString();
@@ -56,11 +57,11 @@ public class ReceiptProcessor {
                 MediaType.parse("application/json"), json);
 
         Request request = new Request.Builder()
-                .url(BASE_URL + "/api/v8/partner/documents")
+                .url(BASE_URL + OCR_URI)
                 .addHeader("Content-Type", "application/json")
                 .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "apikey " + "andreszeran:f78c6b1648552d301fb52dd56eab8558")
-                .addHeader("Client-Id", "vrfezBrm32fb5Fhg5u9wRlOUnyJRvZHU3YIrBHp")
+                .addHeader("Authorization", "apikey " + API_KEY)
+                .addHeader("Client-Id", CLIENT_ID)
                 .post(body)
                 .build();
 
