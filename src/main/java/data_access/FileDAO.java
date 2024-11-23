@@ -8,7 +8,9 @@ import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
-import use_case.modify_split.ModifySplitDataAccessInterface;
+import use_case.split_management.clear_bill.ClearBillDataAccessInterface;
+import use_case.split_management.distribute_bill_even.DistributeBillEvenDataAccessInterface;
+import use_case.split_management.modify_split.ModifySplitDataAccessInterface;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
@@ -25,7 +27,9 @@ public class FileDAO implements FileDAOInterface,
                                 LoginUserDataAccessInterface,
                                 LogoutUserDataAccessInterface,
                                 ChangePasswordUserDataAccessInterface,
-        ModifySplitDataAccessInterface {
+                                ModifySplitDataAccessInterface,
+                                ClearBillDataAccessInterface,
+                                DistributeBillEvenDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -315,13 +319,13 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public void modifySplit(float amountSplitted, int billId, int itemId, int userId) {
-        SplitFactory splitFactory = new SplitFactory();
-        Split newSplit = splitFactory.create(amountSplitted, billId, itemId);
-        User user = users.get(userId);
-        user.addSplit(newSplit);
-        setUser(userId, user);
-    }
 
+        User user = users.get(userId);
+
+        user.modifySplit(amountSplitted, itemId, billId);
+        setUser(userId, user);
+
+        }
     /**
      * Return the undistrubted money on the item
      * @param itemId is the id of the item.
@@ -344,5 +348,38 @@ public class FileDAO implements FileDAOInterface,
 
     }
 
+    @Override
+    public void clearBill(int billId) {
 
+        for (User user : users.values()){
+            for(Split split : user.getSplits()){
+                if (split.getBillId() == billId){
+                    user.removeSplit(split.getItemId(), split.getBillId());
+                }
+            }
+            setUser(user.getId(), user);
+
+        }
+
+    }
+
+    @Override
+    public void distributeBill(int billId, ArrayList<Integer> usersSplitting) {
+        Bill bill = bills.get(billId);
+
+        for (Item item : bill.getItems().values()){
+            float amount_to_distribute = undistributedOnItem(item.getId(), billId);
+            float amount_per_person = amount_to_distribute / usersSplitting.size();
+            for (int userId : usersSplitting){
+                modifySplit(amount_per_person, billId, item.getId(), userId);
+            }
+
+        }
+
+    }
 }
+
+
+
+
+

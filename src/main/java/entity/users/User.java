@@ -35,9 +35,19 @@ public interface User {
     void addSplit(Split newSplit);
 
     /**
-     * @param oldSplit the old split removed from user.
+     * @param itemId id of the item
+     * @param billId id of the bill
+     * remove bill with given item and billId
      */
-    void removeSplit(Split oldSplit);
+    void removeSplit(int itemId, int billId);
+
+    /**
+     * @param amount_modified amount to change
+     * @param itemId id of the item
+     * @param billId id of the bill
+     * remove bill with given item and billId
+     */
+    void modifySplit(float amount_modified, int itemId, int billId);
 
     /**
      * Return the split amount given item and bill id

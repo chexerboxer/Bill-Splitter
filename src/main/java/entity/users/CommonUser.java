@@ -4,6 +4,7 @@ import entity.GenerateId;
 import entity.bill.Bill;
 import entity.item.Item;
 import entity.split.Split;
+import entity.split.SplitFactory;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -92,9 +93,35 @@ public class CommonUser implements User, GenerateId {
 
         splits.add(newSplit);
     }
-    public void removeSplit(Split oldSplit) {
-        splits.remove(oldSplit);
+
+    @Override
+    public void removeSplit(int itemId, int billId) {
+        for (int i = 0; i < splits.size(); i++){
+            Split split = splits.get(i);
+            if (split.getItemId() == itemId && split.getBillId() == billId){
+                splits.remove(i);
+            }
+        }
     }
+
+    @Override
+    public void modifySplit(float amount_modified, int itemId, int billId) {
+
+
+            // if the final amount in the split is nothing then clear it.
+            if (distributedAmount(itemId, billId) + amount_modified == 0){
+                removeSplit(itemId, billId);
+
+                // here is just normal addition or subtraction
+            }else{
+        for (int i = 0; i < splits.size(); i++){
+            Split split = splits.get(i);
+            if (split.getItemId() == itemId && split.getBillId() == billId){
+                splits.get(i).setAmount(split.getAmount() + amount_modified);
+            }
+        }
+    }
+            }
 
     @Override
     public float distributedAmount(int itemId, int billId){
@@ -104,7 +131,8 @@ public class CommonUser implements User, GenerateId {
                 return split.getAmount();
             }
         }
-
+        // if bill not found then return 0.
+    return 0;
 
     }
 

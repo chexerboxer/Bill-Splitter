@@ -1,4 +1,4 @@
-package use_case.modify_split;
+package use_case.split_management.modify_split;
 
 
 

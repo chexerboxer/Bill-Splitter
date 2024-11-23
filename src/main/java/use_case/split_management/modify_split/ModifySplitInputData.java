@@ -1,6 +1,6 @@
-package use_case.modify_split;
+package use_case.split_management.modify_split;
 
-public class AddSplitInputData {
+public class ModifySplitInputData {
 
     private final float amount_splitted;
     private final int bill_id;
@@ -24,7 +24,7 @@ public class AddSplitInputData {
         return user_id;
     }
 
-    public AddSplitInputData(float amountSplitted, int billId, int itemId, int userId) {
+    public ModifySplitInputData(float amountSplitted, int billId, int itemId, int userId) {
         amount_splitted = amountSplitted;
         bill_id = billId;
         item_id = itemId;
