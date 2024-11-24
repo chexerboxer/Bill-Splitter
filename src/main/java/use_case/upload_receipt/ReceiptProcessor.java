@@ -4,6 +4,7 @@ package use_case.upload_receipt;
 import entity.item.Item;
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -71,15 +72,23 @@ public class ReceiptProcessor {
         return generateData(responseJson);
     }
 
-    private ReceiptData generateData(JSONObject jo) throws IOException {
+    private ReceiptData generateData(JSONObject jo) {
         ReceiptData receiptData = new ReceiptData();
+
+        if(jo == null){
+            return receiptData;
+        }
+
         receiptData.setDate(jo.getString(CREATED_DATE_KEY));
         receiptData.setCurrencyType(jo.getString(CURRENCY_TYPE_KEY));
         List<Item> itemList = new ArrayList<>();
-        for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
-            JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
-            Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY));
-            itemList.add(convertedItem);
+
+        if(jo.getJSONArray(ITEM_LIST_KEY) != null){
+            for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
+                JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
+                Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY));
+                itemList.add(convertedItem);
+            }
         }
         receiptData.setItems(itemList);
         return receiptData;
