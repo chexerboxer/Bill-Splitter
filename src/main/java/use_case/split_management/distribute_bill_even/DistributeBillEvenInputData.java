@@ -1,7 +1,5 @@
 package use_case.split_management.distribute_bill_even;
 
-import entity.users.User;
-
 import java.util.ArrayList;
 
 public class DistributeBillEvenInputData {
