@@ -73,14 +73,12 @@ public class Bill implements GenerateId {
     }
 
     public void addItem(Item newItem) {
-        // TODO: add logic so adding occurrences isn't capital sensitive
-        if (items.containsKey(newItem.getId())) {
-            items.put(newItem.getId() + 1, newItem);
+
+        while (items.containsKey(newItem.getId())){
+            newItem.setId(newItem.getId() + 1);
         }
-        // TODO**: add elif to create new items not in database with Item constructor before adding to map
-        else {
-            items.put(1, newItem);
-        }
+
+        items.put(newItem.getId(), newItem);
         totalAmount = totalAmount + newItem.getCost();
     }
     public void removeItem(Item oldItem) {
