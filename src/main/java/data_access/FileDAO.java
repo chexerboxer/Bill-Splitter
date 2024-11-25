@@ -299,15 +299,24 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public void changePassword(User user) {
-        // given user is the same user but with a new password, program goes through file to find user id,
-        // deletes the line and rewrites with the new id
-
+        if (users.containsKey(user.getId())) {
+            users.replace(user.getId(), user);
+            save(); // Persist changes to file
+        } else {
+            System.out.println(user.getId() + "User not found");
+            System.out.println(users);
+        }
     }
 
     public void addUser(User user) {
-        users.put(user.getId(), user);
-        save();
+        if (!users.containsKey(user.getId())) {
+            users.put(user.getId(), user);
+            save();
+        } else {
+            System.out.println("User with ID " + user.getId() + " already exists.");
+        }
     }
+
 
     public void addBill(Bill bill) {
         bills.put(bill.getId(), bill);

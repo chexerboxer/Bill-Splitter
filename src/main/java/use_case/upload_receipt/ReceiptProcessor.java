@@ -7,7 +7,9 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
@@ -26,11 +28,11 @@ public class ReceiptProcessor {
     public static final String FILE_DATA = "file_data";
 
     public static void main(String[] args) throws IOException {
-        final String filename = "C:\\Users\\andre\\OneDrive\\Pictures\\Documents" +
-                "\\University Documents\\CSC207\\Itemized+receipt+example.png";
+        final String filePath = "src/main/java/data_access/receiptfiles.txt";
         ReceiptProcessor receiptProcessor = new ReceiptProcessor();
+        final String filename = receiptProcessor.getReceiptPath(filePath);
         final String data = receiptProcessor.readReceipt(filename);
-        System.out.println(data);
+        System.out.println(filename);
         ReceiptData receiptData = receiptProcessor.retrieveOcrData(data);
         System.out.println(receiptData);
     }
@@ -49,6 +51,25 @@ public class ReceiptProcessor {
         } finally{}
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
         return encodedString;
+    }
+
+    public String getReceiptPath(String filename){
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String currentLine;
+            String lastNontEmptyLine = null;
+
+            while ((currentLine = br.readLine()) != null) {
+                currentLine = currentLine.trim();
+                if (!currentLine.isEmpty()) {
+                    lastNontEmptyLine = currentLine;
+                }
+            }
+
+            return lastNontEmptyLine;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
