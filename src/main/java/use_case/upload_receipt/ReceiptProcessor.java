@@ -4,6 +4,7 @@ package use_case.upload_receipt;
 import entity.item.Item;
 import okhttp3.*;
 import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ import java.util.*;
 import static app.Constants.*;
 
 /**
- *
+ *Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
  */
 public class ReceiptProcessor {
     private static final String CREATED_DATE_KEY = "date";
@@ -33,8 +34,14 @@ public class ReceiptProcessor {
         final String data = receiptProcessor.readReceipt(filename);
         System.out.println(filename);
         ReceiptData receiptData = receiptProcessor.retrieveOcrData(data);
+        System.out.println(receiptData);
     }
 
+    /**
+     * Reads the inputted receipt and converts it into a base 64 encoded String
+     * @param filename the file name of the image
+     * @return the file encoded into a base 64 String
+     */
     public String readReceipt(String filename){
         byte[] fileContent = null;
         try {
@@ -65,6 +72,12 @@ public class ReceiptProcessor {
         }
     }
 
+    /**
+     * Calls the receiptsOCR API and retrieves the data from the encoded base 64 String.
+     * @param data image encoded into a base 64 String
+     * @return a ReceiptData Object with all the information of the receipt
+     * @throws IOException if the API request failed
+     */
     public ReceiptData retrieveOcrData(String data) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Map<String,String> dataRequest = new HashMap<>();
@@ -91,15 +104,28 @@ public class ReceiptProcessor {
         return generateData(responseJson);
     }
 
-    private ReceiptData generateData(JSONObject jo) throws IOException {
+    /**
+     * Private helper method for retrieveOcrData
+     * @param jo the JsonObject created by the API call
+     * @return ReceiptData object with relevant info taken from jo
+     */
+    private ReceiptData generateData(JSONObject jo) {
         ReceiptData receiptData = new ReceiptData();
+
+        if(jo == null){
+            return receiptData;
+        }
+
         receiptData.setDate(jo.getString(CREATED_DATE_KEY));
         receiptData.setCurrencyType(jo.getString(CURRENCY_TYPE_KEY));
         List<Item> itemList = new ArrayList<>();
-        for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
-            JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
-            Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY));
-            itemList.add(convertedItem);
+
+        if(jo.getJSONArray(ITEM_LIST_KEY) != null){
+            for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
+                JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
+                Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY));
+                itemList.add(convertedItem);
+            }
         }
         receiptData.setItems(itemList);
         return receiptData;
