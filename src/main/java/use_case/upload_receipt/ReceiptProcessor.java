@@ -14,7 +14,7 @@ import java.util.*;
 import static app.Constants.*;
 
 /**
- *
+ *Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
  */
 public class ReceiptProcessor {
     private static final String CREATED_DATE_KEY = "date";
@@ -35,6 +35,11 @@ public class ReceiptProcessor {
         System.out.println(receiptData);
     }
 
+    /**
+     * Reads the inputted receipt and converts it into a base 64 encoded String
+     * @param filename the file name of the image
+     * @return the file encoded into a base 64 String
+     */
     public String readReceipt(String filename){
         byte[] fileContent = null;
         try {
@@ -46,6 +51,12 @@ public class ReceiptProcessor {
         return encodedString;
     }
 
+    /**
+     * Calls the receiptsOCR API and retrieves the data from the encoded base 64 String.
+     * @param data image encoded into a base 64 String
+     * @return a ReceiptData Object with all the information of the receipt
+     * @throws IOException if the API request failed
+     */
     public ReceiptData retrieveOcrData(String data) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Map<String,String> dataRequest = new HashMap<>();
@@ -72,6 +83,11 @@ public class ReceiptProcessor {
         return generateData(responseJson);
     }
 
+    /**
+     * Private helper method for retrieveOcrData
+     * @param jo the JsonObject created by the API call
+     * @return ReceiptData object with relevant info taken from jo
+     */
     private ReceiptData generateData(JSONObject jo) {
         ReceiptData receiptData = new ReceiptData();
 
