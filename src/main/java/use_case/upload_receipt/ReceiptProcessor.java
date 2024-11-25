@@ -31,10 +31,8 @@ public class ReceiptProcessor {
         ReceiptProcessor receiptProcessor = new ReceiptProcessor();
         final String filename = receiptProcessor.getReceiptPath(filePath);
         final String data = receiptProcessor.readReceipt(filename);
-        //System.out.println(data);
         System.out.println(filename);
         ReceiptData receiptData = receiptProcessor.retrieveOcrData(data);
-        //System.out.println(receiptData);
     }
 
     public String readReceipt(String filename){
