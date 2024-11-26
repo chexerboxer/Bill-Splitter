@@ -12,6 +12,8 @@ import entity.users.UserFactory;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
+import use_case.manage_items.ManageItemDataAccessInterface;
+import use_case.manage_items.ManageItemInteractor;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInputData;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -26,7 +28,8 @@ public class FileDAO implements FileDAOInterface,
                                 SignupUserDataAccessInterface,
                                 LoginUserDataAccessInterface,
                                 LogoutUserDataAccessInterface,
-                                ChangePasswordUserDataAccessInterface {
+                                ChangePasswordUserDataAccessInterface,
+                                ManageItemDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -312,5 +315,12 @@ public class FileDAO implements FileDAOInterface,
     public void addBill(Bill bill) {
         bills.put(bill.getId(), bill);
         save();
+    }
+
+    @Override
+    public void saveBill(Bill bill) {
+        // This method combines existing functionality to properly save a bill
+        bills.put(bill.getId(), bill);
+        save(); // Calls the existing save() method to persist changes to the CSV
     }
 }
