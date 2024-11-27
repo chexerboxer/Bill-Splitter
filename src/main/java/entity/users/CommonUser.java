@@ -56,6 +56,7 @@ public class CommonUser implements User, GenerateId {
         int id = random.nextInt(idBound) + START_ID_RANGE;
         return id;
     }
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
