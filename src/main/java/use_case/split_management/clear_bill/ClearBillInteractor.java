@@ -1,12 +1,14 @@
 package use_case.split_management.clear_bill;
 
 import data_access.FileDAO;
+import use_case.split_management.SplitManagementOutputBoundary;
 
 public class ClearBillInteractor implements ClearBillInputBoundary {
     FileDAO userDataAccessObject;
-
-    public ClearBillInteractor(FileDAO userDataAccessObject){
+    SplitManagementOutputBoundary splitManagementPresenter;
+    public ClearBillInteractor(FileDAO userDataAccessObject, SplitManagementOutputBoundary splitManagementOutputBoundary){
         this.userDataAccessObject = userDataAccessObject;
+        splitManagementPresenter = splitManagementOutputBoundary;
     }
 
     @Override
@@ -16,7 +18,7 @@ public class ClearBillInteractor implements ClearBillInputBoundary {
 
 
         if (!userDataAccessObject.getAllBills().containsKey(bill_id)){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("bill not found.");
         }
         else{
             userDataAccessObject.clearBill(bill_id);

@@ -21,17 +21,36 @@ import entity.split.SplitFactory;
 import entity.users.CommonUserFactory;
 import entity.users.User;
 import entity.users.UserFactory;
+import interface_adapter.signup.SignupController;
+import interface_adapter.split_management.ClearBillController;
+import interface_adapter.split_management.DistributeBillController;
+import interface_adapter.split_management.ModifySplitController;
+import interface_adapter.split_management.SplitManagementPresenter;
+import use_case.split_management.SplitManagementOutputBoundary;
+import use_case.split_management.clear_bill.ClearBillInputBoundary;
+import use_case.split_management.clear_bill.ClearBillInteractor;
+import use_case.split_management.distribute_bill_even.DistributeBillEvenInputBoundary;
+import use_case.split_management.distribute_bill_even.DistributeBillEvenInteractor;
+import use_case.split_management.modify_split.ModifySplitInputBoundary;
+import use_case.split_management.modify_split.ModifySplitInteractor;
 
 
+// TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
+// TODO note: creating billdisplay viewmodel and viewstate shouldnt be bad jsut plug in the bill from the viewstate and the viewmodel stuff isnt long.
 public class BillDisplayView extends JFrame {
     private FileDAO userDataAccessObject;
     private Bill bill;
+    private ClearBillController clearBillController;
+    private DistributeBillController distributeBillController;
+    private ModifySplitController modifySplitController;
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
     private JPanel membersPanel;
     private JPanel itemsPanel;
     private DefaultTableModel tableModel;
 
+
+    // TODO NEED BILL DISPLAY VIEW MODEL, move the bill into the bill display state thats to be created.
     public BillDisplayView(FileDAO userDataAccessObject, Bill bill) {
         this.userDataAccessObject = userDataAccessObject;
         this.bill = bill;
@@ -140,9 +159,9 @@ public class BillDisplayView extends JFrame {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
 
 
-        // TODO not data stored in bill cant represent delete maybe nvm this will be done in the call at dashboard view
-        LocalDate date = LocalDate.of(2024, 11, 4);
-        JLabel dateLabel = new JLabel("Created on " + date.format(DateTimeFormatter.ofPattern("MMMM d, yyyy")));
+
+
+        JLabel dateLabel = new JLabel("Total Cost: " + bill.getTotalAmount());
         dateLabel.setForeground(Color.GRAY);
 
         headerPanel.add(titleLabel);
@@ -205,16 +224,63 @@ public class BillDisplayView extends JFrame {
 
         // Create header panel with title and add button
         JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        JLabel allItemsLabel = new JLabel("All Items");
-        allItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel addItemsLabel = new JLabel("Add Items");
+        addItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         JButton addItemButton = new JButton("+");
         addItemButton.setFont(new Font("Arial", Font.BOLD, 14));
         addItemButton.setFocusPainted(false);
         addItemButton.addActionListener(e -> showAddItemDialog(this));
 
-        headerPanel.add(allItemsLabel);
+        headerPanel.add(addItemsLabel);
         headerPanel.add(addItemButton);
+
+
+        JLabel RemoveItemsLabel = new JLabel("Remove Items");
+        RemoveItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton RemoveItemButton = new JButton("+");
+        RemoveItemButton.setFont(new Font("Arial", Font.BOLD, 14));
+        RemoveItemButton.setFocusPainted(false);
+        RemoveItemButton.addActionListener(e -> showRemoveItemDialog(this));
+
+        headerPanel.add(RemoveItemsLabel);
+        headerPanel.add(RemoveItemButton);
+
+
+        JLabel ModifySplitsLabel = new JLabel("Modify Splits");
+        ModifySplitsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton ModifySplitsButton = new JButton("+");
+        ModifySplitsButton.setFont(new Font("Arial", Font.BOLD, 14));
+        ModifySplitsButton.setFocusPainted(false);
+        ModifySplitsButton.addActionListener(e -> showModifySplitsDialog(this));
+
+        headerPanel.add(ModifySplitsLabel);
+        headerPanel.add(ModifySplitsButton);
+
+        JLabel DistributeBillLabel = new JLabel("Distribute Bill");
+        DistributeBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton DistributeBillButton = new JButton("+");
+        DistributeBillButton.setFont(new Font("Arial", Font.BOLD, 14));
+        DistributeBillButton.setFocusPainted(false);
+        DistributeBillButton.addActionListener(e -> showDistributeBillDialog(this));
+
+        headerPanel.add(DistributeBillLabel);
+        headerPanel.add(DistributeBillButton);
+
+        JLabel ClearBillLabel = new JLabel("Clear Bill");
+        ClearBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton ClearBillButton = new JButton("+");
+        ClearBillButton.setFont(new Font("Arial", Font.BOLD, 14));
+        ClearBillButton.setFocusPainted(false);
+        ClearBillButton.addActionListener(e -> ClearBillEvent(this));
+
+        headerPanel.add(ClearBillLabel);
+        headerPanel.add(ClearBillButton);
+
 
         // Create the table model
         String[] columnNames = {"All Items", "Assigned Splits"};
@@ -230,6 +296,7 @@ public class BillDisplayView extends JFrame {
             String itemcolContent = item.getName() + ": " + item.getCost() + "$";
 
             ArrayList<Integer> users = userDataAccessObject.usersSplittingItem(itemId, bill.getId());
+
             ArrayList<String> usersStrings = new ArrayList<>();
             for (int i = 0; i < users.size(); i++){
                 // all of these users are returns of usersSplittingItem thus has some split in the item.
@@ -238,20 +305,22 @@ public class BillDisplayView extends JFrame {
                     usersStrings.add(user.getName() + ": " + user.distributedAmount(itemId, bill.getId()) + "$");
 
             }
-            String usercolContent = String.join(",", usersStrings);
+            // This has to be the most scuffed solution ever lmao
+            // This table thing doesnt display multiple lines if there is jsut a line break in the string
+            // so i gotta use html to display multiple lines.
+            String usercolContent = String.join("<br>", usersStrings);
+            usercolContent = "<html>" + usercolContent + "</html>";
+
 
             tableModel.addRow(new Object[]{itemcolContent, usercolContent});
 
         }
 
-
-
-
         JTable table = new JTable(tableModel);
 
         // Style the table
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 14));
-        table.setRowHeight(40);
+        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 24));
+        table.setRowHeight(80);
 
         // Create a panel for the table with custom header
         JPanel tablePanel = new JPanel(new BorderLayout());
@@ -261,9 +330,285 @@ public class BillDisplayView extends JFrame {
         itemsPanel.add(tablePanel, BorderLayout.CENTER);
     }
 
-    private void showAddItemDialog(JFrame parent) {
-        // Create the dialog
+    private void showRemoveItemDialog(JFrame parent) {
+        // Create main panel with padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        // Add title
+        JLabel titleLabel = new JLabel("Select Items to remove");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        mainPanel.add(titleLabel);
+
+        // generate an inverse items which maps the name of the item to its id.
+        Map<String, Integer> reverseItems = new HashMap<>();
+        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+            reverseItems.put(entry.getValue().getName(), entry.getKey());
+        }
+
+        ArrayList<JCheckBox> checkBoxes =  new ArrayList<>();
+        for (String itemName : reverseItems.keySet()){
+            JCheckBox checkBox = new JCheckBox(itemName);
+            mainPanel.add(checkBox);
+            checkBoxes.add(checkBox);
+        }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton removeButton = new JButton("Remove!");
+        removeButton.setBackground(Color.BLACK);
+        removeButton.setForeground(Color.WHITE);
+        removeButton.setFocusPainted(false);
+        removeButton.setBorderPainted(false);
+        removeButton.setPreferredSize(new Dimension(100, 35));
+
+        // Add action listener for create button
+        removeButton.addActionListener(e -> {
+            // goes through all that is selected then remove them from DAO then repain.
+
+            for (JCheckBox checkBox : checkBoxes){
+                if(checkBox.isSelected()){
+                    // remove item from bill
+                    System.out.println(checkBox.getText());
+                    bill.removeItem(reverseItems.get(checkBox.getText()));
+                    userDataAccessObject.setBill(bill.getId(), bill);
+
+                    // remove splits that use this item in this bill
+                    for (int userId : bill.getUsers()){
+                        User user = userDataAccessObject.getUser(userId);
+                        user.removeSplit(reverseItems.get(checkBox.getText()), bill.getId());
+                        userDataAccessObject.setUser(user.getId(), user);
+                    }
+
+                }
+            }
+
+            // This part of the code makes the parent display redraw itself after updating the DAO.
+            this.remove(mainContentPanel);
+            createMainContent();
+            parent.add(mainContentPanel, BorderLayout.CENTER);
+            parent.repaint();
+            parent.revalidate();
+
+
+            JOptionPane.getRootFrame().dispose();
+
+                });
+
+
+
+
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        buttonPanel.add(removeButton);
+        mainPanel.add(buttonPanel);
+
+
+        JOptionPane.showMessageDialog(null, mainPanel,"Remove Items", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void ClearBillEvent(JFrame parent) {
+
+        // change the values in DAO
+        clearBillController.execute(bill.getId());
+
+        // redraw main content panel with updated values
+        this.remove(mainContentPanel);
+        createMainContent();
+        parent.add(mainContentPanel, BorderLayout.CENTER);
+        parent.repaint();
+        parent.revalidate();
+
+    }
+
+
+    private void showDistributeBillDialog(JFrame parent) {
+        // Create main panel with padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Add title
+        JLabel titleLabel = new JLabel("Select people to distribute among");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        mainPanel.add(titleLabel);
+
+
+        // Create input fields
+        // generate an inverse users which maps the name of the user to its id.
+        Map<String, Integer> reverseUsers = new HashMap<>();
+        for(int userId : bill.getUsers()){
+            String userName = userDataAccessObject.getUser(userId).getName();
+            reverseUsers.put(userName, userId);
+        }
+
+        ArrayList<JCheckBox> checkBoxes =  new ArrayList<>();
+        for (String userName : reverseUsers.keySet()){
+            JCheckBox checkBox = new JCheckBox(userName);
+            mainPanel.add(checkBox);
+            checkBoxes.add(checkBox);
+        }
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton DistributeButton = new JButton("Distribute!");
+        DistributeButton.setBackground(Color.BLACK);
+        DistributeButton.setForeground(Color.WHITE);
+        DistributeButton.setFocusPainted(false);
+        DistributeButton.setBorderPainted(false);
+        DistributeButton.setPreferredSize(new Dimension(100, 35));
+
+        // Add action listener for create button
+        DistributeButton.addActionListener(e -> {
+            // goes through all that is selected then distribute to them then repaint.
+
+            ArrayList<Integer> usersSplitting = new ArrayList<>();
+            for (JCheckBox checkBox : checkBoxes){
+                if(checkBox.isSelected()){
+                    // if the user name is selected, add them to a list then call the controller for distribute.
+
+                    usersSplitting.add(reverseUsers.get(checkBox.getText()));
+                }
+            }
+            distributeBillController.execute(bill.getId(), usersSplitting);
+
+
+            // This part of the code makes the parent display redraw itself after updating the DAO.
+            this.remove(mainContentPanel);
+            createMainContent();
+            parent.add(mainContentPanel, BorderLayout.CENTER);
+            parent.repaint();
+            parent.revalidate();
+
+
+            JOptionPane.getRootFrame().dispose();
+
+        });
+
+
+
+
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        buttonPanel.add(DistributeButton);
+        mainPanel.add(buttonPanel);
+
+
+
+        JOptionPane.showMessageDialog(null, mainPanel,"Distribute Bill", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // TODO implement by hooking up with usecase controller.
+    private void showModifySplitsDialog(JFrame parent) {
+        // Create main panel with padding
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Add title
+        JLabel titleLabel = new JLabel("Select people to change split value by");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        mainPanel.add(titleLabel);
+
+        // Create input fields
+
+        // generate an inverse users which maps the name of the user to its id.
+        Map<String, Integer> reverseUsers = new HashMap<>();
+        for(int userId : bill.getUsers()){
+            String userName = userDataAccessObject.getUser(userId).getName();
+            reverseUsers.put(userName, userId);
+        }
+
+        // generate an inverse items which maps the name of the item to its id.
+        Map<String, Integer> reverseItems = new HashMap<>();
+        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+            reverseItems.put(entry.getValue().getName(), entry.getKey());
+        }
+
+
+        // have drop down menu for which user to modify.
+        final JComboBox<String> userSelection =
+                new JComboBox<>(reverseUsers.keySet().toArray(new String[reverseUsers.size()]));
+        mainPanel.add(userSelection);
+
+        // have drop down menu for which item to modify.
+        final JComboBox<String> itemSelection =
+                new JComboBox<>(reverseItems.keySet().toArray(new String[reverseItems.size()]));
+        mainPanel.add(itemSelection);
+
+
+        // have amount modified by
+        JTextField AmountModifiedField = new JTextField("Please enter how much the split is modified here");
+        AmountModifiedField.setPreferredSize(new Dimension(300, 30));
+        AmountModifiedField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                AmountModifiedField.setText("");
+            }
+            public void focusLost(FocusEvent e) {
+                if(AmountModifiedField.getText().isEmpty())
+                    AmountModifiedField.setText("Please enter item cost here");
+            }
+        });
+
+        mainPanel.add(AmountModifiedField);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton ModifyButton = new JButton("Modify!");
+        ModifyButton.setBackground(Color.BLACK);
+        ModifyButton.setForeground(Color.WHITE);
+        ModifyButton.setFocusPainted(false);
+        ModifyButton.setBorderPainted(false);
+        ModifyButton.setPreferredSize(new Dimension(100, 35));
+
+        // Add action listener for create button
+        ModifyButton.addActionListener(e -> {
+            int userId = reverseUsers.get(userSelection.getSelectedItem());
+            int itemId = reverseItems.get(itemSelection.getSelectedItem());
+
+            try{
+                float amountModified = Float.valueOf(AmountModifiedField.getText());
+
+                modifySplitController.execute(amountModified, bill.getId(), itemId, userId);
+
+
+                // This part of the code makes the parent display redraw itself after updating the DAO.
+                this.remove(mainContentPanel);
+                createMainContent();
+                parent.add(mainContentPanel, BorderLayout.CENTER);
+                parent.repaint();
+                parent.revalidate();
+
+
+                JOptionPane.getRootFrame().dispose();
+            } catch (NumberFormatException ex){
+                // This catches when the user input something that is not a float, thus have a pop up saying they
+                // gotta input a float.
+                JOptionPane.showMessageDialog(parent, "The amount modified is not a number. Try again.");
+
+            }
+
+
+
+            JOptionPane.getRootFrame().dispose();
+
+        });
+
+
+
+
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        buttonPanel.add(ModifyButton);
+        mainPanel.add(buttonPanel);
+
+
+        JOptionPane.showMessageDialog(null, mainPanel,"Modify Split", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showAddItemDialog(JFrame parent) {
 
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
@@ -382,10 +727,22 @@ public class BillDisplayView extends JFrame {
         mainPanel.add(buttonPanel);
 
 
-        JOptionPane.showMessageDialog(null, mainPanel,"Information", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mainPanel,"Add Items", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
+    // Setters for the controllers, TODO add these in the AppBuilder when intializing the BillDisplayView. can refer to main when im doing testing.
+    public void setClearBillController(ClearBillController controller) {
+        this.clearBillController = controller;
+    }
+
+    public void setDistributeBillController(DistributeBillController controller) {
+        this.distributeBillController = controller;
+    }
+
+    public void setModifySplitController(ModifySplitController controller) {
+        this.modifySplitController = controller;
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -405,8 +762,10 @@ public class BillDisplayView extends JFrame {
         userids.add(12);
         HashMap<Integer, Item> items = new HashMap<>();
         items.put(10, itemFactory.create("item1",10,32.2f));
-        items.put(11, itemFactory.create("item2", 11, 22.1f));
-        Bill bill1 = billFactory.create("testBillName", 10, userids, items, 221.3f);
+        items.put(11, itemFactory.create("item2", 11, 42.1f));
+        Bill bill1 = billFactory.create("testBillName", 10, userids);
+        bill1.addItem(itemFactory.create("item1",10,32.2f));
+        bill1.addItem(itemFactory.create("item2", 11, 42.1f));
         ArrayList<Split> splits = new ArrayList<>();
         splits.add(splitFactory.create(12,10,11));
         ArrayList<Split> splits2 = new ArrayList<>();
@@ -433,6 +792,30 @@ public class BillDisplayView extends JFrame {
 
         SwingUtilities.invokeLater(() -> {
             BillDisplayView view = new BillDisplayView(userDataAccessObject,userDataAccessObject.getBill(10));
+
+            // set up controllers
+            SplitManagementOutputBoundary splitManagementOutputBoundary = new SplitManagementPresenter();
+
+            final ClearBillInputBoundary clearBillInteractor =
+                    new ClearBillInteractor(userDataAccessObject, splitManagementOutputBoundary);
+
+            final ClearBillController clearBillController1 = new ClearBillController(clearBillInteractor);
+
+            final DistributeBillEvenInputBoundary distributeBillInteractor =
+                    new DistributeBillEvenInteractor(userDataAccessObject, splitManagementOutputBoundary);
+
+            final DistributeBillController distributeBillController1 = new DistributeBillController(distributeBillInteractor);
+
+            final ModifySplitInputBoundary modifySplitInterator =
+                    new ModifySplitInteractor(userDataAccessObject, splitManagementOutputBoundary);
+
+            final ModifySplitController modifySplitController1 = new ModifySplitController(modifySplitInterator);
+
+            view.setClearBillController(clearBillController1);
+
+            view.setDistributeBillController(distributeBillController1);
+
+            view.setModifySplitController(modifySplitController1);
 
             view.setVisible(true);
         });

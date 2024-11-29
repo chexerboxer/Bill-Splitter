@@ -1,12 +1,16 @@
 package use_case.split_management.modify_split;
 
 import data_access.FileDAO;
+import use_case.signup.SignupOutputBoundary;
+import use_case.split_management.SplitManagementOutputBoundary;
 
 public class ModifySplitInteractor implements ModifySplitInputBoundary {
     FileDAO userDataAccessObject;
+    SplitManagementOutputBoundary splitManagementPresenter;
 
-    public ModifySplitInteractor(FileDAO userDataAccessObject){
+    public ModifySplitInteractor(FileDAO userDataAccessObject, SplitManagementOutputBoundary splitManagementOutputBoundary){
         this.userDataAccessObject = userDataAccessObject;
+        this.splitManagementPresenter = splitManagementOutputBoundary;
     }
 
     @Override
@@ -18,21 +22,16 @@ public class ModifySplitInteractor implements ModifySplitInputBoundary {
 
 
         if (!userDataAccessObject.getAllBills().containsKey(bill_id)){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("bill not found.");
         }
-        else if (!userDataAccessObject.getAllUsers().containsKey(user_id)){
-            // TODO fail case
+        else if (!userDataAccessObject.getBill(bill_id).getUsers().contains(user_id)){
+            splitManagementPresenter.prepareFailView("user not in bill.");
         }
         else if (!userDataAccessObject.getBill(bill_id).getItems().containsKey(item_id)){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("item not in bill.");
         }
         else if (userDataAccessObject.undistributedOnItem(item_id, bill_id) < amount_splitted){
-            // TODO fail case
-        }
-
-        // The modify split interactor allows both positive and negative values.
-        else if (userDataAccessObject.getUser(user_id).distributedAmount(item_id, bill_id) + amount_splitted < 0){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("not enough left on the item to split.");
         }
         else{
 

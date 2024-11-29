@@ -7,6 +7,7 @@ import entity.split.Split;
 import entity.split.SplitFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -96,10 +97,12 @@ public class CommonUser implements User, GenerateId {
 
     @Override
     public void removeSplit(int itemId, int billId) {
-        for (int i = 0; i < splits.size(); i++){
-            Split split = splits.get(i);
+        Iterator<Split> iter2 = splits.iterator();
+
+        while(iter2.hasNext()){
+            Split split = iter2.next();
             if (split.getItemId() == itemId && split.getBillId() == billId){
-                splits.remove(i);
+                iter2.remove();
             }
         }
     }
@@ -120,6 +123,10 @@ public class CommonUser implements User, GenerateId {
                 splits.get(i).setAmount(split.getAmount() + amount_modified);
             }
         }
+
+        // if its here then it means the split does not exist in the user yet, create new
+        SplitFactory splitFactory = new SplitFactory();
+        addSplit(splitFactory.create(amount_modified, billId, itemId));
     }
             }
 

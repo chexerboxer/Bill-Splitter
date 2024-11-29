@@ -1,15 +1,18 @@
 package use_case.split_management.distribute_bill_even;
 
 import data_access.FileDAO;
-import entity.users.User;
+import use_case.split_management.SplitManagementOutputBoundary;
+
 
 import java.util.ArrayList;
 
 public class DistributeBillEvenInteractor implements DistributeBillEvenInputBoundary {
     FileDAO userDataAccessObject;
+    SplitManagementOutputBoundary splitManagementPresenter;
 
-    public DistributeBillEvenInteractor(FileDAO userDataAccessObject){
+    public DistributeBillEvenInteractor(FileDAO userDataAccessObject, SplitManagementOutputBoundary splitManagementOutputBoundary){
         this.userDataAccessObject = userDataAccessObject;
+        splitManagementPresenter = splitManagementOutputBoundary;
     }
 
     @Override
@@ -28,10 +31,10 @@ public class DistributeBillEvenInteractor implements DistributeBillEvenInputBoun
             }
         }
         if (!userDataAccessObject.getAllBills().containsKey(bill_id)){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("bill not found.");
 
         }else if (!usersSplittingContained){
-            // TODO fail case
+            splitManagementPresenter.prepareFailView("user not splitting this item.");
 
         }
 

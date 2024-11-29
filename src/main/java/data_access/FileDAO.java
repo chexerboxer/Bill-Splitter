@@ -8,10 +8,10 @@ import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
+import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.split_management.clear_bill.ClearBillDataAccessInterface;
 import use_case.split_management.distribute_bill_even.DistributeBillEvenDataAccessInterface;
 import use_case.split_management.modify_split.ModifySplitDataAccessInterface;
-import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupUserDataAccessInterface;
@@ -360,8 +360,7 @@ public class FileDAO implements FileDAOInterface,
     public ArrayList<Integer> usersSplittingItem(int itemId, int billId){
         ArrayList<Integer> usersSplitting = new ArrayList<>();
         for(User user : users.values()){
-            user.getSplits().get(0).getAmount();
-            user.getSplits().get(0).getItemId();
+
             if (user.distributedAmount(itemId, billId) > 0) {
                 usersSplitting.add(user.getId());
             }
@@ -397,10 +396,10 @@ public class FileDAO implements FileDAOInterface,
     public void clearBill(int billId) {
 
         for (User user : users.values()){
-            for(Split split : user.getSplits()){
-                if (split.getBillId() == billId){
-                    user.removeSplit(split.getItemId(), split.getBillId());
-                }
+            for(int itemId: bills.get(billId).getItems().keySet()){
+
+                    user.removeSplit(itemId, billId);
+
             }
             setUser(user.getId(), user);
 

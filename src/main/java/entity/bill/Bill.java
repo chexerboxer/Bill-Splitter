@@ -2,7 +2,7 @@ package entity.bill;
 
 import entity.GenerateId;
 import entity.item.Item;
-import entity.users.User;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +35,13 @@ public class Bill implements GenerateId {
         this.users = users;
         this.items = items;
         this.totalAmount = totalAmount;
+    }
+
+    public Bill(String name, int id, ArrayList<Integer> users) {
+        this.name = name;
+        this.id = id;
+        this.users = users;
+
     }
 
     public boolean equals(Bill bill){
@@ -75,17 +82,20 @@ public class Bill implements GenerateId {
     public void addItem(Item newItem) {
         // TODO: add logic so adding occurrences isn't capital sensitive
         if (items.containsKey(newItem.getId())) {
-            items.put(newItem.getId() + 1, newItem);
+            newItem.setId(newItem.generateId());
+            addItem(newItem);
         }
         // TODO**: add elif to create new items not in database with Item constructor before adding to map
+        //  ?? the paramater is an item already though
         else {
             items.put(newItem.getId(), newItem);
         }
         totalAmount = totalAmount + newItem.getCost();
     }
-    public void removeItem(Item oldItem) {
-        items.remove(oldItem);
+    public void removeItem(int oldItemId) {
+        Item oldItem = items.get(oldItemId);
         totalAmount = totalAmount - oldItem.getCost();
+        items.remove(oldItemId);
     }
 
 
