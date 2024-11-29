@@ -65,11 +65,11 @@ public class Bill implements GenerateId {
     }
     public float getTotalAmount(){return totalAmount;}
 
-    public void addUser(User newUser) {
-        users.add(newUser.getId());
+    public void addUser(int id) {
+        users.add(id);
     }
-    public void removeUser (User oldUser) {
-        users.remove(oldUser.getId());
+    public void removeUser (int userId) {
+        users.remove(userId);
     }
 
     public void addItem(Item newItem) {
@@ -79,7 +79,7 @@ public class Bill implements GenerateId {
         }
         // TODO**: add elif to create new items not in database with Item constructor before adding to map
         else {
-            items.put(1, newItem);
+            items.put(newItem.getId(), newItem);
         }
         totalAmount = totalAmount + newItem.getCost();
     }

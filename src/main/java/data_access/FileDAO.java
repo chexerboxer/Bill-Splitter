@@ -255,8 +255,10 @@ public class FileDAO implements FileDAOInterface,
     public boolean removeUser(int id) {
         if (users.keySet().contains(id)){
             users.remove(id);
+            save();
             return true;
         }
+            save();
             return false;
 
     }
@@ -265,8 +267,10 @@ public class FileDAO implements FileDAOInterface,
     public boolean removeBill(int id) {
         if (bills.keySet().contains(id)){
             bills.remove(id);
+            save();
             return true;
         }
+        save();
         return false;
     }
 
@@ -317,15 +321,56 @@ public class FileDAO implements FileDAOInterface,
         save();
     }
 
+    // checks whether the user is in a bill by their splits and remove if they are not.
+    public void checkRemoveUserInBill(int billId, int userId){
+        Bill bill = bills.get(billId);
+        User user = users.get(userId);
+        for (int itemId : bill.getItems().keySet()) {
+            // if the user has split in one of the item of the bill then it doesnt have to be removed.
+            if(user.distributedAmount(itemId, billId) > 0){
+                return;
+            }
+        }
+
+        // the user has no split in the bill, remove it from the bill.
+        bill.removeUser(userId);
+        setBill(billId, bill);
+        save();
+    }
+
     @Override
     public void modifySplit(float amountSplitted, int billId, int itemId, int userId) {
 
         User user = users.get(userId);
 
+
         user.modifySplit(amountSplitted, itemId, billId);
         setUser(userId, user);
 
+        checkRemoveUserInBill(billId, userId);
+        save();
+    }
+
+    /**
+     * Return the list of users attributed to this item.
+     * @param itemId is the id of the item.
+     * @param billId is the id of the bill of the item.
+     * @return list of users attributed to this item.
+     */
+    public ArrayList<Integer> usersSplittingItem(int itemId, int billId){
+        ArrayList<Integer> usersSplitting = new ArrayList<>();
+        for(User user : users.values()){
+            user.getSplits().get(0).getAmount();
+            user.getSplits().get(0).getItemId();
+            if (user.distributedAmount(itemId, billId) > 0) {
+                usersSplitting.add(user.getId());
+            }
+
         }
+        return usersSplitting;
+
+    }
+
     /**
      * Return the undistrubted money on the item
      * @param itemId is the id of the item.
@@ -367,14 +412,18 @@ public class FileDAO implements FileDAOInterface,
     public void distributeBill(int billId, ArrayList<Integer> usersSplitting) {
         Bill bill = bills.get(billId);
 
-        for (Item item : bill.getItems().values()){
-            float amount_to_distribute = undistributedOnItem(item.getId(), billId);
-            float amount_per_person = amount_to_distribute / usersSplitting.size();
-            for (int userId : usersSplitting){
-                modifySplit(amount_per_person, billId, item.getId(), userId);
-            }
+        for (Item item : bill.getItems().values()) {
 
+            float amount_to_distribute = undistributedOnItem(item.getId(), billId);
+            if (amount_to_distribute >= 0) {
+                float amount_per_person = amount_to_distribute / usersSplitting.size();
+                for (int userId : usersSplitting) {
+                    modifySplit(amount_per_person, billId, item.getId(), userId);
+                }
+
+            }
         }
+
 
     }
 }

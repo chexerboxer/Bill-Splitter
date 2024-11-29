@@ -109,7 +109,7 @@ public class CommonUser implements User, GenerateId {
 
 
             // if the final amount in the split is nothing then clear it.
-            if (distributedAmount(itemId, billId) + amount_modified == 0){
+            if (distributedAmount(itemId, billId) + amount_modified <= 0){
                 removeSplit(itemId, billId);
 
                 // here is just normal addition or subtraction
@@ -131,7 +131,7 @@ public class CommonUser implements User, GenerateId {
                 return split.getAmount();
             }
         }
-        // if bill not found then return 0.
+        // if split not found then return 0.
     return 0;
 
     }
