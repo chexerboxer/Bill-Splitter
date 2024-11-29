@@ -1,6 +1,7 @@
 package app;
 
 import javax.swing.JFrame;
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -17,7 +18,7 @@ public class Main {
                                             .addChangePasswordView()
                                             .addLoginView()
                                             .addSignupView()
-                                            .addLoggedInView()
+                                            .addDashboardView()
                                             .addChangePasswordUseCase()
                                             .addSignupUseCase()
                                             .addLoginUseCase()
@@ -25,6 +26,7 @@ public class Main {
                                             .addLogoutUseCase()
                                             .build();
 
+        application.setSize(new Dimension(1000,700));
         application.pack();
         application.setVisible(true);
     }

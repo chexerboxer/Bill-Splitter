@@ -1,8 +1,8 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
-import interface_adapter.change_password.LoggedInState;
-import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.dashboard.DashboardState;
+import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.signup.SignupViewModel;
 import interface_adapter.change_password.ChangePasswordViewModel;
 import use_case.login.LoginOutputBoundary;
@@ -14,19 +14,19 @@ import use_case.login.LoginOutputData;
 public class LoginPresenter implements LoginOutputBoundary {
 
     private final LoginViewModel loginViewModel;
-    private final LoggedInViewModel loggedInViewModel;
+    private final DashboardViewModel dashboardViewModel;
     private final ViewManagerModel viewManagerModel;
     private final SignupViewModel signupViewModel;
     private final ChangePasswordViewModel changePasswordViewModel;
 
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
-                          LoggedInViewModel loggedInViewModel,
+                          DashboardViewModel dashboardViewModel,
                           LoginViewModel loginViewModel,
                           SignupViewModel signupViewModel,
                           ChangePasswordViewModel changePasswordViewModel) {
         this.viewManagerModel = viewManagerModel;
-        this.loggedInViewModel = loggedInViewModel;
+        this.dashboardViewModel = dashboardViewModel;
         this.loginViewModel = loginViewModel;
         this.signupViewModel = signupViewModel;
         this.changePasswordViewModel = changePasswordViewModel;
@@ -35,13 +35,11 @@ public class LoginPresenter implements LoginOutputBoundary {
     @Override
     public void prepareSuccessView(LoginOutputData response) {
         // On success, switch to the logged in view.
+        final DashboardState dashboardState = dashboardViewModel.getState();
+        dashboardState.setUsername(response.getUsername());
+        dashboardState.setUserBillsData(response.getUserBillsData());
 
-        final LoggedInState loggedInState = loggedInViewModel.getState();
-        loggedInState.setUsername(response.getUsername());
-        this.loggedInViewModel.setState(loggedInState);
-        this.loggedInViewModel.firePropertyChanged();
-
-        this.viewManagerModel.setState(loggedInViewModel.getViewName());
+        this.viewManagerModel.setState(dashboardViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();
     }
 

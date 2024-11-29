@@ -1,6 +1,6 @@
 package app;
 
-import java.awt.CardLayout;
+import java.awt.*;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -16,7 +16,7 @@ import entity.users.UserFactory;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
-import interface_adapter.change_password.LoggedInViewModel;
+import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
@@ -38,12 +38,7 @@ import use_case.logout.LogoutOutputBoundary;
 import use_case.signup.SignupInputBoundary;
 import use_case.signup.SignupInteractor;
 import use_case.signup.SignupOutputBoundary;
-import view.LoggedInView;
-import view.LoginView;
-import view.SignupView;
-import view.ViewManager;
-import view.ChangePasswordView;
-
+import view.*;
 
 /**
  * The AppBuilder class is responsible for putting together the pieces of
@@ -70,8 +65,8 @@ public class AppBuilder {
     private SignupView signupView;
     private SignupViewModel signupViewModel;
     private LoginViewModel loginViewModel;
-    private LoggedInViewModel loggedInViewModel;
-    private LoggedInView loggedInView;
+    private DashboardViewModel dashboardViewModel;
+    private DashboardView dashboardView;
     private LoginView loginView;
     private ChangePasswordView changePasswordView;
     private ChangePasswordViewModel changePasswordViewModel;
@@ -114,10 +109,18 @@ public class AppBuilder {
      * Adds the LoggedIn View to the application.
      * @return this builder
      */
-    public AppBuilder addLoggedInView() {
-        loggedInViewModel = new LoggedInViewModel();
-        loggedInView = new LoggedInView(loggedInViewModel);
-        cardPanel.add(loggedInView, loggedInView.getViewName());
+    // TODO: testing for bill splitter view
+//    public AppBuilder addLoggedInView() {
+//        dashboardViewModel = new DashboardViewModel();
+//        JPanel bill = new BillDisplayView(dashboardViewModel);
+//        cardPanel.add(bill, "logged in");
+//        return this;
+//    }
+
+    public AppBuilder addDashboardView() {
+        dashboardViewModel = new DashboardViewModel();
+        dashboardView = new DashboardView(dashboardViewModel);
+        cardPanel.add(dashboardView, dashboardView.getViewName());
         return this;
     }
 
@@ -142,7 +145,7 @@ public class AppBuilder {
      */
     public AppBuilder addLoginUseCase() {
         final LoginOutputBoundary loginOutputBoundary = new LoginPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel, signupViewModel, changePasswordViewModel);
+                dashboardViewModel, loginViewModel, signupViewModel, changePasswordViewModel);
         final LoginInputBoundary loginInteractor = new LoginInteractor(
                 userDataAccessObject, loginOutputBoundary);
 
@@ -180,13 +183,13 @@ public class AppBuilder {
      */
     public AppBuilder addLogoutUseCase() {
         final LogoutOutputBoundary logoutOutputBoundary = new LogoutPresenter(viewManagerModel,
-                loggedInViewModel, loginViewModel);
+                dashboardViewModel, loginViewModel);
 
         final LogoutInputBoundary logoutInteractor =
                 new LogoutInteractor(userDataAccessObject, logoutOutputBoundary);
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
-        loggedInView.setLogoutController(logoutController);
+        dashboardView.setLogoutController(logoutController);
         return this;
     }
 

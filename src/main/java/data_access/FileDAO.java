@@ -10,6 +10,7 @@ import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.users.UserFactory;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
+import use_case.dashboard.DashboardUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.signup.SignupInputBoundary;
@@ -26,7 +27,8 @@ public class FileDAO implements FileDAOInterface,
                                 SignupUserDataAccessInterface,
                                 LoginUserDataAccessInterface,
                                 LogoutUserDataAccessInterface,
-                                ChangePasswordUserDataAccessInterface {
+                                ChangePasswordUserDataAccessInterface,
+                                DashboardUserDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -42,7 +44,7 @@ public class FileDAO implements FileDAOInterface,
      * @param csvPath is the path of the csv file.
      * @param billFactory is the Factory used to create bills.
      * @param userFactory is the factory used to create users.
-     * @return the LoggedInView created for the provided input classes
+     * @return the DashboardView created for the provided input classes
      * @throws IOException for reader
      */
     public FileDAO(String csvPath, BillFactory billFactory, UserFactory userFactory,
@@ -295,6 +297,8 @@ public class FileDAO implements FileDAOInterface,
     @Override
     public void setCurrentUsername(String username) {
 
+
+
     }
 
     @Override
@@ -312,5 +316,18 @@ public class FileDAO implements FileDAOInterface,
     public void addBill(Bill bill) {
         bills.put(bill.getId(), bill);
         save();
+    }
+
+    @Override
+    public ArrayList<Bill> getUserBills(User user) {
+        ArrayList<Bill> userBills = new ArrayList<>();
+
+        for (Bill bill: bills.values()) {
+            if (bill.getUsers().contains(user.getId())) {
+                userBills.add(bill);
+            }
+        }
+
+        return userBills;
     }
 }

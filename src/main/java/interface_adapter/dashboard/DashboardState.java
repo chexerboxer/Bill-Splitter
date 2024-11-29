@@ -1,23 +1,26 @@
-package interface_adapter.change_password;
+package interface_adapter.dashboard;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The State information representing the logged-in user.
  */
-public class LoggedInState {
+public class DashboardState {
     private String username = "";
-
     private String password = "";
     private String passwordError;
+    private HashMap<Integer, String> userBillsData;
 
-    public LoggedInState(LoggedInState copy) {
+    public DashboardState(DashboardState copy) {
         username = copy.username;
         password = copy.password;
+        userBillsData = copy.userBillsData;
         passwordError = copy.passwordError;
     }
 
     // Because of the previous copy constructor, the default constructor must be explicit.
-    public LoggedInState() {
-
+    public DashboardState() {
     }
 
     public String getUsername() {
@@ -38,5 +41,13 @@ public class LoggedInState {
 
     public String getPassword() {
         return password;
+    }
+
+    public HashMap<Integer, String> getUserBillsData() {
+        return userBillsData;
+    }
+
+    public void setUserBillsData(HashMap<Integer, String> userBillsData) {
+        this.userBillsData = userBillsData;
     }
 }
