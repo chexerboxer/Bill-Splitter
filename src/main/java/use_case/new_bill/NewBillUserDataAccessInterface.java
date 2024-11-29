@@ -11,6 +11,8 @@ public interface NewBillUserDataAccessInterface {
      */
     String getBillName();
 
+
+
     /**
      * Sets the bill name.
      * @param newBillName the new bill name

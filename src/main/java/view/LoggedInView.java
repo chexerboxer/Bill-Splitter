@@ -18,6 +18,7 @@ import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
+import interface_adapter.new_bill.NewBillController;
 
 /**
  * The View for when the user is logged into the program.
@@ -29,6 +30,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final JLabel passwordErrorField = new JLabel();
     private final JFileChooser fileChooser = new JFileChooser();
     private ChangePasswordController changePasswordController;
+    private NewBillController newBillController;
     private LogoutController logoutController;
 
     private final JLabel username;
@@ -134,6 +136,23 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                     }
                 }
         );
+        addBill.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        String inBillName = JOptionPane.showInputDialog(
+                                "Bill Name:", "");
+//                        if (evt.getSource().equals(addBill)) {
+//                            newBillController.execute(inBillName);
+//                        }
+                        JButton newBillButton = new JButton(inBillName);
+                        newBillButton.setFont(new Font("Arial", Font.BOLD, 10));
+                        buttons.add(newBillButton, BorderLayout.LINE_START);
+                        buttons.revalidate();
+                        buttons.repaint();
+                    }
+                    
+                }
+        );
 
         this.add(title, BorderLayout.NORTH);
         this.add(usernameInfo, BorderLayout.WEST);
@@ -162,6 +181,10 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
     public void setChangePasswordController(ChangePasswordController changePasswordController) {
         this.changePasswordController = changePasswordController;
+    }
+
+    public void setNewBillController(NewBillController newBillController) {
+        this.newBillController = newBillController;
     }
 
     /**
