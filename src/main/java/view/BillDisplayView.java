@@ -179,31 +179,30 @@ public class BillDisplayView extends JFrame {
         uploadButton.setMinimumSize(new Dimension(100, 50));
         uploadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         uploadButton.setBorder(new DashBorderRect(1));
-        uploadButton.addActionListener(e -> {
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            fileChooser.setDialogTitle("Select a Receipt Image");
-                            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-                                    "Image files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
-                            int returnValue = fileChooser.showOpenDialog(null);
+        uploadButton.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        fileChooser.setDialogTitle("Select a Receipt Image");
+                        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                                "Image files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
+                        int returnValue = fileChooser.showOpenDialog(null);
 
-                            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                                java.io.File selectedFile = fileChooser.getSelectedFile();
-                                String filepath = selectedFile.getAbsolutePath();
-                                try {
-                                    JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
-                                    FileWriter writer = new FileWriter("src/main/java/data_access/receiptfiles.txt", true);
-                                    writer.write(filepath + "\n");
-                                    writer.close();
-                                } catch (IOException e) {
-                                    JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null, "File not uploaded");
+                        if (returnValue == JFileChooser.APPROVE_OPTION) {
+                            java.io.File selectedFile = fileChooser.getSelectedFile();
+                            String filepath = selectedFile.getAbsolutePath();
+                            try {
+                                JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
+                                FileWriter writer = new FileWriter("src/main/java/data_access/receiptfiles.txt", true);
+                                writer.write(filepath + "\n");
+                                writer.close();
+                            } catch (IOException e) {
+                                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
                             }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File not uploaded");
                         }
-                    };
-        });
+                    }
+                });
 
         // Members section
         createMembersSection();
