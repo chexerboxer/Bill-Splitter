@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
@@ -64,7 +66,7 @@ public class BillDisplayView extends JFrame {
         add(sidebarPanel, BorderLayout.WEST);
         add(mainContentPanel, BorderLayout.CENTER);
 
-        setSize(1000, 700);
+        setSize(1200, 700);
         setLocationRelativeTo(null);
     }
 
@@ -278,9 +280,18 @@ public class BillDisplayView extends JFrame {
         ClearBillButton.setFocusPainted(false);
         ClearBillButton.addActionListener(e -> ClearBillEvent(this));
 
+        JLabel EditPriceLabel = new JLabel("Edit Price of an Item");
+        EditPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JButton EditPriceButton = new JButton("+");
+        EditPriceButton.setFont(new Font("Arial", Font.BOLD, 14));
+        EditPriceButton.setFocusPainted(false);
+        EditPriceButton.addActionListener(e -> EditPriceEvent(this));
+
         headerPanel.add(ClearBillLabel);
         headerPanel.add(ClearBillButton);
-
+        headerPanel.add(EditPriceLabel);
+        headerPanel.add(EditPriceButton);
 
         // Create the table model
         String[] columnNames = {"All Items", "Assigned Splits"};
@@ -498,6 +509,45 @@ public class BillDisplayView extends JFrame {
 
 
         JOptionPane.showMessageDialog(null, mainPanel,"Distribute Bill", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void EditPriceEvent(JFrame parent) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+
+        JLabel titleLabel = new JLabel("Select item to edit price of");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+        Map<String, Integer> reverseItems = new HashMap<>();
+        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+            reverseItems.put(entry.getValue().getName(), entry.getKey());
+        }
+        final JComboBox<String> itemSelection =
+                new JComboBox<>(reverseItems.keySet().toArray(new String[reverseItems.size()]));
+        mainPanel.add(itemSelection);
+
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField newPriceField = new JTextField(20);
+        inputPanel.add(new JLabel("New Price:"));
+        inputPanel.add(newPriceField);
+
+        mainPanel.add(inputPanel);
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Edit Item Price",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION){
+            try {
+                float newPrice = Float.valueOf(newPriceField.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(parent, "Please enter a valid price.");
+            }
+        }
     }
 
     // TODO implement by hooking up with usecase controller.
