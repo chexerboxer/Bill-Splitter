@@ -23,6 +23,7 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
 
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
+    private JPanel allBillsPanel = new JPanel();
 
     private final int COLUMNS_NUM = 3;
 
@@ -62,25 +63,14 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
 
         // based on the bills the user is logged as being a member of,
             // make a unique card panel for each and add them to the grid layout
-        JPanel allBillsPanel = new JPanel();
         // set rows to 0 to make row number flexible
         allBillsPanel.setLayout(new GridLayout(0, COLUMNS_NUM, 10, 10));
-        allBillsPanel.setMaximumSize(new Dimension(400,350));
 
         // create bill panels depending on what bills the user is a part of
-        if (currentState.getUserBillsData() != null) {
-            for (int billId: currentState.getUserBillsData().keySet()) {
-                BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId), billId);
-                allBillsPanel.add(billCard);
-            }
-        } else {
-            System.out.println("empty!");
-        }
-
+        settingBills(currentState);
 
         // nest bill grid into scrollable pane
         JScrollPane scrollAllBills = new JScrollPane(allBillsPanel);
-        scrollAllBills.setPreferredSize(new Dimension(400,350));
 
         // hide scrollbar + adjust speed
         scrollAllBills.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
@@ -94,11 +84,26 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
         mainContentPanel.add(scrollAllBills);
     }
 
+    private void settingBills(DashboardState currentState) {
+        allBillsPanel.removeAll();
+
+        if (currentState.getUserBillsData() != null) {
+            for (int billId: currentState.getUserBillsData().keySet()) {
+                BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId), billId);
+                billCard.setPreferredSize(new Dimension(100,100));
+                allBillsPanel.add(billCard);
+            }
+        }
+
+        allBillsPanel.revalidate();
+        allBillsPanel.repaint();
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("password")) {
-            final DashboardState state = (DashboardState) evt.getNewValue();
-            JOptionPane.showMessageDialog(null, "password updated for " + state.getUsername());
+        if (evt.getPropertyName().equals("state")) {
+            this.settingBills(this.dashboardViewModel.getState());
+
         }
 
     }

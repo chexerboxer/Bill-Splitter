@@ -38,6 +38,8 @@ public class LoginPresenter implements LoginOutputBoundary {
         final DashboardState dashboardState = dashboardViewModel.getState();
         dashboardState.setUsername(response.getUsername());
         dashboardState.setUserBillsData(response.getUserBillsData());
+        this.dashboardViewModel.setState(dashboardState);
+        this.dashboardViewModel.firePropertyChanged();
 
         this.viewManagerModel.setState(dashboardViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();

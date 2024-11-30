@@ -12,12 +12,35 @@ public class BillCardPanel extends JPanel {
         this.name = name;
         this.billId = billId;
 
-        this.add(new JLabel(name));
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        setBackground(new Color(210, 210, 210));
 
-        this.setBackground(Color.CYAN);
+        JLabel billName = new JLabel(name);
+        billName.setFont(new Font("Arial", Font.BOLD, 18));
+        add(billName, BorderLayout.NORTH);
 
-        this.setMaximumSize(new Dimension(100, 50));
+        JButton deleteBill = new JButton("delete (forever!)");
+        deleteBill.setFont(new Font("Arial", Font.PLAIN, 10));
+        deleteBill.setBackground(Color.BLACK);
+        deleteBill.setForeground(Color.WHITE);
+        add(deleteBill, BorderLayout.SOUTH);
 
+        // add hover effect on bill cards to convey to the user they can click on them
+        this.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                setBackground(new Color(190, 190, 190));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                setBackground(new Color(210, 210, 210));
+            }
+
+        });
+
+        setPreferredSize(new Dimension(100, 100));
 
     }
+
+
 }
