@@ -18,6 +18,7 @@ import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
+import interface_adapter.new_bill.NewBillController;
 
 /**
  * The View for when the user is logged into the program.
@@ -29,6 +30,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final JLabel passwordErrorField = new JLabel();
     private final JFileChooser fileChooser = new JFileChooser();
     private ChangePasswordController changePasswordController;
+    private NewBillController newBillController;
     private LogoutController logoutController;
 
     private final JLabel username;
@@ -59,7 +61,8 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         usernameInfo.setFont(new Font("Arial", Font.BOLD, 20));
         username = new JLabel();
 
-        final JPanel buttons = new JPanel(new BorderLayout(100, 100));
+        final JPanel buttons = new JPanel(new BorderLayout(250, 250));
+        final JPanel billList = new JPanel(new FlowLayout());
 
         changePassword = new JButton("Change Password");
         addBill = new JButton("Add Bill");
@@ -81,7 +84,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         buttons.add(changePassword, BorderLayout.NORTH);
         buttons.add(toIOUs, BorderLayout.WEST);
-        buttons.add(addBill, BorderLayout.LINE_END);
+        billList.add(addBill);
         buttons.add(logOut, BorderLayout.SOUTH);
         buttons.add(upload, BorderLayout.CENTER);
 
@@ -134,6 +137,25 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                     }
                 }
         );
+        boolean isNewBill = false;
+        addBill.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        String inBillName = JOptionPane.showInputDialog(
+                                "Bill Name:", "");
+//                        if (evt.getSource().equals(addBill)) {
+//                            newBillController.execute(inBillName);
+//                        }
+                        JButton newBillButton = new JButton(inBillName);
+                        newBillButton.setFont(new Font("Arial", Font.BOLD, 20));
+                        newBillButton.setPreferredSize(new Dimension(100, 100));
+                        billList.add(newBillButton);
+                        buttons.revalidate();
+                        buttons.repaint();
+                    }
+                    
+                }
+        );
 
         this.add(title, BorderLayout.NORTH);
         this.add(usernameInfo, BorderLayout.WEST);
@@ -141,6 +163,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         this.add(passwordErrorField);
         this.add(buttons);
+        buttons.add(billList, BorderLayout.EAST);
     }
 
     @Override
@@ -162,6 +185,10 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
     public void setChangePasswordController(ChangePasswordController changePasswordController) {
         this.changePasswordController = changePasswordController;
+    }
+
+    public void setNewBillController(NewBillController newBillController) {
+        this.newBillController = newBillController;
     }
 
     /**

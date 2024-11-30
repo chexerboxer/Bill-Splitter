@@ -18,7 +18,7 @@ import static app.Constants.*;
 /**
  *Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
  */
-public class ReceiptProcessor {
+public class ReceiptProcessor implements ReceiptProcessorInputBoundary{
     private static final String CREATED_DATE_KEY = "date";
     private static final String CURRENCY_TYPE_KEY = "currency_code";
     private static final String ITEM_LIST_KEY = "line_items";
@@ -42,6 +42,7 @@ public class ReceiptProcessor {
      * @param filename the file name of the image
      * @return the file encoded into a base 64 String
      */
+    @Override
     public String readReceipt(String filename){
         byte[] fileContent = null;
         try {
@@ -53,6 +54,7 @@ public class ReceiptProcessor {
         return encodedString;
     }
 
+    @Override
     public String getReceiptPath(String filename){
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String currentLine;
@@ -78,6 +80,7 @@ public class ReceiptProcessor {
      * @return a ReceiptData Object with all the information of the receipt
      * @throws IOException if the API request failed
      */
+    @Override
     public ReceiptData retrieveOcrData(String data) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Map<String,String> dataRequest = new HashMap<>();
