@@ -61,7 +61,8 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
         usernameInfo.setFont(new Font("Arial", Font.BOLD, 20));
         username = new JLabel();
 
-        final JPanel buttons = new JPanel(new BorderLayout(100, 100));
+        final JPanel buttons = new JPanel(new BorderLayout(250, 250));
+        final JPanel billList = new JPanel(new FlowLayout());
 
         changePassword = new JButton("Change Password");
         addBill = new JButton("Add Bill");
@@ -83,7 +84,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         buttons.add(changePassword, BorderLayout.NORTH);
         buttons.add(toIOUs, BorderLayout.WEST);
-        buttons.add(addBill, BorderLayout.LINE_END);
+        billList.add(addBill);
         buttons.add(logOut, BorderLayout.SOUTH);
         buttons.add(upload, BorderLayout.CENTER);
 
@@ -136,6 +137,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                     }
                 }
         );
+        boolean isNewBill = false;
         addBill.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -145,8 +147,9 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 //                            newBillController.execute(inBillName);
 //                        }
                         JButton newBillButton = new JButton(inBillName);
-                        newBillButton.setFont(new Font("Arial", Font.BOLD, 10));
-                        buttons.add(newBillButton, BorderLayout.LINE_START);
+                        newBillButton.setFont(new Font("Arial", Font.BOLD, 20));
+                        newBillButton.setPreferredSize(new Dimension(100, 100));
+                        billList.add(newBillButton);
                         buttons.revalidate();
                         buttons.repaint();
                     }
@@ -160,6 +163,7 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         this.add(passwordErrorField);
         this.add(buttons);
+        buttons.add(billList, BorderLayout.EAST);
     }
 
     @Override
