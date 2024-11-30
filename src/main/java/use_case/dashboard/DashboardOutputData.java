@@ -3,16 +3,19 @@ package use_case.dashboard;
 import java.util.HashMap;
 
 public class DashboardOutputData {
-    private final String username;
+    private final HashMap<Integer, String> userBillsData;
     private final boolean useCaseFailed;
 
-    public DashboardOutputData(String username, boolean useCaseFailed) {
-        this.username = username;
+    public DashboardOutputData(
+                              HashMap<Integer,String> userBillsData,
+                              boolean useCaseFailed) {
+        this.userBillsData = userBillsData;
         this.useCaseFailed = useCaseFailed;
     }
 
-    public String getUsername() {
-        return username;
+    public HashMap<Integer, String> getUserBillsData() {
+        return userBillsData;
     }
+
 
 }

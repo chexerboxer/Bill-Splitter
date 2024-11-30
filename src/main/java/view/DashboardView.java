@@ -7,6 +7,7 @@ import java.beans.PropertyChangeListener;
 import javax.swing.*;
 
 import interface_adapter.change_password.ChangePasswordController;
+import interface_adapter.dashboard.DashboardController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.logout.LogoutController;
@@ -18,6 +19,8 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
 
     private final String viewName = "dashboard";
     private final DashboardViewModel dashboardViewModel;
+    private DashboardController dashboardController;
+
     private ChangePasswordController changePasswordController;
     private LogoutController logoutController;
 
@@ -38,7 +41,10 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
         setLayout(new BorderLayout());
 
         sidebarPanel = new JPanel();
-        LoggedInPageView.createSidebar(sidebarPanel, changePasswordController, logoutController, currentState);
+        LoggedInPageView.createSidebar(sidebarPanel,
+                changePasswordController,
+                logoutController,
+                currentState);
 
         createMainContent(currentState);
 
@@ -89,7 +95,10 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
 
         if (currentState.getUserBillsData() != null) {
             for (int billId: currentState.getUserBillsData().keySet()) {
-                BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId), billId);
+                BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId),
+                        currentState.getUserBillsData(),
+                        billId,
+                        dashboardController);
                 billCard.setPreferredSize(new Dimension(100,100));
                 allBillsPanel.add(billCard);
             }
@@ -103,6 +112,14 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("state")) {
             this.settingBills(this.dashboardViewModel.getState());
+            // TODO: refactor sidebar interface to class; have method to set user
+            this.remove(sidebarPanel);
+            sidebarPanel = new JPanel();
+            LoggedInPageView.createSidebar(sidebarPanel,
+                    changePasswordController,
+                    logoutController,
+                    this.dashboardViewModel.getState());
+            add(sidebarPanel);
 
         }
 
@@ -110,6 +127,10 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
 
     public String getViewName() {
         return viewName;
+    }
+
+    public void setDashboardController(DashboardController dashboardController) {
+        this.dashboardController = dashboardController;
     }
 
     public void setChangePasswordController(ChangePasswordController changePasswordController) {

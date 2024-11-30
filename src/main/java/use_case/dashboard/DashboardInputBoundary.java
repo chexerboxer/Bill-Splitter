@@ -17,5 +17,5 @@ public interface DashboardInputBoundary {
 
     void switchtoChangePasswordView();
 
-    void switchToBillView(int billId);
+//    void switchToBillView(int billId);
 }

@@ -15,33 +15,30 @@ public class DashboardPresenter implements DashboardOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final SignupViewModel signupViewModel;
     private final ChangePasswordViewModel changePasswordViewModel;
-    private final BillDisplayViewModel billDisplayViewModel;
+//    private final BillDisplayViewModel billDisplayViewModel;
 
 
     public DashboardPresenter(ViewManagerModel viewManagerModel,
                           DashboardViewModel dashboardViewModel,
-                          BillDisplayViewModel billDisplayViewModel,
+//                          BillDisplayViewModel billDisplayViewModel,
                           SignupViewModel signupViewModel,
                           ChangePasswordViewModel changePasswordViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.dashboardViewModel = dashboardViewModel;
-        this.billDisplayViewModel = billDisplayViewModel;
+//        this.billDisplayViewModel = billDisplayViewModel;
         this.signupViewModel = signupViewModel;
         this.changePasswordViewModel = changePasswordViewModel;
     }
 
     @Override
     public void prepareSuccessView(DashboardOutputData response) {
-        // On success, switch to unique bill view.
+        // On success, refresh page to show bills have been removed
+        final DashboardState dashboardState = dashboardViewModel.getState();
+        dashboardState.setUserBillsData(response.getUserBillsData());
+        this.dashboardViewModel.setState(dashboardState);
+        this.dashboardViewModel.firePropertyChanged();
 
-//        final BillDisplayState billDisplayState = billDisplayViewModel.getState();
-//        billDisplayState.setUsername(response.getUsername());
-//        billDisplayState.setBill(response.getBill());
-//        this.billDisplayState.setState(billDisplayState);
-//        this.billDisplayState.firePropertyChanged();
-//
-//        this.viewManagerModel.setState(dashboardViewModel.getViewName());
-
+        this.viewManagerModel.setState(dashboardViewModel.getViewName());
         this.viewManagerModel.firePropertyChanged();
     }
 
@@ -67,9 +64,9 @@ public class DashboardPresenter implements DashboardOutputBoundary {
         viewManagerModel.firePropertyChanged();
     }
 
-    public void switchToBillView(int billId) {
-
-        viewManagerModel.setState(billDisplayViewModel.getViewName());
-        viewManagerModel.firePropertyChanged();
-    }
+//    public void switchToBillView(int billId) {
+//
+//        viewManagerModel.setState(billDisplayViewModel.getViewName());
+//        viewManagerModel.firePropertyChanged();
+//    }
 }

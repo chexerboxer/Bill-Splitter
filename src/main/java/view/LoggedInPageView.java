@@ -32,12 +32,8 @@ public interface LoggedInPageView {
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
         userInfoPanel.setBackground(new Color(230, 230, 230));
 
-        JLabel usernameLabel = new JLabel("User123");
-        JLabel manageLabel = new JLabel("Manage account");
-        manageLabel.setForeground(Color.GRAY);
-
+        JLabel usernameLabel = new JLabel(currentState.getUsername());
         userInfoPanel.add(usernameLabel);
-        userInfoPanel.add(manageLabel);
 
         profilePanel.add(avatarLabel);
         profilePanel.add(userInfoPanel);
@@ -53,18 +49,13 @@ public interface LoggedInPageView {
             System.out.println("Navigate to Dashboard");
         });
 
-        JButton iousBtn = createSidebarButton("IOUs");
-        iousBtn.addActionListener(e -> {
-            System.out.println("Navigate to IOUs");
-        });
-
         JButton createBillBtn = createSidebarButton("Create new bill");
         createBillBtn.addActionListener(e -> {
             System.out.println("Create new bill");
         });
 
         JButton changePwBtn = createSidebarButton("Change password");
-        dashboardBtn.addActionListener(evt -> {
+        changePwBtn.addActionListener(evt -> {
             String toPassword = JOptionPane.showInputDialog(
                     "New Password:", "");
             if (evt.getSource().equals(changePwBtn)) {
@@ -76,7 +67,7 @@ public interface LoggedInPageView {
         });
 
         JButton logoutBtn = createSidebarButton("Logout");
-        dashboardBtn.addActionListener(evt -> {
+        logoutBtn.addActionListener(evt -> {
             if (evt.getSource().equals(logoutBtn)) {
                 logoutController.execute(
                         currentState.getUsername()
@@ -88,8 +79,6 @@ public interface LoggedInPageView {
         sidebarPanel.add(profilePanel);
         sidebarPanel.add(new JSeparator());
         navigationPanel.add(dashboardBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
-        navigationPanel.add(iousBtn);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
         navigationPanel.add(createBillBtn);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons

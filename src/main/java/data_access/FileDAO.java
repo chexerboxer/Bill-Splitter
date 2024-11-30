@@ -264,6 +264,7 @@ public class FileDAO implements FileDAOInterface,
     public boolean removeBill(int id) {
         if (bills.keySet().contains(id)){
             bills.remove(id);
+            save();
             return true;
         }
         return false;

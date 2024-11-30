@@ -16,6 +16,8 @@ import entity.users.UserFactory;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
+import interface_adapter.dashboard.DashboardController;
+import interface_adapter.dashboard.DashboardPresenter;
 import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.login.LoginController;
@@ -29,6 +31,9 @@ import interface_adapter.signup.SignupViewModel;
 import use_case.change_password.ChangePasswordInputBoundary;
 import use_case.change_password.ChangePasswordInteractor;
 import use_case.change_password.ChangePasswordOutputBoundary;
+import use_case.dashboard.DashboardInputBoundary;
+import use_case.dashboard.DashboardInteractor;
+import use_case.dashboard.DashboardOutputBoundary;
 import use_case.login.LoginInputBoundary;
 import use_case.login.LoginInteractor;
 import use_case.login.LoginOutputBoundary;
@@ -174,6 +179,7 @@ public class AppBuilder {
         final ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);
         changePasswordView.setChangePasswordController(changePasswordController);
+        dashboardView.setChangePasswordController(changePasswordController);
         return this;
     }
 
@@ -190,6 +196,20 @@ public class AppBuilder {
 
         final LogoutController logoutController = new LogoutController(logoutInteractor);
         dashboardView.setLogoutController(logoutController);
+        return this;
+    }
+
+    public AppBuilder addDashboardUseCase() {
+        final DashboardOutputBoundary dashboardOutputBoundary = new DashboardPresenter(viewManagerModel,
+                dashboardViewModel,
+//                billDisplayViewModel,
+                signupViewModel,
+                changePasswordViewModel);
+        final DashboardInputBoundary dashboardInteractor = new DashboardInteractor(
+                userDataAccessObject, dashboardOutputBoundary);
+
+        final DashboardController dashboardController = new DashboardController(dashboardInteractor);
+        dashboardView.setDashboardController(dashboardController);
         return this;
     }
 
