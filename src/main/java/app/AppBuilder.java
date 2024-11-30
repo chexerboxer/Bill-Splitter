@@ -171,6 +171,7 @@ public class AppBuilder {
         final ChangePasswordController changePasswordController =
                 new ChangePasswordController(changePasswordInteractor);
         changePasswordView.setChangePasswordController(changePasswordController);
+        loggedInView.setChangePasswordController(changePasswordController);
         return this;
     }
 

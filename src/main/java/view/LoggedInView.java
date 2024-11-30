@@ -5,13 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -21,6 +18,7 @@ import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
+import interface_adapter.new_bill.NewBillController;
 
 /**
  * The View for when the user is logged into the program.
@@ -30,7 +28,9 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final String viewName = "logged in";
     private final LoggedInViewModel loggedInViewModel;
     private final JLabel passwordErrorField = new JLabel();
+    private final JFileChooser fileChooser = new JFileChooser();
     private ChangePasswordController changePasswordController;
+    private NewBillController newBillController;
     private LogoutController logoutController;
 
     private final JLabel username;
@@ -43,8 +43,8 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
     private final JButton toIOUs;
 
-//    private final JTextField passwordInputField = new JTextField(15);
-//    private final JButton changePassword;
+    private final JButton upload;
+
 
     public LoggedInView(LoggedInViewModel loggedInViewModel) {
         this.loggedInViewModel = loggedInViewModel;
@@ -57,73 +57,37 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
         final LoggedInState currentState = loggedInViewModel.getState();
 
-//        final LabelTextPanel passwordInfo = new LabelTextPanel(
-//                new JLabel("Password"), passwordInputField);
         final JLabel usernameInfo = new JLabel("[insert username here]");
         usernameInfo.setFont(new Font("Arial", Font.BOLD, 20));
         username = new JLabel();
 
-        final JPanel buttons = new JPanel(new BorderLayout(100, 100));
+        final JPanel buttons = new JPanel(new BorderLayout(250, 250));
+        final JPanel billList = new JPanel(new FlowLayout());
 
         changePassword = new JButton("Change Password");
         addBill = new JButton("Add Bill");
         logOut = new JButton("Log Out");
         toIOUs = new JButton("To IOUs");
+        upload = new JButton("Upload");
 
         changePassword.setFont(new Font("Arial",Font.CENTER_BASELINE, 20));
         addBill.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
         logOut.setFont(new Font("Arial",Font.CENTER_BASELINE, 20));
         toIOUs.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
+        upload.setFont(new Font("Arial",Font.CENTER_BASELINE, 15));
 
         changePassword.setPreferredSize(new Dimension(100, 100));
         addBill.setPreferredSize(new Dimension(100, 100));
         logOut.setPreferredSize(new Dimension(100, 100));
         toIOUs.setPreferredSize(new Dimension(100, 100));
+        upload.setPreferredSize(new Dimension(100, 100));
 
         buttons.add(changePassword, BorderLayout.NORTH);
         buttons.add(toIOUs, BorderLayout.WEST);
-        buttons.add(addBill, BorderLayout.LINE_END);
+        billList.add(addBill);
         buttons.add(logOut, BorderLayout.SOUTH);
+        buttons.add(upload, BorderLayout.CENTER);
 
-//        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//
-//        passwordInputField.getDocument().addDocumentListener(new DocumentListener() {
-//
-//            private void documentListenerHelper() {
-//                final LoggedInState currentState = loggedInViewModel.getState();
-//                currentState.setPassword(passwordInputField.getText());
-//                loggedInViewModel.setState(currentState);
-//            }
-//
-//            @Override
-//            public void insertUpdate(DocumentEvent e) {
-//                documentListenerHelper();
-//            }
-//
-//            @Override
-//            public void removeUpdate(DocumentEvent e) {
-//                documentListenerHelper();
-//            }
-//
-//            @Override
-//            public void changedUpdate(DocumentEvent e) {
-//                documentListenerHelper();
-//            }
-//        });
-
-//        changePassword.addActionListener(
-//                // This creates an anonymous subclass of ActionListener and instantiates it.
-//                evt -> {
-//                    if (evt.getSource().equals(changePassword)) {
-//                        final LoggedInState currentState = loggedInViewModel.getState();
-//
-//                        this.changePasswordController.execute(
-//                                currentState.getUsername(),
-//                                currentState.getPassword()
-//                        );
-//                    }
-//                }
-//        );
         changePassword.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -148,14 +112,58 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
                     }
                 }
         );
+        upload.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        fileChooser.setDialogTitle("Select a Receipt Image");
+                        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                                "Image files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
+                        int returnValue = fileChooser.showOpenDialog(null);
+
+                        if (returnValue == JFileChooser.APPROVE_OPTION) {
+                            java.io.File selectedFile = fileChooser.getSelectedFile();
+                            String filepath = selectedFile.getAbsolutePath();
+                            try {
+                                JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
+                                FileWriter writer = new FileWriter("src/main/java/data_access/receiptfiles.txt", true);
+                                writer.write(filepath + "\n");
+                                writer.close();
+                            } catch (IOException e) {
+                                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "File not uploaded");
+                        }
+                    }
+                }
+        );
+        boolean isNewBill = false;
+        addBill.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        String inBillName = JOptionPane.showInputDialog(
+                                "Bill Name:", "");
+//                        if (evt.getSource().equals(addBill)) {
+//                            newBillController.execute(inBillName);
+//                        }
+                        JButton newBillButton = new JButton(inBillName);
+                        newBillButton.setFont(new Font("Arial", Font.BOLD, 20));
+                        newBillButton.setPreferredSize(new Dimension(100, 100));
+                        billList.add(newBillButton);
+                        buttons.revalidate();
+                        buttons.repaint();
+                    }
+                    
+                }
+        );
 
         this.add(title, BorderLayout.NORTH);
         this.add(usernameInfo, BorderLayout.WEST);
         this.add(username);
 
-//        this.add(passwordInfo);
         this.add(passwordErrorField);
         this.add(buttons);
+        buttons.add(billList, BorderLayout.EAST);
     }
 
     @Override
@@ -177,6 +185,10 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
     public void setChangePasswordController(ChangePasswordController changePasswordController) {
         this.changePasswordController = changePasswordController;
+    }
+
+    public void setNewBillController(NewBillController newBillController) {
+        this.newBillController = newBillController;
     }
 
     /**
