@@ -121,6 +121,7 @@ public class CommonUser implements User, GenerateId {
             Split split = splits.get(i);
             if (split.getItemId() == itemId && split.getBillId() == billId){
                 splits.get(i).setAmount(split.getAmount() + amount_modified);
+                return;
             }
         }
 

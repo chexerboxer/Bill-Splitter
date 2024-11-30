@@ -3,15 +3,15 @@ package interface_adapter.upload_receipt;
 
 import use_case.upload_receipt.UploadReceiptInputBoundary;
 import use_case.upload_receipt.UploadReceiptInputData;
+import use_case.upload_receipt.UploadReceiptInteractor;
 
 import java.io.IOException;
 
 public class UploadReceiptController {
-    public class SignupController {
 
         private final UploadReceiptInputBoundary uploadReceiptUseCaseInteractor;
 
-        public SignupController(UploadReceiptInputBoundary uploadReceiptUseCaseInteractor) {
+        public UploadReceiptController(UploadReceiptInputBoundary uploadReceiptUseCaseInteractor) {
             this.uploadReceiptUseCaseInteractor = uploadReceiptUseCaseInteractor;
         }
 
@@ -20,10 +20,10 @@ public class UploadReceiptController {
          *
 
          */
-        public void execute(UploadReceiptInputData uploadReceiptInputData) throws IOException{
-
+        public void execute(String receiptFileName, int billId) throws IOException{
+            UploadReceiptInputData uploadReceiptInputData = new UploadReceiptInputData(receiptFileName, billId);
             uploadReceiptUseCaseInteractor.execute(uploadReceiptInputData);
 
         }
     }
-}
+

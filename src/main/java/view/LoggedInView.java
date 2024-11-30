@@ -18,7 +18,6 @@ import interface_adapter.change_password.LoggedInState;
 import interface_adapter.change_password.LoggedInViewModel;
 import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
-import interface_adapter.new_bill.NewBillController;
 
 /**
  * The View for when the user is logged into the program.
@@ -30,7 +29,6 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
     private final JLabel passwordErrorField = new JLabel();
     private final JFileChooser fileChooser = new JFileChooser();
     private ChangePasswordController changePasswordController;
-    private NewBillController newBillController;
     private LogoutController logoutController;
 
     private final JLabel username;
@@ -185,10 +183,6 @@ public class LoggedInView extends JPanel implements PropertyChangeListener {
 
     public void setChangePasswordController(ChangePasswordController changePasswordController) {
         this.changePasswordController = changePasswordController;
-    }
-
-    public void setNewBillController(NewBillController newBillController) {
-        this.newBillController = newBillController;
     }
 
     /**

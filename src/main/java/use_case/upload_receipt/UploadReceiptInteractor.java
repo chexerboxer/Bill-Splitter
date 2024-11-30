@@ -46,8 +46,7 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     public void execute(UploadReceiptInputData uploadReceiptInputData)  {
         try {
             String fileName = uploadReceiptInputData.getReceiptFileName();
-            final String filePath = getReceiptPath(fileName);
-            final String data = readReceipt(filePath);
+            final String data = readReceipt(fileName);
             OkHttpClient client = new OkHttpClient();
             Map<String, String> dataRequest = new HashMap<>();
             dataRequest.put(FILE_DATA, data);
@@ -84,24 +83,6 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
         }
     }
 
-    private String getReceiptPath(String filename){
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String currentLine;
-            String lastNontEmptyLine = null;
-
-            while ((currentLine = br.readLine()) != null) {
-                currentLine = currentLine.trim();
-                if (!currentLine.isEmpty()) {
-                    lastNontEmptyLine = currentLine;
-                }
-            }
-
-            return lastNontEmptyLine;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     /**
      * Reads the inputted receipt and converts it into a base 64 encoded String
@@ -114,7 +95,7 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
             fileContent = FileUtils.readFileToByteArray(new File(filename));
         } catch (IOException e) {
             System.out.println("File Read Error: "+ e.getMessage());
-        } finally{}
+        }
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
         return encodedString;
     }
