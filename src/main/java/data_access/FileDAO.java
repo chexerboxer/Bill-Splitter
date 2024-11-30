@@ -4,7 +4,6 @@ import entity.bill.Bill;
 import entity.bill.BillFactory;
 import entity.split.Split;
 import entity.split.SplitFactory;
-import entity.users.CommonUserFactory;
 import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
@@ -13,9 +12,6 @@ import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
 import use_case.manage_items.ManageItemDataAccessInterface;
-import use_case.manage_items.ManageItemInteractor;
-import use_case.signup.SignupInputBoundary;
-import use_case.signup.SignupInputData;
 import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.*;
