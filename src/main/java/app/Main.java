@@ -24,6 +24,7 @@ public class Main {
                                             .addLoginUseCase()
                                             .addChangePasswordUseCase()
                                             .addLogoutUseCase()
+                .addDashboardUseCase()
                                             .build();
 
         application.setSize(new Dimension(1000,700));
