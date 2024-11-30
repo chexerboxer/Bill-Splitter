@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.time.LocalDate;
@@ -49,6 +50,7 @@ public class BillDisplayView extends JFrame {
     private JPanel mainContentPanel;
     private JPanel membersPanel;
     private JPanel itemsPanel;
+    private final JFileChooser fileChooser = new JFileChooser();
     private DefaultTableModel tableModel;
 
 
@@ -178,8 +180,29 @@ public class BillDisplayView extends JFrame {
         uploadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         uploadButton.setBorder(new DashBorderRect(1));
         uploadButton.addActionListener(e -> {
-            System.out.println("Upload button clicked!");
-            // Add functionality here later
+                    new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            fileChooser.setDialogTitle("Select a Receipt Image");
+                            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+                                    "Image files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
+                            int returnValue = fileChooser.showOpenDialog(null);
+
+                            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                                java.io.File selectedFile = fileChooser.getSelectedFile();
+                                String filepath = selectedFile.getAbsolutePath();
+                                try {
+                                    JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
+                                    FileWriter writer = new FileWriter("src/main/java/data_access/receiptfiles.txt", true);
+                                    writer.write(filepath + "\n");
+                                    writer.close();
+                                } catch (IOException e) {
+                                    JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
+                                }
+                            } else {
+                                JOptionPane.showMessageDialog(null, "File not uploaded");
+                            }
+                        }
+                    };
         });
 
         // Members section
