@@ -12,10 +12,13 @@ import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.logout.LogoutController;
 
+//components
+import view.components.Sidebar;
+
 /**
  * The View for when the user is logged into the program.
  */
-public class DashboardView extends JPanel implements LoggedInPageView, PropertyChangeListener {
+public class DashboardView extends JPanel implements PropertyChangeListener {
 
     private final String viewName = "dashboard";
     private final DashboardViewModel dashboardViewModel;
@@ -40,11 +43,7 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
         setSize(1000,700);
         setLayout(new BorderLayout());
 
-        sidebarPanel = new JPanel();
-        LoggedInPageView.createSidebar(sidebarPanel,
-                changePasswordController,
-                logoutController,
-                currentState);
+        sidebarPanel = new Sidebar(changePasswordController, logoutController, currentState);
 
         createMainContent(currentState);
 
@@ -114,11 +113,7 @@ public class DashboardView extends JPanel implements LoggedInPageView, PropertyC
             this.settingBills(this.dashboardViewModel.getState());
             // TODO: refactor sidebar interface to class; have method to set user
             this.remove(sidebarPanel);
-            sidebarPanel = new JPanel();
-            LoggedInPageView.createSidebar(sidebarPanel,
-                    changePasswordController,
-                    logoutController,
-                    this.dashboardViewModel.getState());
+            sidebarPanel = new Sidebar(changePasswordController, logoutController, this.dashboardViewModel.getState());
             add(sidebarPanel);
 
         }
