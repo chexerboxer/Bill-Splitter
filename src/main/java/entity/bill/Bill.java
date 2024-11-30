@@ -98,6 +98,8 @@ public class Bill implements GenerateId {
         items.remove(oldItemId);
     }
 
-
+    public void setItem(int itemId, Item item){
+        items.put(itemId, item);
+    }
 
 }

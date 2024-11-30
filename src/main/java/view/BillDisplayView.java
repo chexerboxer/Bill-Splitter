@@ -544,13 +544,24 @@ public class BillDisplayView extends JFrame {
         if (result == JOptionPane.OK_OPTION){
             try {
                 float newPrice = Float.valueOf(newPriceField.getText());
+                int itemId = reverseItems.get(itemSelection.getSelectedItem());
+                Item item = bill.getItems().get(itemId);
+                bill.setItem(itemId, item);
+                item.setCost(newPrice);
+                userDataAccessObject.setBill(bill.getId(), bill);
+                this.remove(mainContentPanel);
+                createMainContent();
+                parent.add(mainContentPanel, BorderLayout.CENTER);
+                parent.repaint();
+                parent.revalidate();
+
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(parent, "Please enter a valid price.");
             }
         }
     }
 
-    // TODO implement by hooking up with usecase controller.
+
     private void showModifySplitsDialog(JFrame parent) {
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
