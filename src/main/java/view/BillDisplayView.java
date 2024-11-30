@@ -170,11 +170,17 @@ public class BillDisplayView extends JFrame {
         headerPanel.add(dateLabel);
 
         // Upload receipt section
-        JPanel uploadPanel = new JPanel();
-        uploadPanel.setBorder(new DashBorderRect(1));
-        JLabel uploadLabel = new JLabel("Upload a receipt");
-        uploadLabel.setForeground(Color.GRAY);
-        uploadPanel.add(uploadLabel);
+        JButton uploadButton = new JButton("Upload a receipt");
+        uploadButton.setForeground(Color.GRAY);
+        uploadButton.setPreferredSize(new Dimension(mainContentPanel.getWidth(), 50));
+        uploadButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        uploadButton.setMinimumSize(new Dimension(100, 50));
+        uploadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        uploadButton.setBorder(new DashBorderRect(1));
+        uploadButton.addActionListener(e -> {
+            System.out.println("Upload button clicked!");
+            // Add functionality here later
+        });
 
         // Members section
         createMembersSection();
@@ -185,7 +191,7 @@ public class BillDisplayView extends JFrame {
         // Add all sections to main content
         mainContentPanel.add(headerPanel);
         mainContentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        mainContentPanel.add(uploadPanel);
+        mainContentPanel.add(uploadButton);
         mainContentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainContentPanel.add(membersPanel);
         mainContentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
