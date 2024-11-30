@@ -213,6 +213,16 @@ public class FileDAO implements FileDAOInterface,
     }
 
     @Override
+    public User getByUsername(String username) {
+        for (User user : users.values()) {
+            if (user.getName().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Bill getBill(int id) {
         return bills.get(id);
     }
