@@ -176,14 +176,6 @@ public class AppBuilder {
     }
 
     /**
-     * Adds the New Bill Use Case to the application.
-     * @return this builder
-     */
-    //TODO: make this once the manage bills thing is added
-//    public AppBuilder addNewBillUseCase(){
-//    }
-
-    /**
      * Adds the Logout Use Case to the application.
      * @return this builder
      */
