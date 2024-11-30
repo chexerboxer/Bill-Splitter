@@ -111,24 +111,25 @@ public class CommonUser implements User, GenerateId {
     public void modifySplit(float amount_modified, int itemId, int billId) {
 
 
-            // if the final amount in the split is nothing then clear it.
+                // if the final amount in the split is nothing then clear it.
             if (distributedAmount(itemId, billId) + amount_modified <= 0){
                 removeSplit(itemId, billId);
 
                 // here is just normal addition or subtraction
             }else{
-        for (int i = 0; i < splits.size(); i++){
-            Split split = splits.get(i);
-            if (split.getItemId() == itemId && split.getBillId() == billId){
-                splits.get(i).setAmount(split.getAmount() + amount_modified);
+                for (int i = 0; i < splits.size(); i++){
+                    Split split = splits.get(i);
+                    if (split.getItemId() == itemId && split.getBillId() == billId){
+                        splits.get(i).setAmount(split.getAmount() + amount_modified);
+                        return;
+                    }
             }
-        }
 
-        // if its here then it means the split does not exist in the user yet, create new
-        SplitFactory splitFactory = new SplitFactory();
-        addSplit(splitFactory.create(amount_modified, billId, itemId));
+            // if its here then it means the split does not exist in the user yet, create new
+            SplitFactory splitFactory = new SplitFactory();
+            addSplit(splitFactory.create(amount_modified, billId, itemId));
+        }
     }
-            }
 
     @Override
     public float distributedAmount(int itemId, int billId){
