@@ -29,6 +29,8 @@ import interface_adapter.split_management.ClearBillController;
 import interface_adapter.split_management.DistributeBillController;
 import interface_adapter.split_management.ModifySplitController;
 import interface_adapter.split_management.SplitManagementPresenter;
+import interface_adapter.upload_receipt.UploadReceiptController;
+import interface_adapter.upload_receipt.UploadReceiptPresenter;
 import use_case.split_management.SplitManagementOutputBoundary;
 import use_case.split_management.clear_bill.ClearBillInputBoundary;
 import use_case.split_management.clear_bill.ClearBillInteractor;
@@ -36,6 +38,9 @@ import use_case.split_management.distribute_bill_even.DistributeBillEvenInputBou
 import use_case.split_management.distribute_bill_even.DistributeBillEvenInteractor;
 import use_case.split_management.modify_split.ModifySplitInputBoundary;
 import use_case.split_management.modify_split.ModifySplitInteractor;
+import use_case.upload_receipt.UploadReceiptInputBoundary;
+import use_case.upload_receipt.UploadReceiptInteractor;
+import use_case.upload_receipt.UploadReceiptOutputBoundary;
 
 
 // TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
@@ -43,6 +48,7 @@ import use_case.split_management.modify_split.ModifySplitInteractor;
 public class BillDisplayView extends JFrame {
     private FileDAO userDataAccessObject;
     private Bill bill;
+    private UploadReceiptController uploadReceiptController;
     private ClearBillController clearBillController;
     private DistributeBillController distributeBillController;
     private ModifySplitController modifySplitController;
@@ -192,9 +198,16 @@ public class BillDisplayView extends JFrame {
                             String filepath = selectedFile.getAbsolutePath();
                             try {
                                 JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
-                                FileWriter writer = new FileWriter("src/main/java/data_access/receiptfiles.txt", true);
-                                writer.write(filepath + "\n");
-                                writer.close();
+                                uploadReceiptController.execute(filepath, bill.getId());
+
+
+                                // This part of the code makes the parent display redraw itself after updating the DAO.
+                                remove(mainContentPanel);
+                                createMainContent();
+                                add(mainContentPanel, BorderLayout.CENTER);
+                                repaint();
+                                revalidate();
+
                             } catch (IOException e) {
                                 JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
                             }
@@ -833,6 +846,8 @@ public class BillDisplayView extends JFrame {
         this.modifySplitController = controller;
     }
 
+    public void setUploadReceiptController(UploadReceiptController controller){this.uploadReceiptController = controller;}
+
     public static void main(String[] args) throws IOException {
 
 
@@ -883,6 +898,14 @@ public class BillDisplayView extends JFrame {
             BillDisplayView view = new BillDisplayView(userDataAccessObject,userDataAccessObject.getBill(10));
 
             // set up controllers
+
+            UploadReceiptOutputBoundary uploadReceiptOutputBoundary = new UploadReceiptPresenter();
+
+            final UploadReceiptInputBoundary uploadReceiptInteractor =
+                    new UploadReceiptInteractor(userDataAccessObject, uploadReceiptOutputBoundary);
+
+            final UploadReceiptController uploadReceiptController1 = new UploadReceiptController(uploadReceiptInteractor);
+
             SplitManagementOutputBoundary splitManagementOutputBoundary = new SplitManagementPresenter();
 
             final ClearBillInputBoundary clearBillInteractor =
@@ -905,6 +928,8 @@ public class BillDisplayView extends JFrame {
             view.setDistributeBillController(distributeBillController1);
 
             view.setModifySplitController(modifySplitController1);
+
+            view.setUploadReceiptController(uploadReceiptController1);
 
             view.setVisible(true);
         });
