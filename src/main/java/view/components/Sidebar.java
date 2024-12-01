@@ -1,5 +1,7 @@
 package view.components;
 
+import interface_adapter.LoggedInController;
+import interface_adapter.LoggedInState;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.logout.LogoutController;
@@ -11,9 +13,10 @@ public class Sidebar extends JPanel {
 
     // sidebar will be the same among all logged in views
     // TODO: add dashboard controller and add bill usecase to necessary buttons
-    public Sidebar(ChangePasswordController changePasswordController,
-                        LogoutController logoutController,
-                        DashboardState currentState) {
+    public Sidebar(LoggedInController loggedInController,
+            ChangePasswordController changePasswordController,
+                   LogoutController logoutController,
+                   LoggedInState currentState) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 //        setBackground(new Color(230, 230, 230));
@@ -45,7 +48,10 @@ public class Sidebar extends JPanel {
 
         JButton dashboardBtn = createSidebarButton("Dashboard");
         dashboardBtn.addActionListener(e -> {
-            System.out.println("Navigate to Dashboard");
+            if (e.getSource().equals(dashboardBtn)) {
+                loggedInController.switchToDashboardView(currentState.getUsername());
+
+            }
         });
 
         JButton createBillBtn = createSidebarButton("Create new bill");
@@ -61,7 +67,7 @@ public class Sidebar extends JPanel {
                 changePasswordController.execute(
                         currentState.getUsername(),
                         toPassword
-                );
+                 );
             }
         });
 

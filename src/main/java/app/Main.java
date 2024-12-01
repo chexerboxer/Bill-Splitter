@@ -19,6 +19,7 @@ public class Main {
                                             .addLoginView()
                                             .addSignupView()
                                             .addDashboardView()
+                .addBillDisplayView()
                                             .addChangePasswordUseCase()
                                             .addSignupUseCase()
                                             .addLoginUseCase()
@@ -27,6 +28,7 @@ public class Main {
                 .addDashboardUseCase()
                                             .build();
 
+        application.setSize(new Dimension(1000,700));
         application.setSize(new Dimension(1000,700));
         application.pack();
         application.setVisible(true);
