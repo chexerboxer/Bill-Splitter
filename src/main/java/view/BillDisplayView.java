@@ -74,7 +74,7 @@ public class BillDisplayView extends JFrame {
         add(sidebarPanel, BorderLayout.WEST);
         add(mainContentPanel, BorderLayout.CENTER);
 
-        setSize(1200, 700);
+        setSize(1350, 700);
         setLocationRelativeTo(null);
     }
 
@@ -258,8 +258,19 @@ public class BillDisplayView extends JFrame {
             memberButtonsPanel.add(memberButton);
         }
 
+        // Add Members
+        JLabel addMembersLabel = new JLabel("Add Member");
+        addMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton addMembersButton = new JButton("+");
+        addMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        addMembersButton.setFocusPainted(false);
+        addMembersButton.addActionListener(e -> addMembersEvent(this));
+        memberButtonsPanel.add(addMembersLabel);
+        memberButtonsPanel.add(addMembersButton);
+
         membersPanel.add(membersLabel);
         membersPanel.add(memberButtonsPanel);
+
     }
 
     private void createItemsTable() {
@@ -313,7 +324,7 @@ public class BillDisplayView extends JFrame {
         headerPanel.add(DistributeBillLabel);
         headerPanel.add(DistributeBillButton);
 
-        JLabel ClearBillLabel = new JLabel("Clear Bill");
+        JLabel ClearBillLabel = new JLabel("Clear Splits");
         ClearBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         JButton ClearBillButton = new JButton("+");
@@ -321,18 +332,31 @@ public class BillDisplayView extends JFrame {
         ClearBillButton.setFocusPainted(false);
         ClearBillButton.addActionListener(e -> ClearBillEvent(this));
 
+        // Edit price
         JLabel EditPriceLabel = new JLabel("Edit Price of an Item");
         EditPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
-
         JButton EditPriceButton = new JButton("+");
         EditPriceButton.setFont(new Font("Arial", Font.BOLD, 14));
         EditPriceButton.setFocusPainted(false);
         EditPriceButton.addActionListener(e -> EditPriceEvent(this));
 
+        // Remove Members
+        JLabel removeMembersLabel = new JLabel("Remove Member");
+        removeMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton removeMembersButton = new JButton("+");
+        removeMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        removeMembersButton.setFocusPainted(false);
+        removeMembersButton.addActionListener(e -> removeMembersEvent(this));
+
+
+
         headerPanel.add(ClearBillLabel);
         headerPanel.add(ClearBillButton);
         headerPanel.add(EditPriceLabel);
         headerPanel.add(EditPriceButton);
+        headerPanel.add(removeMembersLabel);
+        headerPanel.add(removeMembersButton);
+
 
         // Create the table model
         String[] columnNames = {"All Items", "Assigned Splits"};
@@ -380,6 +404,79 @@ public class BillDisplayView extends JFrame {
         tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         itemsPanel.add(tablePanel, BorderLayout.CENTER);
+    }
+
+    private void addMembersEvent(BillDisplayView billDisplayView) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        JLabel titleLabel = new JLabel("Add Member");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+        JTextField newMemberField = new JTextField(20);
+        mainPanel.add(new JLabel("New Member: "));
+        mainPanel.add(newMemberField);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Add a New Member",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION){
+
+        }
+
+    }
+
+    private void removeMembersEvent(JFrame parent) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        JLabel titleLabel = new JLabel("Remove Member");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+
+        Map<String, Integer> reverseUsers = new HashMap<>();
+        for(int userId : bill.getUsers()){
+            String userName = userDataAccessObject.getUser(userId).getName();
+            reverseUsers.put(userName, userId);
+        }
+
+        final JComboBox<String> userSelection =
+                new JComboBox<>(reverseUsers.keySet().toArray(new String[reverseUsers.size()]));
+        mainPanel.add(userSelection);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Remove item",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION){
+            int userId = reverseUsers.get(userSelection.getSelectedItem());
+
+            // first remove all splits in the user that has this bill
+            // just write a helper in common user thing
+
+            // remove user from bill users list
+            // bill.remove the user then call the userDAO setBill to update the DAO
+
+            // redraw the all member panel
+
+
+
+
+            this.remove(mainContentPanel);
+            createMainContent();
+            parent.add(mainContentPanel);
+            parent.repaint();
+            parent.revalidate();
+        }
     }
 
     private void showRemoveItemDialog(JFrame parent) {

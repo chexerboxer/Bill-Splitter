@@ -1,5 +1,5 @@
 type,name,id,users/password,items/splits,total
-Bill,testBillName,10,[10;11;12],[[Fountain Beverage;727787632;1.990000]/[Tacos Del Mal Shrimp;661269587;14.980000]/[Especial Salad Chicken;148863556;12.500000]],9.470003
-User,testpersonB,10,tasd,[]
-User,testpersonC,11,tasd,[]
-User,testpersonA,12,asd2123,[]
+Bill,testBillName,10,[10;11;12],[[item1;10;32.200001]/[item2;11;42.099998]],74.300003
+User,testpersonB,10,tasd,[[10.000000;10;10]/[12.000000;10;11]]
+User,testpersonC,11,tasd,[[11.000000;10;10]]
+User,testpersonA,12,asd2123,[[12.000000;10;11]]
