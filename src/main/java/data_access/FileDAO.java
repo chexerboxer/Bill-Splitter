@@ -4,6 +4,7 @@ import entity.bill.Bill;
 import entity.bill.BillFactory;
 import entity.split.Split;
 import entity.split.SplitFactory;
+import entity.users.CommonUserFactory;
 import entity.users.User;
 import entity.item.Item;
 import entity.item.ItemFactory;
@@ -12,8 +13,11 @@ import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.split_management.clear_bill.ClearBillDataAccessInterface;
 import use_case.split_management.distribute_bill_even.DistributeBillEvenDataAccessInterface;
 import use_case.split_management.modify_split.ModifySplitDataAccessInterface;
+import use_case.dashboard.DashboardUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
 import use_case.logout.LogoutUserDataAccessInterface;
+import use_case.signup.SignupInputBoundary;
+import use_case.signup.SignupInputData;
 import use_case.signup.SignupUserDataAccessInterface;
 
 import java.io.*;
@@ -23,13 +27,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class FileDAO implements FileDAOInterface,
-                                SignupUserDataAccessInterface,
-                                LoginUserDataAccessInterface,
-                                LogoutUserDataAccessInterface,
-                                ChangePasswordUserDataAccessInterface,
-                                ModifySplitDataAccessInterface,
-                                ClearBillDataAccessInterface,
-                                DistributeBillEvenDataAccessInterface {
+        SignupUserDataAccessInterface,
+        LoginUserDataAccessInterface,
+        LogoutUserDataAccessInterface,
+        ChangePasswordUserDataAccessInterface,
+        ModifySplitDataAccessInterface,
+        ClearBillDataAccessInterface,
+        DistributeBillEvenDataAccessInterface,
+        DashboardUserDataAccessInterface {
 
     private static final String HEADER = "type,name,id,users/password,items/splits,total";
 
@@ -39,22 +44,22 @@ public class FileDAO implements FileDAOInterface,
     private Map<Integer, User> users = new HashMap<>();
 
 
-
     /**
      * Constructor to intialize the csv file and then read it.
-     * @param csvPath is the path of the csv file.
+     *
+     * @param csvPath     is the path of the csv file.
      * @param billFactory is the Factory used to create bills.
      * @param userFactory is the factory used to create users.
-     * @return the LoggedInView created for the provided input classes
+     * @return the DashboardView created for the provided input classes
      * @throws IOException for reader
      */
     public FileDAO(String csvPath, BillFactory billFactory, UserFactory userFactory,
-                   ItemFactory itemFactory, SplitFactory splitFactory) throws IOException{
+                   ItemFactory itemFactory, SplitFactory splitFactory) throws IOException {
 
         csvFile = new File(csvPath);
         headers.put("type", 0);
         headers.put("name", 1);
-        headers.put("id",2);
+        headers.put("id", 2);
         headers.put("users", 3);
         headers.put("password", 3);
         headers.put("items", 4);
@@ -62,11 +67,9 @@ public class FileDAO implements FileDAOInterface,
         headers.put("total", 5);
         DAOhelper helper = new DAOhelper();
 
-        if (csvFile.length() == 0){
+        if (csvFile.length() == 0) {
             save();
-        }
-
-        else{
+        } else {
             try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
                 final String header = reader.readLine();
 
@@ -79,7 +82,7 @@ public class FileDAO implements FileDAOInterface,
                     final String[] col = row.split(",");
                     final String type = String.valueOf(col[headers.get("type")]);
 
-                    if (type.equals("Bill")){
+                    if (type.equals("Bill")) {
                         final String name = String.valueOf(col[headers.get("name")]);
                         final int id = Integer.valueOf(col[headers.get("id")]);
 
@@ -98,8 +101,7 @@ public class FileDAO implements FileDAOInterface,
                         Bill newBill = billFactory.create(name, id, userIds, items, total);
 
                         bills.put(id, newBill);
-                    }
-                    else if (type.equals("User")){
+                    } else if (type.equals("User")) {
                         final String name = String.valueOf(col[headers.get("name")]);
                         final int id = Integer.valueOf(col[headers.get("id")]);
                         final String password = String.valueOf(col[headers.get("password")]);
@@ -112,8 +114,7 @@ public class FileDAO implements FileDAOInterface,
                         User newUser = userFactory.create(name, id, password, splits);
 
                         users.put(id, newUser);
-                    }
-                    else{
+                    } else {
                         throw new RuntimeException(String.format
                                 ("type should be%n: %s%but was:%n%s", "Bill or User", type));
                     }
@@ -128,18 +129,18 @@ public class FileDAO implements FileDAOInterface,
     @Override
     public void save() {
         final BufferedWriter writer;
-        try{
+        try {
             writer = new BufferedWriter(new FileWriter(csvFile));
             writer.write(HEADER);
             writer.newLine();
 
-            for(Bill bill : bills.values()){
+            for (Bill bill : bills.values()) {
                 final String name = bill.getName();
                 final int id = bill.getId();
 
                 ArrayList<Integer> userIdOG = bill.getUsers();
                 String users = "";
-                if (!userIdOG.isEmpty()){
+                if (!userIdOG.isEmpty()) {
                     String[] userList = new String[userIdOG.size()];
 
                     for (int i = 0; i < userIdOG.size(); i++) {
@@ -170,11 +171,11 @@ public class FileDAO implements FileDAOInterface,
 
 
                 writer.write(String.format("%s,%s,%d,%s,%s,%f",
-                        "Bill",name, id, users, items, totalAmount));
+                        "Bill", name, id, users, items, totalAmount));
                 writer.newLine();
             }
 
-            for (User user : users.values()){
+            for (User user : users.values()) {
                 final String name = user.getName();
                 final int id = user.getId();
                 final String password = user.getPassword();
@@ -201,7 +202,7 @@ public class FileDAO implements FileDAOInterface,
 
             }
             writer.close();
-        }catch (IOException ex){
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
 
@@ -253,19 +254,19 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public boolean removeUser(int id) {
-        if (users.keySet().contains(id)){
+        if (users.keySet().contains(id)) {
             users.remove(id);
             save();
             return true;
         }
-            save();
-            return false;
+        save();
+        return false;
 
     }
 
     @Override
     public boolean removeBill(int id) {
-        if (bills.keySet().contains(id)){
+        if (bills.keySet().contains(id)) {
             bills.remove(id);
             save();
             return true;
@@ -276,7 +277,7 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public boolean existsByName(String username) {
-        for (User user: users.values()) {
+        for (User user : users.values()) {
             if (user.getName().equals(username)) {
                 return true;
             }
@@ -286,7 +287,7 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public User get(String username) {
-        for (User user: users.values()) {
+        for (User user : users.values()) {
             if (user.getName().equals(username)) {
                 return user;
             }
@@ -301,6 +302,8 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public void setCurrentUsername(String username) {
+
+
 
     }
 
@@ -322,12 +325,12 @@ public class FileDAO implements FileDAOInterface,
     }
 
     // checks whether the user is in a bill by their splits and remove if they are not.
-    public void checkRemoveUserInBill(int billId, int userId){
+    public void checkRemoveUserInBill(int billId, int userId) {
         Bill bill = bills.get(billId);
         User user = users.get(userId);
         for (int itemId : bill.getItems().keySet()) {
             // if the user has split in one of the item of the bill then it doesnt have to be removed.
-            if(user.distributedAmount(itemId, billId) > 0){
+            if (user.distributedAmount(itemId, billId) > 0) {
                 return;
             }
         }
@@ -353,13 +356,14 @@ public class FileDAO implements FileDAOInterface,
 
     /**
      * Return the list of users attributed to this item.
+     *
      * @param itemId is the id of the item.
      * @param billId is the id of the bill of the item.
      * @return list of users attributed to this item.
      */
-    public ArrayList<Integer> usersSplittingItem(int itemId, int billId){
+    public ArrayList<Integer> usersSplittingItem(int itemId, int billId) {
         ArrayList<Integer> usersSplitting = new ArrayList<>();
-        for(User user : users.values()){
+        for (User user : users.values()) {
 
             if (user.distributedAmount(itemId, billId) > 0) {
                 usersSplitting.add(user.getId());
@@ -372,17 +376,18 @@ public class FileDAO implements FileDAOInterface,
 
     /**
      * Return the undistrubted money on the item
+     *
      * @param itemId is the id of the item.
      * @param billId is the id of the bill of the item.
      * @return amount of money yet to be distributed.
      */
-    public float undistributedOnItem(int itemId, int billId){
+    public float undistributedOnItem(int itemId, int billId) {
         Bill bill = bills.get(billId);
         Item item = bill.getItems().get(itemId);
         float total = item.getCost();
-        for(User user : users.values()){
-            for(Split split : user.getSplits()){
-                if (split.getItemId() == itemId && split.getBillId() == billId){
+        for (User user : users.values()) {
+            for (Split split : user.getSplits()) {
+                if (split.getItemId() == itemId && split.getBillId() == billId) {
                     total -= split.getAmount();
                 }
             }
@@ -395,10 +400,10 @@ public class FileDAO implements FileDAOInterface,
     @Override
     public void clearBill(int billId) {
 
-        for (User user : users.values()){
-            for(int itemId: bills.get(billId).getItems().keySet()){
+        for (User user : users.values()) {
+            for (int itemId : bills.get(billId).getItems().keySet()) {
 
-                    user.removeSplit(itemId, billId);
+                user.removeSplit(itemId, billId);
 
             }
             setUser(user.getId(), user);
@@ -420,12 +425,26 @@ public class FileDAO implements FileDAOInterface,
                     modifySplit(amount_per_person, billId, item.getId(), userId);
                 }
 
+                @Override
+                public ArrayList<Bill> getUserBills (User user){
+                    ArrayList<Bill> userBills = new ArrayList<>();
+
+                    for (Bill bill : bills.values()) {
+                        if (bill.getUsers().contains(user.getId())) {
+                            userBills.add(bill);
+                        }
+                    }
+
+                    return userBills;
+                }
             }
+
         }
-
-
     }
+
+
 }
+
 
 
 

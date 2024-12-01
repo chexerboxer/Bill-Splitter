@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import data_access.FileDAO;
@@ -25,6 +27,17 @@ import entity.users.CommonUserFactory;
 import entity.users.User;
 import entity.users.UserFactory;
 import interface_adapter.signup.SignupController;
+// components
+import interface_adapter.bill_splitter.BillDisplayController;
+import interface_adapter.bill_splitter.BillDisplayState;
+import interface_adapter.bill_splitter.BillDisplayViewModel;
+import view.components.*;
+
+import interface_adapter.change_password.ChangePasswordController;
+import interface_adapter.dashboard.DashboardState;
+import interface_adapter.dashboard.DashboardViewModel;
+import interface_adapter.logout.LogoutController;
+
 import interface_adapter.split_management.ClearBillController;
 import interface_adapter.split_management.DistributeBillController;
 import interface_adapter.split_management.ModifySplitController;
@@ -45,30 +58,39 @@ import use_case.upload_receipt.UploadReceiptOutputBoundary;
 
 // TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
 // TODO note: creating billdisplay viewmodel and viewstate shouldnt be bad jsut plug in the bill from the viewstate and the viewmodel stuff isnt long.
-public class BillDisplayView extends JFrame {
+public class BillDisplayView extends JFrame implements PropertyChangeListener{
     private FileDAO userDataAccessObject;
     private Bill bill;
     private UploadReceiptController uploadReceiptController;
     private ClearBillController clearBillController;
+    private BillDisplayController billDisplayController;
+    private ChangePasswordController changePasswordController;
+    private LogoutController logoutController;
     private DistributeBillController distributeBillController;
     private ModifySplitController modifySplitController;
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
+
+    private final String viewName = "bill splitter";
+    private final BillDisplayViewModel billDisplayViewModel;
+
+
     private JPanel membersPanel;
     private JPanel itemsPanel;
     private final JFileChooser fileChooser = new JFileChooser();
     private DefaultTableModel tableModel;
 
 
-    // TODO NEED BILL DISPLAY VIEW MODEL, move the bill into the bill display state thats to be created.
-    public BillDisplayView(FileDAO userDataAccessObject, Bill bill) {
-        this.userDataAccessObject = userDataAccessObject;
-        this.bill = bill;
-        setTitle("Billsplitter");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    public BillDisplayView(BillDisplayViewModel billDisplayViewModel) {
+        this.billDisplayViewModel = billDisplayViewModel;
+        BillDisplayState currentState = billDisplayViewModel.getState();
+        this.billDisplayViewModel.addPropertyChangeListener(this);
+
         setLayout(new BorderLayout());
 
-        createSidebar();
+        sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, currentState);
+
         createMainContent();
 
         add(sidebarPanel, BorderLayout.WEST);
@@ -723,7 +745,7 @@ public class BillDisplayView extends JFrame {
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create input fields
-        JTextField itemNameField = new JTextField("Please enter item name here");
+        JTextField itemNameField = new JTextField();
         itemNameField.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(15),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -818,6 +840,7 @@ public class BillDisplayView extends JFrame {
         itemCostField.putClientProperty("JTextField.placeholderText", "Item cost");
 
         // Add components to main panel
+        mainPanel.add(closePanel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -953,31 +976,35 @@ class RoundedBorder extends AbstractBorder {
     }
 
     @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(this.radius/2, this.radius/2, this.radius/2, this.radius/2);
-    }
-}
+    public void propertyChange(PropertyChangeEvent evt) {
+        System.out.println("property changed now displaying bill display");
+        if (evt.getPropertyName().equals("state")) {
+            this.remove(sidebarPanel);
+            sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, this.billDisplayViewModel.getState());
+            add(sidebarPanel);
 
-class DashBorderRect extends AbstractBorder {
-    private int thickness;
-
-    public DashBorderRect(int thickness) {
-        this.thickness = thickness;
+        }
     }
 
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f,
-                new float[]{5.0f}, 0.0f));
-        g2d.drawRect(x, y, width - 1, height - 1);
-        g2d.dispose();
+    public String getViewName() {
+        return viewName;
     }
 
-    @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(thickness, thickness, thickness, thickness);
+    public void setChangePasswordController(ChangePasswordController changePasswordController) {
+        this.changePasswordController = changePasswordController;
     }
+
+    /**
+     * Set logout controller class.
+     * @param logoutController parameter.
+     */
+
+    public void setLogoutController(LogoutController logoutController) {
+        this.logoutController = logoutController;
+    }
+
+    public void setBillDisplayController(BillDisplayController billDisplayController) {
+        this.billDisplayController = billDisplayController;
+    }
+
 }

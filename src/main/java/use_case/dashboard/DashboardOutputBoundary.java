@@ -1,16 +1,13 @@
-package use_case.login;
+package use_case.dashboard;
 
-import entity.bill.Bill;
+import use_case.login.LoginOutputData;
 
-/**
- * The output boundary for the Login Use Case.
- */
-public interface LoginOutputBoundary {
+public interface DashboardOutputBoundary {
     /**
      * Prepares the success view for the Login Use Case.
      * @param outputData the output data
      */
-    void prepareSuccessView(LoginOutputData outputData);
+    void prepareSuccessView(DashboardOutputData outputData);
 
     /**
      * Prepares the failure view for the Login Use Case.
@@ -24,4 +21,6 @@ public interface LoginOutputBoundary {
     void switchToSignUpView();
 
     void switchToChangePasswordView();
+
+    void switchToBillView(String username, int billId);
 }
