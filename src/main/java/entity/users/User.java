@@ -28,4 +28,6 @@ public interface User {
     String getPassword();
 
     ArrayList<Split> getSplits();
+
+    void setPassword(String password);
 }
