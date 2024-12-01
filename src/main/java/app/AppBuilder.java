@@ -14,6 +14,7 @@ import entity.split.SplitFactory;
 import entity.users.CommonUserFactory;
 import entity.users.UserFactory;
 import interface_adapter.ViewManagerModel;
+import interface_adapter.bill_splitter.BillDisplayViewModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
 import interface_adapter.dashboard.DashboardController;
@@ -75,6 +76,8 @@ public class AppBuilder {
     private LoginView loginView;
     private ChangePasswordView changePasswordView;
     private ChangePasswordViewModel changePasswordViewModel;
+    private BillDisplayView billDisplayView;
+    private BillDisplayViewModel billDisplayViewModel;
 
 
     public AppBuilder() throws IOException {
@@ -114,18 +117,18 @@ public class AppBuilder {
      * Adds the LoggedIn View to the application.
      * @return this builder
      */
-    // TODO: testing for bill splitter view
-//    public AppBuilder addLoggedInView() {
-//        dashboardViewModel = new DashboardViewModel();
-//        JPanel bill = new BillDisplayView(dashboardViewModel);
-//        cardPanel.add(bill, "logged in");
-//        return this;
-//    }
 
     public AppBuilder addDashboardView() {
         dashboardViewModel = new DashboardViewModel();
         dashboardView = new DashboardView(dashboardViewModel);
         cardPanel.add(dashboardView, dashboardView.getViewName());
+        return this;
+    }
+
+    public AppBuilder addBillDisplayView() {
+        billDisplayViewModel = new BillDisplayViewModel();
+        billDisplayView = new BillDisplayView(billDisplayViewModel);
+        cardPanel.add(billDisplayView, billDisplayView.getViewName());
         return this;
     }
 
@@ -202,7 +205,7 @@ public class AppBuilder {
     public AppBuilder addDashboardUseCase() {
         final DashboardOutputBoundary dashboardOutputBoundary = new DashboardPresenter(viewManagerModel,
                 dashboardViewModel,
-//                billDisplayViewModel,
+                billDisplayViewModel,
                 signupViewModel,
                 changePasswordViewModel);
         final DashboardInputBoundary dashboardInteractor = new DashboardInteractor(
@@ -212,6 +215,8 @@ public class AppBuilder {
         dashboardView.setDashboardController(dashboardController);
         return this;
     }
+
+    // TODO: initialize controllers for bill display view with addBillDisplayUseCase (will need to make presenters)
 
     /**
      * Creates the JFrame for the application and initially sets the SignupView to be displayed.

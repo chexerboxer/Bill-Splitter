@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.bill_splitter.BillDisplayState;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.logout.LogoutController;
@@ -15,8 +16,8 @@ public interface LoggedInPageView {
     static void createSidebar(JPanel sidebarPanel,
                               ChangePasswordController changePasswordController,
                               LogoutController logoutController,
-                              DashboardState currentState){
-
+                              BillDisplayState currentState){
+        // TODO: FIX SCUFFED SHIT WITH BILL VS DASH STATE (create interface)
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBackground(new Color(230, 230, 230));
         sidebarPanel.setPreferredSize(new Dimension(200, sidebarPanel.getHeight()));
@@ -41,8 +42,9 @@ public interface LoggedInPageView {
         // Navigation buttons
         JPanel navigationPanel = new JPanel();
         navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.Y_AXIS));
-        navigationPanel.setBackground(new Color(230, 230, 230));
-        navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        navigationPanel.setBackground(Color.BLUE);
+//        navigationPanel.setBackground(new Color(230, 230, 230));
+//        navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         JButton dashboardBtn = createSidebarButton("Dashboard");
         dashboardBtn.addActionListener(e -> {

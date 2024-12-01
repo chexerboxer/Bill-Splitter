@@ -1,6 +1,8 @@
 package view;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -10,6 +12,7 @@ import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.dashboard.DashboardController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
+import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
 
 //components
@@ -43,7 +46,7 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
         setSize(1000,700);
         setLayout(new BorderLayout());
 
-        sidebarPanel = new Sidebar(changePasswordController, logoutController, currentState);
+        sidebarPanel = new Sidebar(dashboardController, changePasswordController, logoutController, currentState);
 
         createMainContent(currentState);
 
@@ -97,8 +100,10 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
                 BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId),
                         currentState.getUserBillsData(),
                         billId,
+                        currentState.getUsername(),
                         dashboardController);
                 billCard.setPreferredSize(new Dimension(100,100));
+
                 allBillsPanel.add(billCard);
             }
         }
@@ -111,9 +116,9 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("state")) {
             this.settingBills(this.dashboardViewModel.getState());
-            // TODO: refactor sidebar interface to class; have method to set user
+            // TODO: refactor sidebar, have method to set user
             this.remove(sidebarPanel);
-            sidebarPanel = new Sidebar(changePasswordController, logoutController, this.dashboardViewModel.getState());
+            sidebarPanel = new Sidebar(dashboardController, changePasswordController, logoutController, this.dashboardViewModel.getState());
             add(sidebarPanel);
 
         }

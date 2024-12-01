@@ -1,20 +1,22 @@
 package interface_adapter.dashboard;
 
+import interface_adapter.LoggedInState;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * The State information representing the logged-in user.
  */
-public class DashboardState {
+public class DashboardState implements LoggedInState {
     private String username = "";
-    private String password = "";
+//    private String password = "";
     private String passwordError;
     private HashMap<Integer, String> userBillsData;
 
     public DashboardState(DashboardState copy) {
         username = copy.username;
-        password = copy.password;
+//        password = copy.password;
         userBillsData = copy.userBillsData;
         passwordError = copy.passwordError;
     }
@@ -31,17 +33,17 @@ public class DashboardState {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
+//
     public void setPasswordError(String passwordError) {
         this.passwordError = passwordError;
     }
-
-    public String getPassword() {
-        return password;
-    }
+//
+//    public String getPassword() {
+//        return password;
+//    }
 
     public HashMap<Integer, String> getUserBillsData() {
         return userBillsData;

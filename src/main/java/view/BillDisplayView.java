@@ -9,13 +9,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 // components
+import interface_adapter.bill_splitter.BillDisplayController;
+import interface_adapter.bill_splitter.BillDisplayState;
+import interface_adapter.bill_splitter.BillDisplayViewModel;
+import view.components.*;
+
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.logout.LogoutController;
 
-public class BillDisplayView extends JPanel implements LoggedInPageView, PropertyChangeListener {
+
+public class BillDisplayView extends JPanel implements PropertyChangeListener {
     private final String viewName = "bill splitter";
+    private final BillDisplayViewModel billDisplayViewModel;
+    private BillDisplayController billDisplayController;
     private ChangePasswordController changePasswordController;
     private LogoutController logoutController;
 
@@ -26,13 +34,14 @@ public class BillDisplayView extends JPanel implements LoggedInPageView, Propert
     private JPanel itemsPanel;
     private DefaultTableModel tableModel;
 
-    public BillDisplayView(DashboardViewModel dashboardViewModel) {
-        final DashboardState currentState = dashboardViewModel.getState();
+    public BillDisplayView(BillDisplayViewModel billDisplayViewModel) {
+        this.billDisplayViewModel = billDisplayViewModel;
+        BillDisplayState currentState = billDisplayViewModel.getState();
+        this.billDisplayViewModel.addPropertyChangeListener(this);
 
         setLayout(new BorderLayout());
 
-        sidebarPanel = new JPanel();
-        LoggedInPageView.createSidebar(sidebarPanel, changePasswordController, logoutController, currentState);
+        sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, currentState);
 
         createMainContent();
 
@@ -241,9 +250,12 @@ public class BillDisplayView extends JPanel implements LoggedInPageView, Propert
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("password")) {
-            final DashboardState state = (DashboardState) evt.getNewValue();
-            JOptionPane.showMessageDialog(null, "password updated for " + state.getUsername());
+        System.out.println("property changed now displaying bill display");
+        if (evt.getPropertyName().equals("state")) {
+            this.remove(sidebarPanel);
+            sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, this.billDisplayViewModel.getState());
+            add(sidebarPanel);
+
         }
     }
 
@@ -262,6 +274,10 @@ public class BillDisplayView extends JPanel implements LoggedInPageView, Propert
 
     public void setLogoutController(LogoutController logoutController) {
         this.logoutController = logoutController;
+    }
+
+    public void setBillDisplayController(BillDisplayController billDisplayController) {
+        this.billDisplayController = billDisplayController;
     }
 
 }

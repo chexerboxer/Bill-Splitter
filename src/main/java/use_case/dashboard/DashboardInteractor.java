@@ -38,9 +38,9 @@ public class DashboardInteractor implements DashboardInputBoundary {
         dashboardPresenter.switchToChangePasswordView();
     }
 
-//    @Override
-//    public void switchToBillView(int billId) {
-//        dashboardPresenter.switchToBillView(billId);
-//
-//    }
+    @Override
+    public void switchToBillView(String username, int billId) {
+        dashboardPresenter.switchToBillView(username,billId);
+
+    }
 }

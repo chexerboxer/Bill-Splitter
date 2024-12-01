@@ -1,12 +1,13 @@
 package interface_adapter.dashboard;
 
+import interface_adapter.LoggedInController;
 import use_case.dashboard.DashboardInputBoundary;
 import use_case.dashboard.DashboardInputBoundary;
 import use_case.dashboard.DashboardInputData;
 
 import java.util.HashMap;
 
-public class DashboardController {
+public class DashboardController implements LoggedInController {
     private final DashboardInputBoundary dashboardUseCaseInteractor;
 
 
@@ -35,8 +36,13 @@ public class DashboardController {
         dashboardUseCaseInteractor.switchtoChangePasswordView();
     }
 
-//    public void switchToBillView(int billId) {
-//        dashboardUseCaseInteractor.switchToBillView(billId);
-//    }
+    public void switchToBillView(String username, int billId) {
+        dashboardUseCaseInteractor.switchToBillView(username, billId);
+    }
+
+    @Override
+    public void switchToDashboardView(String username) {
+        // does nothing but exists to be implemented by the sidebar
+    }
 
 }

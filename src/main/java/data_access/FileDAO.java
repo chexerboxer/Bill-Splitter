@@ -304,8 +304,7 @@ public class FileDAO implements FileDAOInterface,
 
     @Override
     public void changePassword(User user) {
-        // given user is the same user but with a new password, program goes through file to find user id,
-        // deletes the line and rewrites with the new id
+
 
     }
 

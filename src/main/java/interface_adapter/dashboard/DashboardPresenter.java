@@ -15,17 +15,17 @@ public class DashboardPresenter implements DashboardOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final SignupViewModel signupViewModel;
     private final ChangePasswordViewModel changePasswordViewModel;
-//    private final BillDisplayViewModel billDisplayViewModel;
+    private final BillDisplayViewModel billDisplayViewModel;
 
 
     public DashboardPresenter(ViewManagerModel viewManagerModel,
                           DashboardViewModel dashboardViewModel,
-//                          BillDisplayViewModel billDisplayViewModel,
+                          BillDisplayViewModel billDisplayViewModel,
                           SignupViewModel signupViewModel,
                           ChangePasswordViewModel changePasswordViewModel) {
         this.viewManagerModel = viewManagerModel;
         this.dashboardViewModel = dashboardViewModel;
-//        this.billDisplayViewModel = billDisplayViewModel;
+        this.billDisplayViewModel = billDisplayViewModel;
         this.signupViewModel = signupViewModel;
         this.changePasswordViewModel = changePasswordViewModel;
     }
@@ -63,10 +63,16 @@ public class DashboardPresenter implements DashboardOutputBoundary {
         viewManagerModel.setState(changePasswordViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
     }
+    @Override
+    public void switchToBillView(String username, int billId) {
+        final BillDisplayState billDisplayState = billDisplayViewModel.getState();
+        billDisplayState.setBillId(billId);
+        billDisplayState.setUsername(username);
 
-//    public void switchToBillView(int billId) {
-//
-//        viewManagerModel.setState(billDisplayViewModel.getViewName());
-//        viewManagerModel.firePropertyChanged();
-//    }
+        this.billDisplayViewModel.setState(billDisplayState);
+        this.billDisplayViewModel.firePropertyChanged();
+
+        viewManagerModel.setState(billDisplayViewModel.getViewName());
+        viewManagerModel.firePropertyChanged();
+    }
 }
