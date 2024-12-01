@@ -98,6 +98,9 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
             add(sidebarPanel, BorderLayout.WEST);
             add(mainContentPanel, BorderLayout.CENTER);
+            revalidate();
+            repaint();
+
 
             setSize(1200, 700);
       }
@@ -476,8 +479,9 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                     this.remove(mainContentPanel);
                     createMainContent();
                     parent.add(mainContentPanel);
-                    parent.repaint();
                     parent.revalidate();
+                    parent.repaint();
+
                 }
             }
             else {
@@ -540,7 +544,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             // the member section is created and called in the mainContent panel already so dont have to change.
             this.remove(mainContentPanel);
             createMainContent();
-            parent.add(mainContentPanel, BorderLayout.CENTER);
+            parent.add(mainContentPanel);
             parent.revalidate();
             parent.repaint();
 
@@ -1031,6 +1035,8 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             this.remove(sidebarPanel);
             sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, this.billDisplayViewModel.getState());
             add(sidebarPanel);
+
+
 
             drawMainContent();
         }
