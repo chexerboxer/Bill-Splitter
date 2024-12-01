@@ -65,6 +65,7 @@ public class BillCardPanel extends JPanel {
             //TODO: add action listener to use dashboardController to switch to bill display view
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 dashboardController.switchToBillView(username, billId);
             }
         });

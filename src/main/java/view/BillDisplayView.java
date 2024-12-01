@@ -94,6 +94,10 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
         if (bill != null){
 
+            if (sidebarPanel != null) remove(sidebarPanel);
+
+            if (mainContentPanel != null) remove((mainContentPanel));
+
             createMainContent();
 
             add(sidebarPanel, BorderLayout.WEST);
@@ -183,6 +187,9 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         mainContentPanel.add(membersPanel);
         mainContentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainContentPanel.add(itemsPanel);
+        revalidate();
+        repaint();
+
     }
 
     private void createMembersSection() {
@@ -454,11 +461,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
             userDataAccessObject.setUser(userId, user);
 
-            for (int i = 0; i<bill.getUsers().size(); i++){
-                if (bill.getUsers().get(i) == userId){
-                    bill.removeUser(i);
-                }
-            }
+            bill.removeUser(userId);
 
 
             userDataAccessObject.setBill(bill.getId(), bill);
@@ -959,7 +962,8 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         if (evt.getPropertyName().equals("state")) {
             this.remove(sidebarPanel);
             sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, this.billDisplayViewModel.getState());
-            add(sidebarPanel);
+
+
 
 
 
