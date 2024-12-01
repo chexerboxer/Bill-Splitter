@@ -425,21 +425,22 @@ public class FileDAO implements FileDAOInterface,
                     modifySplit(amount_per_person, billId, item.getId(), userId);
                 }
 
-                @Override
-                public ArrayList<Bill> getUserBills (User user){
-                    ArrayList<Bill> userBills = new ArrayList<>();
 
-                    for (Bill bill : bills.values()) {
-                        if (bill.getUsers().contains(user.getId())) {
-                            userBills.add(bill);
-                        }
-                    }
-
-                    return userBills;
-                }
             }
 
         }
+    }
+    @Override
+    public ArrayList<Bill> getUserBills (User user){
+        ArrayList<Bill> userBills = new ArrayList<>();
+
+        for (Bill bill : bills.values()) {
+            if (bill.getUsers().contains(user.getId())) {
+                userBills.add(bill);
+            }
+        }
+
+        return userBills;
     }
 
 

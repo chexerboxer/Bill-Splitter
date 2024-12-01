@@ -1,13 +1,12 @@
 package interface_adapter.dashboard;
 
-import interface_adapter.LoggedInController;
-import use_case.dashboard.DashboardInputBoundary;
+import interface_adapter.LoggedInPresenter;
 import use_case.dashboard.DashboardInputBoundary;
 import use_case.dashboard.DashboardInputData;
 
 import java.util.HashMap;
 
-public class DashboardController implements LoggedInController {
+public class DashboardController implements LoggedInPresenter {
     private final DashboardInputBoundary dashboardUseCaseInteractor;
 
 

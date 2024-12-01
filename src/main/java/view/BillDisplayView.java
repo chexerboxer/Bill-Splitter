@@ -8,62 +8,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
 import data_access.FileDAO;
 import entity.bill.Bill;
-import entity.bill.BillFactory;
 import entity.item.Item;
 import entity.item.ItemFactory;
-import entity.split.Split;
-import entity.split.SplitFactory;
-import entity.users.CommonUserFactory;
 import entity.users.User;
-import entity.users.UserFactory;
-import interface_adapter.signup.SignupController;
 // components
-import interface_adapter.bill_splitter.BillDisplayController;
+import interface_adapter.bill_splitter.BillDisplayPresenter;
 import interface_adapter.bill_splitter.BillDisplayState;
 import interface_adapter.bill_splitter.BillDisplayViewModel;
 import view.components.*;
 
 import interface_adapter.change_password.ChangePasswordController;
-import interface_adapter.dashboard.DashboardState;
-import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.logout.LogoutController;
 
 import interface_adapter.split_management.ClearBillController;
 import interface_adapter.split_management.DistributeBillController;
 import interface_adapter.split_management.ModifySplitController;
-import interface_adapter.split_management.SplitManagementPresenter;
 import interface_adapter.upload_receipt.UploadReceiptController;
-import interface_adapter.upload_receipt.UploadReceiptPresenter;
-import use_case.split_management.SplitManagementOutputBoundary;
-import use_case.split_management.clear_bill.ClearBillInputBoundary;
-import use_case.split_management.clear_bill.ClearBillInteractor;
-import use_case.split_management.distribute_bill_even.DistributeBillEvenInputBoundary;
-import use_case.split_management.distribute_bill_even.DistributeBillEvenInteractor;
-import use_case.split_management.modify_split.ModifySplitInputBoundary;
-import use_case.split_management.modify_split.ModifySplitInteractor;
-import use_case.upload_receipt.UploadReceiptInputBoundary;
-import use_case.upload_receipt.UploadReceiptInteractor;
-import use_case.upload_receipt.UploadReceiptOutputBoundary;
 
 
 // TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
 // TODO note: creating billdisplay viewmodel and viewstate shouldnt be bad jsut plug in the bill from the viewstate and the viewmodel stuff isnt long.
-public class BillDisplayView extends JFrame implements PropertyChangeListener{
+public class BillDisplayView extends JPanel implements PropertyChangeListener{
     private FileDAO userDataAccessObject;
     private Bill bill;
     private UploadReceiptController uploadReceiptController;
     private ClearBillController clearBillController;
-    private BillDisplayController billDisplayController;
+    private BillDisplayPresenter billDisplayPresenter;
     private ChangePasswordController changePasswordController;
     private LogoutController logoutController;
     private DistributeBillController distributeBillController;
@@ -84,20 +61,32 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
 
     public BillDisplayView(BillDisplayViewModel billDisplayViewModel) {
         this.billDisplayViewModel = billDisplayViewModel;
-        BillDisplayState currentState = billDisplayViewModel.getState();
         this.billDisplayViewModel.addPropertyChangeListener(this);
 
+
+
+
+    }
+
+    public void drawMainContent (){
+
+
         setLayout(new BorderLayout());
+        BillDisplayState currentState = billDisplayViewModel.getState();
+        sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, currentState);
 
-        sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, currentState);
+        bill = userDataAccessObject.getBill(currentState.getBillId());
 
-        createMainContent();
+        if (bill != null){
 
-        add(sidebarPanel, BorderLayout.WEST);
-        add(mainContentPanel, BorderLayout.CENTER);
+            createMainContent();
 
-        setSize(1200, 700);
-        setLocationRelativeTo(null);
+            add(sidebarPanel, BorderLayout.WEST);
+            add(mainContentPanel, BorderLayout.CENTER);
+
+            setSize(1200, 700);
+      }
+
     }
 
     private void createSidebar() {
@@ -136,9 +125,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         JButton dashboardBtn = createSidebarButton("Dashboard");
-        dashboardBtn.addActionListener(e -> {
-            System.out.println("Navigate to Dashboard");
-        });
+        dashboardBtn.addActionListener(e -> billDisplayPresenter.switchToDashboardView(billDisplayViewModel.getState().getUsername()));
 
 
         // TODO idk whether this is needed or not as this is already the page to manage splits.
@@ -404,7 +391,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         itemsPanel.add(tablePanel, BorderLayout.CENTER);
     }
 
-    private void showRemoveItemDialog(JFrame parent) {
+    private void showRemoveItemDialog(JPanel parent) {
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -483,7 +470,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         JOptionPane.showMessageDialog(null, mainPanel,"Remove Items", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void ClearBillEvent(JFrame parent) {
+    private void ClearBillEvent(JPanel parent) {
 
         // change the values in DAO
         clearBillController.execute(bill.getId());
@@ -498,7 +485,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
     }
 
 
-    private void showDistributeBillDialog(JFrame parent) {
+    private void showDistributeBillDialog(JPanel parent) {
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -574,7 +561,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         JOptionPane.showMessageDialog(null, mainPanel,"Distribute Bill", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void EditPriceEvent(JFrame parent) {
+    private void EditPriceEvent(JPanel parent) {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
@@ -625,7 +612,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
     }
 
 
-    private void showModifySplitsDialog(JFrame parent) {
+    private void showModifySplitsDialog(JPanel parent) {
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
@@ -732,7 +719,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         JOptionPane.showMessageDialog(null, mainPanel,"Modify Split", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void showAddItemDialog(JFrame parent) {
+    private void showAddItemDialog(JPanel parent) {
 
         // Create main panel with padding
         JPanel mainPanel = new JPanel();
@@ -840,7 +827,7 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         itemCostField.putClientProperty("JTextField.placeholderText", "Item cost");
 
         // Add components to main panel
-        mainPanel.add(closePanel);
+
         mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         mainPanel.add(titleLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
@@ -869,120 +856,27 @@ public class BillDisplayView extends JFrame implements PropertyChangeListener{
         this.modifySplitController = controller;
     }
 
+    public void setDAO(FileDAO fileDAO) {
+        this.userDataAccessObject = fileDAO;
+
+
+        // very very horrible coding practice this the DAO must be set before everything is actaully ran
+        // so this method has to be called before everything is ran, PLEASAE dont call this unless you are initializing
+        // the view.
+        drawMainContent();
+    }
+
     public void setUploadReceiptController(UploadReceiptController controller){this.uploadReceiptController = controller;}
-
-    public static void main(String[] args) throws IOException {
-
-
-        //test run to see whether it works.
-
-        UserFactory userFactory = new CommonUserFactory();
-        SplitFactory splitFactory = new SplitFactory();
-        BillFactory billFactory = new BillFactory();
-        ItemFactory itemFactory = new ItemFactory();
-        FileDAO userDataAccessObject = new FileDAO(System.getProperty("user.dir") + "\\src\\test\\java\\DAO\\BillDisplayViewTest.csv"
-                , billFactory, userFactory, itemFactory, splitFactory);
-
-        ArrayList<Integer> userids = new ArrayList<>();
-        userids.add(10);
-        userids.add(11);
-        userids.add(12);
-        HashMap<Integer, Item> items = new HashMap<>();
-        items.put(10, itemFactory.create("item1",10,32.2f));
-        items.put(11, itemFactory.create("item2", 11, 42.1f));
-        Bill bill1 = billFactory.create("testBillName", 10, userids);
-        bill1.addItem(itemFactory.create("item1",10,32.2f));
-        bill1.addItem(itemFactory.create("item2", 11, 42.1f));
-        ArrayList<Split> splits = new ArrayList<>();
-        splits.add(splitFactory.create(12,10,11));
-        ArrayList<Split> splits2 = new ArrayList<>();
-        splits2.add(splitFactory.create(10,10,10));
-        splits2.add(splitFactory.create(12,10,11));
-        ArrayList<Split> splits3 = new ArrayList<>();
-        splits3.add(splitFactory.create(11,10,10));
-
-        User user1 = userFactory.create("testpersonA", 12,"asd2123",splits);
-        User user2 = userFactory.create("testpersonB", 10,"tasd", splits2);
-        User user3 = userFactory.create("testpersonC", 11,"tasd", splits3);
-
-        HashMap<Integer, Bill> bills = new HashMap<>();
-        bills.put(bill1.getId(), bill1);
-        HashMap<Integer, User> users = new HashMap<>();
-        users.put(user1.getId(), user1);
-        users.put(user2.getId(), user2);
-        users.put(user3.getId(), user3);
-
-        userDataAccessObject.setBills(bills);
-        userDataAccessObject.setUsers(users);
-
-
-
-        SwingUtilities.invokeLater(() -> {
-            BillDisplayView view = new BillDisplayView(userDataAccessObject,userDataAccessObject.getBill(10));
-
-            // set up controllers
-
-            UploadReceiptOutputBoundary uploadReceiptOutputBoundary = new UploadReceiptPresenter();
-
-            final UploadReceiptInputBoundary uploadReceiptInteractor =
-                    new UploadReceiptInteractor(userDataAccessObject, uploadReceiptOutputBoundary);
-
-            final UploadReceiptController uploadReceiptController1 = new UploadReceiptController(uploadReceiptInteractor);
-
-            SplitManagementOutputBoundary splitManagementOutputBoundary = new SplitManagementPresenter();
-
-            final ClearBillInputBoundary clearBillInteractor =
-                    new ClearBillInteractor(userDataAccessObject, splitManagementOutputBoundary);
-
-            final ClearBillController clearBillController1 = new ClearBillController(clearBillInteractor);
-
-            final DistributeBillEvenInputBoundary distributeBillInteractor =
-                    new DistributeBillEvenInteractor(userDataAccessObject, splitManagementOutputBoundary);
-
-            final DistributeBillController distributeBillController1 = new DistributeBillController(distributeBillInteractor);
-
-            final ModifySplitInputBoundary modifySplitInterator =
-                    new ModifySplitInteractor(userDataAccessObject, splitManagementOutputBoundary);
-
-            final ModifySplitController modifySplitController1 = new ModifySplitController(modifySplitInterator);
-
-            view.setClearBillController(clearBillController1);
-
-            view.setDistributeBillController(distributeBillController1);
-
-            view.setModifySplitController(modifySplitController1);
-
-            view.setUploadReceiptController(uploadReceiptController1);
-
-            view.setVisible(true);
-        });
-    }
-}
-
-class RoundedBorder extends AbstractBorder {
-    private int radius;
-
-    RoundedBorder(int radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.LIGHT_GRAY);
-        g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        g2.dispose();
-    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         System.out.println("property changed now displaying bill display");
         if (evt.getPropertyName().equals("state")) {
             this.remove(sidebarPanel);
-            sidebarPanel = new Sidebar(billDisplayController, changePasswordController, logoutController, this.billDisplayViewModel.getState());
+            sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, this.billDisplayViewModel.getState());
             add(sidebarPanel);
 
+            drawMainContent();
         }
     }
 
@@ -1003,8 +897,30 @@ class RoundedBorder extends AbstractBorder {
         this.logoutController = logoutController;
     }
 
-    public void setBillDisplayController(BillDisplayController billDisplayController) {
-        this.billDisplayController = billDisplayController;
+    public void setBillDisplayPresenter(BillDisplayPresenter billDisplayPresenter) {
+        this.billDisplayPresenter = billDisplayPresenter;
     }
+
+
+}
+
+class RoundedBorder extends AbstractBorder {
+    private int radius;
+
+    RoundedBorder(int radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(Color.LIGHT_GRAY);
+        g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+        g2.dispose();
+    }
+
+
+
 
 }
