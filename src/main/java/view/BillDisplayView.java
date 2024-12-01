@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.beans.PropertyChangeEvent;
@@ -15,8 +17,12 @@ import java.beans.PropertyChangeListener;
 
 import data_access.FileDAO;
 import entity.bill.Bill;
+import entity.bill.BillFactory;
 import entity.item.Item;
 import entity.item.ItemFactory;
+import entity.split.Split;
+import entity.split.SplitFactory;
+import entity.users.CommonUserFactory;
 import entity.users.User;
 // components
 import interface_adapter.bill_splitter.BillDisplayPresenter;
@@ -30,7 +36,19 @@ import interface_adapter.logout.LogoutController;
 import interface_adapter.split_management.ClearBillController;
 import interface_adapter.split_management.DistributeBillController;
 import interface_adapter.split_management.ModifySplitController;
+import interface_adapter.split_management.SplitManagementPresenter;
 import interface_adapter.upload_receipt.UploadReceiptController;
+import interface_adapter.upload_receipt.UploadReceiptPresenter;
+import use_case.split_management.SplitManagementOutputBoundary;
+import use_case.split_management.clear_bill.ClearBillInputBoundary;
+import use_case.split_management.clear_bill.ClearBillInteractor;
+import use_case.split_management.distribute_bill_even.DistributeBillEvenInputBoundary;
+import use_case.split_management.distribute_bill_even.DistributeBillEvenInteractor;
+import use_case.split_management.modify_split.ModifySplitInputBoundary;
+import use_case.split_management.modify_split.ModifySplitInteractor;
+import use_case.upload_receipt.UploadReceiptInputBoundary;
+import use_case.upload_receipt.UploadReceiptInteractor;
+import use_case.upload_receipt.UploadReceiptOutputBoundary;
 
 
 // TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
@@ -62,9 +80,6 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
     public BillDisplayView(BillDisplayViewModel billDisplayViewModel) {
         this.billDisplayViewModel = billDisplayViewModel;
         this.billDisplayViewModel.addPropertyChangeListener(this);
-
-
-
 
     }
 
@@ -267,8 +282,34 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             memberButtonsPanel.add(memberButton);
         }
 
+        // Add Members
+        JLabel addMembersLabel = new JLabel("Add Member");
+        addMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton addMembersButton = new JButton("+");
+        addMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        addMembersButton.setFocusPainted(false);
+        addMembersButton.addActionListener(e -> addMembersEvent(this));
+
+
+
+        // Remove Members
+        JLabel removeMembersLabel = new JLabel("Remove Member");
+        removeMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton removeMembersButton = new JButton("+");
+        removeMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        removeMembersButton.setFocusPainted(false);
+        removeMembersButton.addActionListener(e -> removeMembersEvent(this));
+
+        memberButtonsPanel.add(addMembersLabel);
+        memberButtonsPanel.add(addMembersButton);
+        memberButtonsPanel.add(removeMembersLabel);
+        memberButtonsPanel.add(removeMembersButton);
+
+
         membersPanel.add(membersLabel);
         membersPanel.add(memberButtonsPanel);
+
+
     }
 
     private void createItemsTable() {
@@ -322,7 +363,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         headerPanel.add(DistributeBillLabel);
         headerPanel.add(DistributeBillButton);
 
-        JLabel ClearBillLabel = new JLabel("Clear Bill");
+        JLabel ClearBillLabel = new JLabel("Clear Splits");
         ClearBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
         JButton ClearBillButton = new JButton("+");
@@ -330,6 +371,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         ClearBillButton.setFocusPainted(false);
         ClearBillButton.addActionListener(e -> ClearBillEvent(this));
 
+        // Edit price
         JLabel EditPriceLabel = new JLabel("Edit Price of an Item");
         EditPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
@@ -338,10 +380,14 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         EditPriceButton.setFocusPainted(false);
         EditPriceButton.addActionListener(e -> EditPriceEvent(this));
 
+
+
         headerPanel.add(ClearBillLabel);
         headerPanel.add(ClearBillButton);
         headerPanel.add(EditPriceLabel);
         headerPanel.add(EditPriceButton);
+
+
 
         // Create the table model
         String[] columnNames = {"All Items", "Assigned Splits"};
@@ -389,6 +435,116 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
         itemsPanel.add(tablePanel, BorderLayout.CENTER);
+    }
+
+    private void addMembersEvent(JPanel parent) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        JLabel titleLabel = new JLabel("Add Member");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+        JTextField newMemberField = new JTextField(20);
+        mainPanel.add(new JLabel("New Member: "));
+        mainPanel.add(newMemberField);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Add a New Member",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION){
+            String newUserName = newMemberField.getText();
+            Map<Integer, User> DAOUserMap = userDataAccessObject.getAllUsers();
+            Map<String, Integer> reverseUsers = new HashMap<>();
+            for (int key : DAOUserMap.keySet()){
+                String userName = DAOUserMap.get(key).getName();
+                reverseUsers.put(userName, key);
+            }
+            if (reverseUsers.containsKey(newUserName)) {
+                int userid = reverseUsers.get(newUserName);
+                if (bill.getUsers().contains(userid)) {
+                    JOptionPane.showMessageDialog(mainPanel, "Member already in bill.");
+                } else {
+                    int newuserId = reverseUsers.get(newUserName);
+                    bill.addUser(newuserId);
+                    userDataAccessObject.setBill(bill.getId(), bill);
+
+                    this.remove(mainContentPanel);
+                    createMainContent();
+                    parent.add(mainContentPanel);
+                    parent.repaint();
+                    parent.revalidate();
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(mainPanel, "Error, user not found.");
+            }
+        }
+
+    }
+
+    private void removeMembersEvent(JPanel parent) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        JLabel titleLabel = new JLabel("Remove Member");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+
+        Map<String, Integer> reverseUsers = new HashMap<>();
+        for(int userId : bill.getUsers()){
+            String userName = userDataAccessObject.getUser(userId).getName();
+            reverseUsers.put(userName, userId);
+        }
+
+        final JComboBox<String> userSelection =
+                new JComboBox<>(reverseUsers.keySet().toArray(new String[reverseUsers.size()]));
+        mainPanel.add(userSelection);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Remove item",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION){
+            int userId = reverseUsers.get(userSelection.getSelectedItem());
+            User user = userDataAccessObject.getUser(userId);
+            for (Split split : new ArrayList<>(user.getSplits())) {
+                if (bill.getItems().containsKey(split.getItemId()) && split.getBillId() == bill.getId()) {
+                    user.removeSplit(split.getItemId(), split.getBillId());
+                }
+            }
+
+
+            userDataAccessObject.setUser(userId, user);
+
+            for (int i = 0; i<bill.getUsers().size(); i++){
+                if (bill.getUsers().get(i) == userId){
+                    bill.removeUser(i);
+                }
+            }
+
+
+            userDataAccessObject.setBill(bill.getId(), bill);
+
+
+
+
+            // the member section is created and called in the mainContent panel already so dont have to change.
+            this.remove(mainContentPanel);
+            createMainContent();
+            parent.add(mainContentPanel, BorderLayout.CENTER);
+            parent.revalidate();
+            parent.repaint();
+
+        }
     }
 
     private void showRemoveItemDialog(JPanel parent) {
@@ -732,7 +888,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create input fields
-        JTextField itemNameField = new JTextField();
+        JTextField itemNameField = new JTextField("Please enter item name here");
         itemNameField.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(15),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -920,7 +1076,32 @@ class RoundedBorder extends AbstractBorder {
         g2.dispose();
     }
 
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return new Insets(this.radius/2, this.radius/2, this.radius/2, this.radius/2);
+    }
+}
 
+class DashBorderRect extends AbstractBorder {
+    private int thickness;
 
+    public DashBorderRect(int thickness) {
+        this.thickness = thickness;
+    }
 
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        Graphics2D g2d = (Graphics2D) g.create();
+
+        g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER, 10.0f,
+                new float[]{5.0f}, 0.0f));
+        g2d.drawRect(x, y, width - 1, height - 1);
+        g2d.dispose();
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return new Insets(thickness, thickness, thickness, thickness);
+    }
 }
