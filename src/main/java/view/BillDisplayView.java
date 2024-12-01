@@ -145,30 +145,42 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         JButton dashboardBtn = createSidebarButton("Dashboard");
         dashboardBtn.addActionListener(e -> billDisplayPresenter.switchToDashboardView(billDisplayViewModel.getState().getUsername()));
 
-
-        // TODO idk whether this is needed or not as this is already the page to manage splits.
-        JButton iousBtn = createSidebarButton("IOUs");
-        iousBtn.addActionListener(e -> {
-            System.out.println("Navigate to IOUs");
-        });
-
         JButton createBillBtn = createSidebarButton("Create new bill");
-        createBillBtn.addActionListener(e -> {
-            System.out.println("Create new bill");
-        });
+        createBillBtn.addActionListener(e -> addNewBillEvent(this));
 
         // Add components to sidebar in correct order
         sidebarPanel.add(profilePanel);
         sidebarPanel.add(new JSeparator());
         navigationPanel.add(dashboardBtn);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
-        navigationPanel.add(iousBtn);
         navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
         navigationPanel.add(createBillBtn);
         sidebarPanel.add(navigationPanel);
 
         // Add a glue component to push everything to the top
         sidebarPanel.add(Box.createVerticalGlue());
+    }
+
+    private void addNewBillEvent(JPanel parent) {
+        System.out.println("Create new bill");
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+
+        JLabel titleLabel = new JLabel("Create New Bill");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        mainPanel.add(titleLabel);
+        JTextField billNameField = new JTextField(15);
+        mainPanel.add(new JLabel("Enter bill name: "));
+        mainPanel.add(billNameField);
+
+        int result = JOptionPane.showConfirmDialog(
+                null,
+                mainPanel,
+                "Add new bill",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
     }
 
     private JButton createSidebarButton(String text) {
