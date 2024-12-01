@@ -1,3 +1,4 @@
+
 package view;
 
 import java.awt.*;
@@ -6,12 +7,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
+import javax.swing.*;
 
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordViewModel;
@@ -22,7 +18,7 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
     private final String viewName = "change password";
     private final ChangePasswordViewModel changePasswordViewModel;
     private ChangePasswordController changePasswordController;
-
+    private final JTextField usernameField = new JTextField(15);
     private final JTextField newPasswordField = new JTextField(15);
     private final JPasswordField confirmPasswordField = new JPasswordField(15);
 
@@ -42,6 +38,8 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         add(title);
 
+        final LabelTextPanel usernameInfo = new LabelTextPanel(
+                new JLabel("Username"), usernameField);
         final LabelTextPanel newPasswordInfo = new LabelTextPanel(
                 new JLabel("New Password"), newPasswordField);
         newPasswordInfo.setPreferredSize(new Dimension(150, 30));
@@ -49,6 +47,7 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
                 new JLabel("Confirm Password"), confirmPasswordField);
         confirmPasswordInfo.setPreferredSize(new Dimension(150, 30));
         final JPanel buttons = new JPanel();
+
         clear = new JButton("Clear");
         confirm = new JButton("Confirm");
         toLogin = new JButton("Return to Login");
@@ -58,6 +57,7 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.add(title);
+        this.add(usernameInfo);
         this.add(newPasswordInfo);
         this.add(confirmPasswordInfo);
         this.add(buttons);
@@ -65,6 +65,7 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
         clear.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
+                        usernameField.setText("");
                         newPasswordField.setText("");
                         confirmPasswordField.setText("");
                     }
@@ -75,6 +76,39 @@ public class ChangePasswordView extends JPanel implements ActionListener, Proper
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         changePasswordController.switchToLoginView();
+                    }
+                }
+        );
+
+        confirm.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        if (newPasswordField.getText().equals(confirmPasswordField.getText())) {
+                            boolean success = changePasswordController.execute(usernameField.getText(), newPasswordField.getText());
+                            if (success) {
+                                JOptionPane.showMessageDialog(
+                                        ChangePasswordView.this,
+                                        "Password successfully changed",
+                                        "Success",
+                                        JOptionPane.INFORMATION_MESSAGE
+                                );
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(
+                                        ChangePasswordView.this,
+                                        "Username not found",
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    ChangePasswordView.this,
+                                    "Passwords don't match",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
                     }
                 }
         );
