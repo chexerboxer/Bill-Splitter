@@ -265,11 +265,26 @@ public class BillDisplayView extends JFrame {
         addMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
         addMembersButton.setFocusPainted(false);
         addMembersButton.addActionListener(e -> addMembersEvent(this));
+
+
+
+        // Remove Members
+        JLabel removeMembersLabel = new JLabel("Remove Member");
+        removeMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        JButton removeMembersButton = new JButton("+");
+        removeMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        removeMembersButton.setFocusPainted(false);
+        removeMembersButton.addActionListener(e -> removeMembersEvent(this));
+
         memberButtonsPanel.add(addMembersLabel);
         memberButtonsPanel.add(addMembersButton);
+        memberButtonsPanel.add(removeMembersLabel);
+        memberButtonsPanel.add(removeMembersButton);
+
 
         membersPanel.add(membersLabel);
         membersPanel.add(memberButtonsPanel);
+
 
     }
 
@@ -340,22 +355,13 @@ public class BillDisplayView extends JFrame {
         EditPriceButton.setFocusPainted(false);
         EditPriceButton.addActionListener(e -> EditPriceEvent(this));
 
-        // Remove Members
-        JLabel removeMembersLabel = new JLabel("Remove Member");
-        removeMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        JButton removeMembersButton = new JButton("+");
-        removeMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
-        removeMembersButton.setFocusPainted(false);
-        removeMembersButton.addActionListener(e -> removeMembersEvent(this));
-
 
 
         headerPanel.add(ClearBillLabel);
         headerPanel.add(ClearBillButton);
         headerPanel.add(EditPriceLabel);
         headerPanel.add(EditPriceButton);
-        headerPanel.add(removeMembersLabel);
-        headerPanel.add(removeMembersButton);
+
 
 
         // Create the table model
@@ -443,7 +449,7 @@ public class BillDisplayView extends JFrame {
                 userDataAccessObject.setBill(bill.getId(), bill);
 
                 this.remove(mainContentPanel);
-                createMembersSection();
+                createMainContent();
                 parent.add(mainContentPanel);
                 parent.repaint();
                 parent.revalidate();
@@ -490,25 +496,29 @@ public class BillDisplayView extends JFrame {
                     user.removeSplit(split.getItemId(), split.getBillId());
                 }
             }
+
+
             userDataAccessObject.setUser(userId, user);
+
             for (int i = 0; i<bill.getUsers().size(); i++){
                 if (bill.getUsers().get(i) == userId){
                     bill.removeUser(i);
                 }
             }
+
+
             userDataAccessObject.setBill(bill.getId(), bill);
-            // 1)first remove all splits in the user that has this bill
-            // 2)just write a helper in common user thing
 
-            // 3)remove user from bill users list
-            // 4)bill.remove the user then call the userDAO setBill to update the DAO
 
-            // 5) redraw the all member panel
+
+
+            // the member section is created and called in the mainContent panel already so dont have to change.
             this.remove(mainContentPanel);
-            createMembersSection();
-            parent.add(mainContentPanel);
-            parent.repaint();
+            createMainContent();
+            parent.add(mainContentPanel, BorderLayout.CENTER);
             parent.revalidate();
+            parent.repaint();
+
         }
     }
 
@@ -1010,12 +1020,14 @@ public class BillDisplayView extends JFrame {
         User user1 = userFactory.create("testpersonA", 12,"asd2123",splits);
         User user2 = userFactory.create("testpersonB", 10,"tasd", splits2);
         User user3 = userFactory.create("testpersonC", 11,"tasd", splits3);
+        User user4 = userFactory.create("notinbill", "we");
         HashMap<Integer, Bill> bills = new HashMap<>();
         bills.put(bill1.getId(), bill1);
         HashMap<Integer, User> users = new HashMap<>();
         users.put(user1.getId(), user1);
         users.put(user2.getId(), user2);
         users.put(user3.getId(), user3);
+        users.put(user4.getId(), user4);
 
         userDataAccessObject.setBills(bills);
         userDataAccessObject.setUsers(users);
