@@ -70,7 +70,6 @@ public class BillCardPanel extends JPanel {
         });
 
 
-        setPreferredSize(new Dimension(100, 100));
 
     }
 

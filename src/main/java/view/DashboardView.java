@@ -43,15 +43,14 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
         DashboardState currentState = dashboardViewModel.getState();
 
         // styling
-        setSize(1000,700);
         setLayout(new BorderLayout());
 
         sidebarPanel = new Sidebar(dashboardController, changePasswordController, logoutController, currentState);
-
         createMainContent(currentState);
 
         add(sidebarPanel, BorderLayout.WEST);
         add(mainContentPanel, BorderLayout.CENTER);
+
     }
 
     private void createMainContent(DashboardState currentState) {
@@ -64,7 +63,6 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
         JLabel titleLabel = new JLabel("All Your Bills");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
-        headerPanel.setMaximumSize(new Dimension(300, 100));
 
         headerPanel.add(titleLabel);
 
@@ -102,7 +100,7 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
                         billId,
                         currentState.getUsername(),
                         dashboardController);
-                billCard.setPreferredSize(new Dimension(100,100));
+                billCard.setMaximumSize(new Dimension(getWidth(),100));
 
                 allBillsPanel.add(billCard);
             }
@@ -116,10 +114,10 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("state")) {
             this.settingBills(this.dashboardViewModel.getState());
-            // TODO: refactor sidebar, have method to set user
-            this.remove(sidebarPanel);
+
+            remove(sidebarPanel);
             sidebarPanel = new Sidebar(dashboardController, changePasswordController, logoutController, this.dashboardViewModel.getState());
-            add(sidebarPanel);
+            add(sidebarPanel, BorderLayout.WEST);
 
         }
 

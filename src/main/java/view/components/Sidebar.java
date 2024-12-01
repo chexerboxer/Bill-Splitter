@@ -20,8 +20,7 @@ public class Sidebar extends JPanel {
                    DashboardState currentState) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//        setBackground(new Color(230, 230, 230));
-        setBackground(Color.CYAN);
+        setBackground(new Color(230, 230, 230));
         setPreferredSize(new Dimension(200, getHeight()));
 
         // User profile section at the top
@@ -33,7 +32,7 @@ public class Sidebar extends JPanel {
 
         JPanel userInfoPanel = new JPanel();
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
-//        userInfoPanel.setBackground(new Color(230, 230, 230));
+        userInfoPanel.setBackground(new Color(230, 230, 230));
 
         JLabel usernameLabel = new JLabel(currentState.getUsername());
         userInfoPanel.add(usernameLabel);
@@ -54,9 +53,11 @@ public class Sidebar extends JPanel {
         createBillBtn.addActionListener(e -> {
             String newBillName = JOptionPane.showInputDialog("New bill name:", "");
             if (e.getSource().equals(createBillBtn)) {
-                dashboardController.addBill(currentState.getUserBillsData(),
-                        currentState.getUsername(),
-                        newBillName);
+                if (newBillName != null) {
+                    dashboardController.addBill(currentState.getUserBillsData(),
+                            currentState.getUsername(),
+                            newBillName);
+                }
             }
 
         });
@@ -143,9 +144,11 @@ public class Sidebar extends JPanel {
 
         JButton createBillBtn = createSidebarButton("Create new bill");
         createBillBtn.addActionListener(e -> {
-            String newBillName = JOptionPane.showInputDialog("New bill name:");
+            String newBillName = JOptionPane.showInputDialog("New bill name:", "");
             if (e.getSource().equals(createBillBtn)) {
-                billDisplayPresenter.addBill(currentState.getUsername(), newBillName);
+                if (newBillName != null) {
+                    billDisplayPresenter.addBill(currentState.getUsername(), newBillName);
+                }
             }
         });
 
