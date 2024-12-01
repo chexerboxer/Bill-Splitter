@@ -43,6 +43,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
         title.setFont(new Font("Arial",Font.BOLD, 50));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.setSize(1000, 700);
 
         usernameInputField.setPreferredSize(new Dimension(100, 25));
         passwordInputField.setPreferredSize(new Dimension(100, 25));

@@ -1,6 +1,7 @@
 package app;
 
 import javax.swing.JFrame;
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -17,15 +18,19 @@ public class Main {
                                             .addChangePasswordView()
                                             .addLoginView()
                                             .addSignupView()
-                                            .addLoggedInView()
+                                            .addDashboardView()
+                .addBillDisplayView()
                                             .addChangePasswordUseCase()
                                             .addSignupUseCase()
                                             .addLoginUseCase()
                                             .addChangePasswordUseCase()
                                             .addLogoutUseCase()
+                .addDashboardUseCase()
+                .addBillDisplayUseCase()
                                             .build();
 
-        application.pack();
+        application.setSize(new Dimension(1200,700));
+
         application.setVisible(true);
     }
 }

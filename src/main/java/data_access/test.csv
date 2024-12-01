@@ -1,5 +1,4 @@
 type,name,id,users/password,items/splits,total
-User,toryn,777366308,null,[]
-User,,832033423,,[]
-User,torync,307834608,123,[]
+User,,469148335,,[]
 User,hi,903833313,hi,[]
+Bill,test,10,[903833313;469148335],[],0.000000

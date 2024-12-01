@@ -1,6 +1,9 @@
 package use_case.login;
 
+import entity.bill.Bill;
 import entity.users.User;
+
+import java.util.ArrayList;
 
 /**
  * DAO for the Login Use Case.
@@ -37,4 +40,11 @@ public interface LoginUserDataAccessInterface {
      * @param username the new current username; null to indicate that no one is currently logged into the application.
      */
     void setCurrentUsername(String username);
+
+    /**
+     * Returns the bills associated with the user.
+     * @param user the user whose bills need to be looked up
+     * @return the list of bills the user is a member in
+     */
+    ArrayList<Bill> getUserBills(User user);
 }

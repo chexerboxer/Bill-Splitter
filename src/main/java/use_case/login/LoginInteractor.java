@@ -1,7 +1,11 @@
 package use_case.login;
 
 import data_access.FileDAO;
+import entity.bill.Bill;
 import entity.users.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The Login Interactor.
@@ -11,7 +15,6 @@ public class LoginInteractor implements LoginInputBoundary {
     private final LoginOutputBoundary loginPresenter;
 
     public LoginInteractor(LoginUserDataAccessInterface userDataAccessInterface,
-//                            LoginUserDataAccessInterface userDataAccessInterface,
                            LoginOutputBoundary loginOutputBoundary) {
         this.userDataAccessObject = userDataAccessInterface;
         this.loginPresenter = loginOutputBoundary;
@@ -34,19 +37,15 @@ public class LoginInteractor implements LoginInputBoundary {
             else {
 
                 final User user = userDataAccessObject.get(loginInputData.getUsername());
-                if (user == null) {
-                    loginPresenter.prepareFailView("User not found.");
-                    return;
-                }
-                if (!password.equals(user.getPassword())) {
-                    loginPresenter.prepareFailView("Incorrect password for \"" + username + "\".");
-                } else {
-                    userDataAccessObject.setCurrentUsername(user.getName());
-                    userDataAccessObject.setCurrentUsername(user.getName());
-                    final LoginOutputData loginOutputData = new LoginOutputData(user.getName(), false);
-                    loginPresenter.prepareSuccessView(loginOutputData);
+                final ArrayList<Bill> userBills = userDataAccessObject.getUserBills(user);
+                final HashMap<Integer, String> userBillsData = new HashMap<>();
+
+                for (Bill bill: userBills) {
+                    userBillsData.put(bill.getId(), bill.getName());
                 }
 
+                final LoginOutputData loginOutputData = new LoginOutputData(user.getName(), userBillsData, false);
+                loginPresenter.prepareSuccessView(loginOutputData);
             }
         }
     }
