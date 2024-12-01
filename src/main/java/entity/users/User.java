@@ -56,4 +56,9 @@ public interface User {
      * @return amount of money distributed to this person on this item
      */
     float distributedAmount(int itemId, int billId);
+
+    void setPassword(String password);
+
 }
+
+

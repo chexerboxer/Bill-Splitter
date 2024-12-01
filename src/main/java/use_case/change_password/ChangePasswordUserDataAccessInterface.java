@@ -12,4 +12,11 @@ public interface ChangePasswordUserDataAccessInterface {
      * @param user the user whose password is to be updated
      */
     void changePassword(User user);
+
+    /**
+     * Retrieves a user by their username.
+     * @param username the username to search for
+     * @return the user associated with the given username
+     */
+    User getByUsername(String username);
 }
