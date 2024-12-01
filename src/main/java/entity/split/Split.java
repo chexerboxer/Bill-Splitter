@@ -9,7 +9,7 @@ import java.util.Random;
  *  The representation of a split in our program.
  *  Splits are a specific amount of money owed by a user from one item in some bill
  */
-public class Split implements GenerateId {
+public class Split {
     private float amount;
     private final int billId;
     private final int itemId;
@@ -25,19 +25,17 @@ public class Split implements GenerateId {
     }
 
 
-    public boolean equals(Split split){
-        return this.amount == split.getAmount() && this.billId == split.getBillId() && this.itemId == split.getItemId();
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Split split = (Split) obj;
+        return Float.compare(split.amount, amount) == 0 &&
+                billId == split.billId &&
+                itemId == split.itemId;
     }
 
     public void setAmount(float amount) {
         this.amount = amount;
-    }
-    @Override
-    public int generateId() {
-        Random random = new Random();
-        int idBound = END_ID_RANGE - START_ID_RANGE + 1;
-        int id = random.nextInt(idBound) + START_ID_RANGE;
-        return id;
     }
 
     public float getAmount() {
