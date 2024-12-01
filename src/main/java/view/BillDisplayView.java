@@ -459,20 +459,27 @@ public class BillDisplayView extends JFrame {
 
         if (result == JOptionPane.OK_OPTION){
             int userId = reverseUsers.get(userSelection.getSelectedItem());
+            User user = userDataAccessObject.getUser(userId);
+            for (int itemId : bill.getItems().keySet()){
+                user.removeSplit(itemId, bill.getId());
+            }
+            userDataAccessObject.setUser(userId, user);
+            for (int i = 0; i<bill.getUsers().size(); i++){
+                if (bill.getUsers().get(i) == userId){
+                    bill.removeUser(i);
+                }
+            }
+            System.out.println(bill.getUsers());
+            userDataAccessObject.setBill(bill.getId(), bill);
+            // 1)first remove all splits in the user that has this bill
+            // 2)just write a helper in common user thing
 
-            // first remove all splits in the user that has this bill
-            // just write a helper in common user thing
+            // 3)remove user from bill users list
+            // 4)bill.remove the user then call the userDAO setBill to update the DAO
 
-            // remove user from bill users list
-            // bill.remove the user then call the userDAO setBill to update the DAO
-
-            // redraw the all member panel
-
-
-
-
+            // 5) redraw the all member panel
             this.remove(mainContentPanel);
-            createMainContent();
+            createMembersSection();
             parent.add(mainContentPanel);
             parent.repaint();
             parent.revalidate();
@@ -543,7 +550,7 @@ public class BillDisplayView extends JFrame {
             parent.revalidate();
 
 
-            JOptionPane.getRootFrame().dispose();
+
 
                 });
 
