@@ -3,18 +3,14 @@ package interface_adapter.bill_splitter;
 import data_access.FileDAO;
 import entity.bill.Bill;
 import entity.users.User;
-import interface_adapter.LoggedInPresenter;
 import interface_adapter.ViewManagerModel;
-import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
-import interface_adapter.login.LoginViewModel;
-import interface_adapter.signup.SignupViewModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BillDisplayPresenter implements LoggedInPresenter {
+public class BillDisplayPresenter {
 
 
     private final DashboardViewModel dashboardViewModel;
@@ -29,7 +25,6 @@ public class BillDisplayPresenter implements LoggedInPresenter {
         this.userDataAccessObject = userDataAccessObject;
     }
 
-    @Override
     public void switchToDashboardView(String username) {
 
         final User user = userDataAccessObject.get(username);
@@ -50,6 +45,16 @@ public class BillDisplayPresenter implements LoggedInPresenter {
         this.viewManagerModel.firePropertyChanged();
 
 
+    }
+
+    public void addBill(String username, String newBillName) {
+        // create new bill object
+        final User creator = userDataAccessObject.get(username);
+        final int creatorId = creator.getId();
+        final Bill newBill = new Bill(newBillName, creatorId);
+        userDataAccessObject.addBill(newBill);
+
+        // dashboard view will automatically update after switching
     }
 
 }

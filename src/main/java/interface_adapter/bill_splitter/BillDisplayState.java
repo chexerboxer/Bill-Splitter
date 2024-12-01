@@ -1,8 +1,6 @@
 package interface_adapter.bill_splitter;
 
-import interface_adapter.LoggedInState;
-
-public class BillDisplayState implements LoggedInState {
+public class BillDisplayState {
     private String username;
     private int billId;
 

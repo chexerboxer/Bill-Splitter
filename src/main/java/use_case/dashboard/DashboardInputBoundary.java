@@ -2,6 +2,8 @@ package use_case.dashboard;
 
 import use_case.dashboard.DashboardInputData;
 
+import java.util.HashMap;
+
 public interface DashboardInputBoundary {
 
     /**
@@ -18,4 +20,6 @@ public interface DashboardInputBoundary {
     void switchtoChangePasswordView();
 
     void switchToBillView(String username, int billId);
+
+    void addBill(HashMap<Integer, String> userBillsData, String username, String newBillName);
 }

@@ -1,12 +1,11 @@
 package interface_adapter.dashboard;
 
-import interface_adapter.LoggedInPresenter;
 import use_case.dashboard.DashboardInputBoundary;
 import use_case.dashboard.DashboardInputData;
 
 import java.util.HashMap;
 
-public class DashboardController implements LoggedInPresenter {
+public class DashboardController {
     private final DashboardInputBoundary dashboardUseCaseInteractor;
 
 
@@ -39,9 +38,8 @@ public class DashboardController implements LoggedInPresenter {
         dashboardUseCaseInteractor.switchToBillView(username, billId);
     }
 
-    @Override
-    public void switchToDashboardView(String username) {
-        // does nothing but exists to be implemented by the sidebar
+    public void addBill(HashMap<Integer, String> userBillsData, String username, String newBillName) {
+        dashboardUseCaseInteractor.addBill(userBillsData, username, newBillName);
     }
 
 }

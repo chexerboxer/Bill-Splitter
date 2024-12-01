@@ -24,9 +24,12 @@ public class Bill implements GenerateId {
     private static final int END_ID_RANGE = 999999;
 
 
-    public Bill(String name) {
+    public Bill(String name, int creatorId) {
         this.name = name;
         this.id = generateId();
+        ArrayList<Integer> users = new ArrayList<>();
+        users.add(creatorId);
+        this.users = users;
     }
 
     public Bill(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){

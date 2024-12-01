@@ -10,8 +10,8 @@ import java.util.HashMap;
  */
 public class BillFactory {
 
-    public Bill create(String name) {
-        return new Bill(name);
+    public Bill create(String name, int creatorId) {
+        return new Bill(name, creatorId);
     }
 
     public Bill create(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){

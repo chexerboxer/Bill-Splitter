@@ -33,4 +33,6 @@ public interface DashboardUserDataAccessInterface {
      */
 
     boolean removeBill(int billId);
+
+    void addBill(Bill bill);
 }
