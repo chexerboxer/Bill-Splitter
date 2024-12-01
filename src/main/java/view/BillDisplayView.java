@@ -406,7 +406,7 @@ public class BillDisplayView extends JFrame {
         itemsPanel.add(tablePanel, BorderLayout.CENTER);
     }
 
-    private void addMembersEvent(BillDisplayView billDisplayView) {
+    private void addMembersEvent(JFrame parent) {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
@@ -426,7 +426,32 @@ public class BillDisplayView extends JFrame {
         );
 
         if (result == JOptionPane.OK_OPTION){
+            String newUserName = newMemberField.getText();
+            Map<Integer, User> DAOUserMap = userDataAccessObject.getAllUsers();
+            Map<String, Integer> reverseUsers = new HashMap<>();
+            for (int key : DAOUserMap.keySet()){
+                String userName = DAOUserMap.get(key).getName();
+                reverseUsers.put(userName, key);
+            }
+            if (reverseUsers.containsKey(newUserName)) {
+                int userid = reverseUsers.get(newUserName);
+                if (bill.getUsers().contains(userid)) {
+                    JOptionPane.showMessageDialog(mainPanel, "Member already in bill.");
+                } else {
+                int newuserId = reverseUsers.get(newUserName);
+                bill.addUser(newuserId);
+                userDataAccessObject.setBill(bill.getId(), bill);
 
+                this.remove(mainContentPanel);
+                createMembersSection();
+                parent.add(mainContentPanel);
+                parent.repaint();
+                parent.revalidate();
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(mainPanel, "Error, user not found.");
+            }
         }
 
     }
@@ -460,8 +485,10 @@ public class BillDisplayView extends JFrame {
         if (result == JOptionPane.OK_OPTION){
             int userId = reverseUsers.get(userSelection.getSelectedItem());
             User user = userDataAccessObject.getUser(userId);
-            for (int itemId : bill.getItems().keySet()){
-                user.removeSplit(itemId, bill.getId());
+            for (Split split : new ArrayList<>(user.getSplits())) {
+                if (bill.getItems().containsKey(split.getItemId()) && split.getBillId() == bill.getId()) {
+                    user.removeSplit(split.getItemId(), split.getBillId());
+                }
             }
             userDataAccessObject.setUser(userId, user);
             for (int i = 0; i<bill.getUsers().size(); i++){
@@ -469,7 +496,6 @@ public class BillDisplayView extends JFrame {
                     bill.removeUser(i);
                 }
             }
-            System.out.println(bill.getUsers());
             userDataAccessObject.setBill(bill.getId(), bill);
             // 1)first remove all splits in the user that has this bill
             // 2)just write a helper in common user thing
@@ -528,7 +554,6 @@ public class BillDisplayView extends JFrame {
             for (JCheckBox checkBox : checkBoxes){
                 if(checkBox.isSelected()){
                     // remove item from bill
-                    System.out.println(checkBox.getText());
                     bill.removeItem(reverseItems.get(checkBox.getText()));
                     userDataAccessObject.setBill(bill.getId(), bill);
 
@@ -985,7 +1010,6 @@ public class BillDisplayView extends JFrame {
         User user1 = userFactory.create("testpersonA", 12,"asd2123",splits);
         User user2 = userFactory.create("testpersonB", 10,"tasd", splits2);
         User user3 = userFactory.create("testpersonC", 11,"tasd", splits3);
-
         HashMap<Integer, Bill> bills = new HashMap<>();
         bills.put(bill1.getId(), bill1);
         HashMap<Integer, User> users = new HashMap<>();
