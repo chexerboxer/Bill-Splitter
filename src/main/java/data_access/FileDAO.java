@@ -74,7 +74,7 @@ public class FileDAO implements FileDAOInterface,
                 final String header = reader.readLine();
 
                 if (!header.equals(HEADER)) {
-                    throw new RuntimeException(String.format("header should be%n: %s%but was:%n%s", HEADER, header));
+                    throw new RuntimeException(String.format("header should be: %s but is: %s", HEADER, header));
                 }
 
                 String row;
