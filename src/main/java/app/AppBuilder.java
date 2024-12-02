@@ -64,10 +64,7 @@ import use_case.upload_receipt.UploadReceiptOutputBoundary;
 import view.*;
 
 /**
- * The AppBuilder class is responsible for putting together the pieces of
- * our CA architecture; piece by piece.
- * <p/>
- * This is done by adding each View and then adding related Use Cases.
+ * The AppBuilder class to initialize all the views and controllers needed for the program
  */
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -123,6 +120,10 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Change Password View to the application, a unique view for the usecase when a user first opens the app.
+     * @return this builder
+     */
     public AppBuilder addChangePasswordView() {
         changePasswordViewModel = new ChangePasswordViewModel();
         changePasswordView = new ChangePasswordView(changePasswordViewModel);
@@ -131,17 +132,19 @@ public class AppBuilder {
     }
 
     /**
-     * Adds the LoggedIn View to the application.
+     * Adds the Dashboard View to the application.
      * @return this builder
      */
-
     public AppBuilder addDashboardView() {
         dashboardViewModel = new DashboardViewModel();
         dashboardView = new DashboardView(dashboardViewModel);
         cardPanel.add(dashboardView, dashboardView.getViewName());
         return this;
     }
-
+    /**
+     * Adds the Bill Display View to the application.
+     * @return this builder
+     */
     public AppBuilder addBillDisplayView() {
         billDisplayViewModel = new BillDisplayViewModel();
 
@@ -221,6 +224,10 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Dashboard Use Cases to the application.
+     * @return this builder
+     */
     public AppBuilder addDashboardUseCase() {
         final DashboardOutputBoundary dashboardOutputBoundary = new DashboardPresenter(viewManagerModel,
                 dashboardViewModel,
@@ -235,9 +242,12 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Bill Display Use Cases to the application.
+     * @return this builder
+     */
     public AppBuilder addBillDisplayUseCase() {
         // set up controllers
-
         UploadReceiptOutputBoundary uploadReceiptOutputBoundary = new UploadReceiptPresenter();
 
         final UploadReceiptInputBoundary uploadReceiptInteractor =
@@ -290,17 +300,11 @@ public class AppBuilder {
 
 
         billDisplayView.setBillDisplayPresenter(billDisplayPresenter);
-
         billDisplayView.setChangePasswordController(changePasswordController);
-
         billDisplayView.setLogoutController(logoutController);
-
         billDisplayView.setClearBillController(clearBillController1);
-
         billDisplayView.setDistributeBillController(distributeBillController1);
-
         billDisplayView.setModifySplitController(modifySplitController1);
-
         billDisplayView.setUploadReceiptController(uploadReceiptController1);
 
         return this;

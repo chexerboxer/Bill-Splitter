@@ -19,18 +19,17 @@ public class Main {
                                             .addLoginView()
                                             .addSignupView()
                                             .addDashboardView()
-                .addBillDisplayView()
+                                            .addBillDisplayView()
                                             .addChangePasswordUseCase()
                                             .addSignupUseCase()
                                             .addLoginUseCase()
                                             .addChangePasswordUseCase()
                                             .addLogoutUseCase()
-                .addDashboardUseCase()
-                .addBillDisplayUseCase()
+                                            .addDashboardUseCase()
+                                            .addBillDisplayUseCase()
                                             .build();
 
         application.setSize(new Dimension(1200,700));
-
         application.setVisible(true);
     }
 }

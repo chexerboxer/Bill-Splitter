@@ -29,6 +29,7 @@ public class Bill implements GenerateId {
         this.id = generateId();
     }
 
+    // for creating new bills from the dashboard, where the current user is automatically added to the bill
     public Bill(String name, int creatorId) {
         this.name = name;
         this.id = generateId();
@@ -36,6 +37,7 @@ public class Bill implements GenerateId {
         users.add(creatorId);
         this.users = users;
     }
+
 
     public Bill(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){
         this.name = name;
@@ -59,9 +61,6 @@ public class Bill implements GenerateId {
                 && this.items.equals(bill.items);
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
     @Override
     public int generateId() {
         Random random = new Random();
@@ -70,21 +69,30 @@ public class Bill implements GenerateId {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
     public int getId() {
         return id;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     public ArrayList<Integer> getUsers() {return users;}
+
     public HashMap<Integer, Item> getItems() {
         return items;
     }
+
     public float getTotalAmount(){return totalAmount;}
 
     public void addUser(int id) {
         users.add(id);
     }
+
     public void removeUser (int userId) {
         for (int i=0;i<users.size();i++){
             if (users.get(i) == userId){
@@ -97,18 +105,15 @@ public class Bill implements GenerateId {
     }
 
     public void addItem(Item newItem) {
-        // TODO: add logic so adding occurrences isn't capital sensitive
         if (items.containsKey(newItem.getId())) {
             newItem.setId(newItem.generateId());
             addItem(newItem);
-        }
-        // TODO**: add elif to create new items not in database with Item constructor before adding to map
-        //  ?? the paramater is an item already though
-        else {
+        } else {
             items.put(newItem.getId(), newItem);
         }
         totalAmount = totalAmount + newItem.getCost();
     }
+
     public void removeItem(int oldItemId) {
         Item oldItem = items.get(oldItemId);
         totalAmount = totalAmount - oldItem.getCost();

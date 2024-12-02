@@ -25,7 +25,7 @@ public class ChangePasswordInteractor implements ChangePasswordInputBoundary {
 
     @Override
     public boolean execute(ChangePasswordInputData changePasswordInputData) {
-        User user = userDataAccessObject.getByUsername(changePasswordInputData.getUsername());
+        User user = userDataAccessObject.get(changePasswordInputData.getUsername());
 
         if (user == null) {
             userPresenter.prepareFailView("User not found");

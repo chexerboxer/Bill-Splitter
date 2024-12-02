@@ -8,6 +8,10 @@ import entity.split.SplitFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * DAO helper to parse through the unique csv formatting to extract and format necessary information.
+ * See FileDAO.java for csv file formatting breakdown.
+ */
 public class DAOhelper {
 
     public ArrayList<Integer> UserIdExtraction(String userIdsString){
