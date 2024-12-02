@@ -1,5 +1,5 @@
 # **Bill-Splitter**
-**Authors: Colleen Chang, Jordan Shao, Toryn Chua, Andres Li, Jacob Mathew Keluthara**
+**Authors and Contributors: Colleen Chang, Jordan Shao, Toryn Chua, Andres Li, Jacob Mathew Keluthara**
 ## Purpose
 Picture this: you are out with a large group of friends and decide to eat at a restaurant. After enjoying a nice meal\
 at this restaurant, you and your friends realize that the restaurant only gives their bills in one large bill rather\
@@ -37,10 +37,12 @@ The bill managing page\
 After uploading a receipt, the program will automatically add the items to the bill!
 ## Installation
 This program requires the Intellij IDE and runs on java version 21.0.\
+### <ins>Forking the Github Repository<ins>
 To install this program, visit the [Bill-Splitter github page](https://github.com/chexerboxer/Bill-Splitter) and click on\
 the "fork" button and create your own fork of the github repository:\
 ![github fork button](src/main/resources/Installation/github_fork_button.png)\
-![github fork creation](src/main/resources/Installation/clicking_fork.png)\
+![github fork creation](src/main/resources/Installation/clicking_fork.png)
+### <ins>Creating Your Own Copy of Bill-Splitter<ins>
 Next, in the github page of the fork, click on the large green "Code" button and copy the link:
 ![github big green button](src/main/resources/Installation/big_green_code_button.png)\
 ![copy fork link](src/main/resources/Installation/copy_link.png)\
@@ -50,17 +52,20 @@ Paste the link and click on "clone". Then, on the project window go to src > mai
 ![run main](src/main/resources/Installation/run_main.png)\
 and now, you can use the application as you please!
 ## Usage
+### <ins>Sign up and Log in<ins>
 As soon as the program is first run, you are able to input a username and password to create your account:\
 ![sign up](src/main/resources/usage/signup.png)\
-Afterwards, input the credentials again on the login page to be directed to the dashboard:\
+Afterwards, input the credentials again on the login page to be directed to the dashboard.
+### <ins>Dashboard<ins>
 ![login](src/main/resources/usage/login.png)\
 In the dashboard, the log out simply logs the user out and the change password button allows the user to change the\
 account's password. To create a bill, click "create bill" and input the bill name:\
 ![create bill](src/main/resources/usage/create_bill.png)\
 ![new bill](src/main/resources/usage/bill_on_dash.png)\
-Click on the newly created bill to access its management window:\
+Click on the newly created bill to access its management window
+### <ins>Bill Management Window<ins>
 ![bill management](src/main/resources/usage/bill_management_window.png)\
-Shown are all the things you can do to your code. You can add or remove members as well as adding or removing items.\
+Shown are all the things you can do to your bill. You can add or remove members as well as adding or removing items.\
 When adding an item, simply type in the item name and its cost and the item will be added. One of the biggest features\
 is that the user can upload a picture of a receipt and the program will scan and add the items on the receipt to the\
 bill. Here is an example of a receipt:\
@@ -84,5 +89,9 @@ member on the item:\
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
 ## About Feedback
+Any Feedback you would like to provide for the Bill-Splitter application can be submitted via this google form:\
+[Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLSdhQkbslCObdcHdzTV_-tmUa0HwA37-zPpn5HtptvxHJnFTOw/viewform?usp=sf_link)
 ## About Contributions
-
+You can contribute to Bill-Splitter by [forking the github repository](#installation) and pushing changes to it.\
+Then, if you allow us to, we can make changes to the main Bill-Splitter repository and add your name to the list of \
+contributors.
