@@ -4,6 +4,7 @@ import entity.GenerateId;
 import entity.item.Item;
 import entity.users.User;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -23,10 +24,17 @@ public class Bill implements GenerateId {
     private static final int START_ID_RANGE = 100000;
     private static final int END_ID_RANGE = 999999;
 
-
     public Bill(String name) {
         this.name = name;
         this.id = generateId();
+    }
+
+    public Bill(String name, int creatorId) {
+        this.name = name;
+        this.id = generateId();
+        ArrayList<Integer> users = new ArrayList<>();
+        users.add(creatorId);
+        this.users = users;
     }
 
     public Bill(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){
@@ -37,9 +45,18 @@ public class Bill implements GenerateId {
         this.totalAmount = totalAmount;
     }
 
-    public boolean equals(Bill bill){
-        return this.name.equals(bill.getName()) && this.id == bill.getId() && this.users == bill.getUsers()
-                && this.items == bill.getItems() && totalAmount == bill.getTotalAmount();
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        Bill bill = (Bill) obj;
+
+        return this.id == bill.id
+                && Float.compare(this.totalAmount, bill.totalAmount) == 0
+                && this.name.equals(bill.name)
+                && this.users.equals(bill.users)
+                && this.items.equals(bill.items);
     }
 
     public void setName(String name) {
@@ -65,29 +82,41 @@ public class Bill implements GenerateId {
     }
     public float getTotalAmount(){return totalAmount;}
 
-    public void addUser(User newUser) {
-        users.add(newUser.getId());
+    public void addUser(int id) {
+        users.add(id);
     }
-    public void removeUser (User oldUser) {
-        users.remove(oldUser.getId());
+    public void removeUser (int userId) {
+        for (int i=0;i<users.size();i++){
+            if (users.get(i) == userId){
+                users.remove(i);
+                return;
+            }
+        }
+
+
     }
 
     public void addItem(Item newItem) {
         // TODO: add logic so adding occurrences isn't capital sensitive
         if (items.containsKey(newItem.getId())) {
-            items.put(newItem.getId() + 1, newItem);
+            newItem.setId(newItem.generateId());
+            addItem(newItem);
         }
         // TODO**: add elif to create new items not in database with Item constructor before adding to map
+        //  ?? the paramater is an item already though
         else {
-            items.put(1, newItem);
+            items.put(newItem.getId(), newItem);
         }
         totalAmount = totalAmount + newItem.getCost();
     }
-    public void removeItem(Item oldItem) {
-        items.remove(oldItem);
+    public void removeItem(int oldItemId) {
+        Item oldItem = items.get(oldItemId);
         totalAmount = totalAmount - oldItem.getCost();
+        items.remove(oldItemId);
     }
 
-
+    public void setItem(int itemId, Item item){
+        items.put(itemId, item);
+    }
 
 }

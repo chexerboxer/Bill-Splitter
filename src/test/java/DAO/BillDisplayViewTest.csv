@@ -1,0 +1,6 @@
+type,name,id,users/password,items/splits,total
+Bill,testBillName,10,[10;11;12;195685225],[[item1;10;32.200001]/[item2;11;42.099998]],74.300003
+User,notinbill,195685225,we,[[2.800000;10;10]/[4.525000;10;11]]
+User,testpersonB,10,tasd,[[12.800000;10;10]/[16.525000;10;11]]
+User,testpersonC,11,tasd,[[13.800000;10;10]/[4.525000;10;11]]
+User,testpersonA,12,asd2123,[[16.525000;10;11]/[2.800000;10;10]]

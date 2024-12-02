@@ -7,7 +7,7 @@ import java.util.Random;
 public class Item implements GenerateId {
 
     private String name;
-    private final int id;
+    private int id;
     private float cost;
 
     // set bounds when generating an ID so it'll always be 9 digits
@@ -25,6 +25,7 @@ public class Item implements GenerateId {
         this.id = id;
         this.cost = cost;
     }
+
 
     public boolean equals(Item item){
         return this.name.equals(item.getName()) && this.id == item.getId() && this.cost == item.getCost();
@@ -53,4 +54,5 @@ public class Item implements GenerateId {
     public float getCost() {
         return cost;
     }
+    public void setId(int newId){id = newId;}
 }

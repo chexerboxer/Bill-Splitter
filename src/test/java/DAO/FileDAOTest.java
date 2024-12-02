@@ -45,7 +45,7 @@ public class FileDAOTest {
 
     @Test
     public void ItemsEmptyTest(){
-        String itemString = "";
+        String itemString = "[]";
         DAOhelper helper = new DAOhelper();
         HashMap<Integer, Item> testItems = helper.ItemsExtraction(itemString, new ItemFactory());
 
