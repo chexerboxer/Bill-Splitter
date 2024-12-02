@@ -1,6 +1,6 @@
 type,name,id,users/password,items/splits,total
+Bill,test2,560991,[],[],0.000000
 Bill,test,10,[10;20],[[item2;11;22.100000]],221.300003
-Bill,test2,819687,[],[],0.000000
-User,test2,500529031,tasd,[]
+User,test2,743515008,tasd,[]
 User,test,12,asd2123,[[123.000000;10;11]]
 User,test,13,asd2123,[[123.000000;10;11]]

@@ -1,4 +1,4 @@
-package entities;
+package entities.splits;
 
 import entity.split.Split;
 import entity.split.SplitFactory;
