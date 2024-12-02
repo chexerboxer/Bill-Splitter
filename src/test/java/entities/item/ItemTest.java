@@ -1,4 +1,4 @@
-package entities;
+package entities.item;
 
 import entity.item.Item;
 import entity.item.ItemFactory;
