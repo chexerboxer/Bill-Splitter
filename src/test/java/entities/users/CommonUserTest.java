@@ -1,10 +1,11 @@
-package entities;
+package entities.users;
 
 import entity.split.Split;
 import entity.split.SplitFactory;
 import entity.users.CommonUser;
 import entity.users.CommonUserFactory;
 import entity.users.User;
+import entity.users.UserFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CommonUserTest {
     private CommonUser user;
     private SplitFactory splitFactory;
+    private UserFactory userFactory;
 
     @BeforeEach
     void setUp() {
         splitFactory = new SplitFactory();
         user = new CommonUser("Test User", "password123");
+        userFactory = new CommonUserFactory();
+
     }
 
     @Test
@@ -181,4 +185,37 @@ class CommonUserTest {
 
         assertTrue(user1.equals(user2), "Users with identical attributes should be equal");
     }
+
+    @Test
+    void testModifySplitCreatesNewSplit() {
+        // Call modifySplit on a non-existent split
+        user.modifySplit(25.0f, 1, 1);
+
+        // Verify that a new split is created
+        assertEquals(1, user.getSplits().size(), "A new split should be created when no matching split exists");
+        assertEquals(25.0f, user.getSplits().get(0).getAmount(), "The newly created split should have the correct amount");
+        assertEquals(1, user.getSplits().get(0).getItemId(), "The newly created split should have the correct itemId");
+        assertEquals(1, user.getSplits().get(0).getBillId(), "The newly created split should have the correct billId");
+    }
+
+    @Test
+    void testCreateWithAllParameters() {
+        ArrayList<Split> splits = new ArrayList<>();
+        splits.add(new Split(50.0f, 1, 1));
+
+        User user = userFactory.create("John Doe", 123456789, "password123", splits);
+
+        // Verify the user is created correctly
+        assertEquals("John Doe", user.getName(), "User name should match the provided value");
+        assertEquals(123456789, user.getId(), "User ID should match the provided value");
+        assertEquals("password123", user.getPassword(), "User password should match the provided value");
+        assertEquals(splits, user.getSplits(), "User splits should match the provided list");
+    }
+
+    @Test
+    void testrandomcommonuser() {
+        ArrayList<Split> splits = new ArrayList<>();
+        userFactory.create("test", "123", splits);
+    }
+
 }
