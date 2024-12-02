@@ -14,11 +14,12 @@ public class BillFactory {
         return new Bill(name);
     }
 
+    public Bill create(String name, int creatorId) {
+        return new Bill(name, creatorId);
+    }
+
     public Bill create(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){
         return new Bill(name, id, users, items, totalAmount);
     }
 
-    public Bill create(String name, int id, ArrayList<Integer> users) {
-        return new Bill(name, id, users);
-    }
 }

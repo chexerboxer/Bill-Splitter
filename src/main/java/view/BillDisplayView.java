@@ -94,6 +94,10 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
         if (bill != null){
 
+            if (sidebarPanel != null) remove(sidebarPanel);
+
+            if (mainContentPanel != null) remove((mainContentPanel));
+
             createMainContent();
 
             add(sidebarPanel, BorderLayout.WEST);
@@ -105,93 +109,6 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             setSize(1200, 700);
       }
 
-    }
-
-    private void createSidebar() {
-        sidebarPanel = new JPanel();
-        sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(230, 230, 230));
-        sidebarPanel.setPreferredSize(new Dimension(200, getHeight()));
-
-        // User profile section at the top
-        JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        profilePanel.setBackground(new Color(230, 230, 230));
-
-        JLabel avatarLabel = new JLabel("☺");
-        avatarLabel.setFont(new Font("Arial", Font.PLAIN, 24));
-
-        JPanel userInfoPanel = new JPanel();
-        userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
-        userInfoPanel.setBackground(new Color(230, 230, 230));
-
-
-        // TODO change these username to match.
-        JLabel usernameLabel = new JLabel("User123");
-        JLabel manageLabel = new JLabel("Manage account");
-        manageLabel.setForeground(Color.GRAY);
-
-        userInfoPanel.add(usernameLabel);
-        userInfoPanel.add(manageLabel);
-
-        profilePanel.add(avatarLabel);
-        profilePanel.add(userInfoPanel);
-
-        // Navigation buttons
-        JPanel navigationPanel = new JPanel();
-        navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.Y_AXIS));
-        navigationPanel.setBackground(new Color(230, 230, 230));
-        navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
-
-        JButton dashboardBtn = createSidebarButton("Dashboard");
-        dashboardBtn.addActionListener(e -> billDisplayPresenter.switchToDashboardView(billDisplayViewModel.getState().getUsername()));
-
-        JButton createBillBtn = createSidebarButton("Create new bill");
-        createBillBtn.addActionListener(e -> addNewBillEvent(this));
-
-        // Add components to sidebar in correct order
-        sidebarPanel.add(profilePanel);
-        sidebarPanel.add(new JSeparator());
-        navigationPanel.add(dashboardBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
-        navigationPanel.add(createBillBtn);
-        sidebarPanel.add(navigationPanel);
-
-        // Add a glue component to push everything to the top
-        sidebarPanel.add(Box.createVerticalGlue());
-    }
-
-    private void addNewBillEvent(JPanel parent) {
-        System.out.println("Create new bill");
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-
-        JLabel titleLabel = new JLabel("Create New Bill");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
-        mainPanel.add(titleLabel);
-        JTextField billNameField = new JTextField(15);
-        mainPanel.add(new JLabel("Enter bill name: "));
-        mainPanel.add(billNameField);
-
-        int result = JOptionPane.showConfirmDialog(
-                null,
-                mainPanel,
-                "Add new bill",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE
-        );
-    }
-
-    private JButton createSidebarButton(String text) {
-        JButton button = new JButton(text);
-        button.setAlignmentX(Component.LEFT_ALIGNMENT);
-        button.setBorderPainted(false);
-        button.setContentAreaFilled(false);
-        button.setMaximumSize(new Dimension(200, 40));
-        button.setHorizontalAlignment(SwingConstants.LEFT);
-        button.setFont(new Font("Arial", Font.PLAIN, 14));
-        return button;
     }
 
     private void createMainContent() {
@@ -270,6 +187,9 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         mainContentPanel.add(membersPanel);
         mainContentPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         mainContentPanel.add(itemsPanel);
+        revalidate();
+        repaint();
+
     }
 
     private void createMembersSection() {
@@ -541,11 +461,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
             userDataAccessObject.setUser(userId, user);
 
-            for (int i = 0; i<bill.getUsers().size(); i++){
-                if (bill.getUsers().get(i) == userId){
-                    bill.removeUser(i);
-                }
-            }
+            bill.removeUser(userId);
 
 
             userDataAccessObject.setBill(bill.getId(), bill);
@@ -1046,7 +962,8 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         if (evt.getPropertyName().equals("state")) {
             this.remove(sidebarPanel);
             sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, this.billDisplayViewModel.getState());
-            add(sidebarPanel);
+
+
 
 
 

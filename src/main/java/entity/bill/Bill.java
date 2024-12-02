@@ -2,6 +2,7 @@ package entity.bill;
 
 import entity.GenerateId;
 import entity.item.Item;
+import entity.users.User;
 
 
 import java.util.ArrayList;
@@ -23,10 +24,17 @@ public class Bill implements GenerateId {
     private static final int START_ID_RANGE = 100000;
     private static final int END_ID_RANGE = 999999;
 
-
     public Bill(String name) {
         this.name = name;
         this.id = generateId();
+    }
+
+    public Bill(String name, int creatorId) {
+        this.name = name;
+        this.id = generateId();
+        ArrayList<Integer> users = new ArrayList<>();
+        users.add(creatorId);
+        this.users = users;
     }
 
     public Bill(String name, int id, ArrayList<Integer> users, HashMap<Integer, Item> items, float totalAmount){
@@ -37,16 +45,18 @@ public class Bill implements GenerateId {
         this.totalAmount = totalAmount;
     }
 
-    public Bill(String name, int id, ArrayList<Integer> users) {
-        this.name = name;
-        this.id = id;
-        this.users = users;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
 
-    }
+        Bill bill = (Bill) obj;
 
-    public boolean equals(Bill bill){
-        return this.name.equals(bill.getName()) && this.id == bill.getId() && this.users == bill.getUsers()
-                && this.items == bill.getItems() && totalAmount == bill.getTotalAmount();
+        return this.id == bill.id
+                && Float.compare(this.totalAmount, bill.totalAmount) == 0
+                && this.name.equals(bill.name)
+                && this.users.equals(bill.users)
+                && this.items.equals(bill.items);
     }
 
     public void setName(String name) {
@@ -76,7 +86,14 @@ public class Bill implements GenerateId {
         users.add(id);
     }
     public void removeUser (int userId) {
-        users.remove(userId);
+        for (int i=0;i<users.size();i++){
+            if (users.get(i) == userId){
+                users.remove(i);
+                return;
+            }
+        }
+
+
     }
 
     public void addItem(Item newItem) {
