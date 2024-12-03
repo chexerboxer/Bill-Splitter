@@ -1,9 +1,9 @@
 package use_case.dashboard;
 
+import java.util.HashMap;
+
 import entity.bill.Bill;
 import entity.users.User;
-
-import java.util.HashMap;
 
 public class DashboardInteractor implements DashboardInputBoundary {
     private final DashboardUserDataAccessInterface userDataAccessObject;

@@ -7,6 +7,12 @@ public class ModifySplitInputData {
     private final int item_id;
     private final int user_id;
 
+    public ModifySplitInputData(float amountSplitted, int billId, int itemId, int userId) {
+        amount_splitted = amountSplitted;
+        bill_id = billId;
+        item_id = itemId;
+        user_id = userId;
+    }
 
     public float getAmount_splitted() {
         return amount_splitted;
@@ -23,13 +29,5 @@ public class ModifySplitInputData {
     public int getUser_id() {
         return user_id;
     }
-
-    public ModifySplitInputData(float amountSplitted, int billId, int itemId, int userId) {
-        amount_splitted = amountSplitted;
-        bill_id = billId;
-        item_id = itemId;
-        user_id = userId;
-    }
-
 
 }

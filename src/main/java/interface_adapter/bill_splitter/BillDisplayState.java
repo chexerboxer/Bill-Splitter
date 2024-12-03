@@ -4,7 +4,6 @@ public class BillDisplayState {
     private String username;
     private int billId;
 
-
     public int getBillId() {
         return billId;
     }

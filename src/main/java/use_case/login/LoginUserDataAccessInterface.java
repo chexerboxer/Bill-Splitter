@@ -1,9 +1,9 @@
 package use_case.login;
 
+import java.util.ArrayList;
+
 import entity.bill.Bill;
 import entity.users.User;
-
-import java.util.ArrayList;
 
 /**
  * DAO for the Login Use Case.

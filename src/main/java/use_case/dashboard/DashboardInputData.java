@@ -7,7 +7,7 @@ public class DashboardInputData {
     private final int billId;
 
     public DashboardInputData(
-                              HashMap<Integer,String> userBillsData,
+                              HashMap<Integer, String> userBillsData,
                               int billId) {
         this.userBillsData = userBillsData;
         this.billId = billId;

@@ -1,7 +1,5 @@
 package use_case.dashboard;
 
-import use_case.login.LoginOutputData;
-
 public interface DashboardOutputBoundary {
     /**
      * Prepares the success view for the Login Use Case.

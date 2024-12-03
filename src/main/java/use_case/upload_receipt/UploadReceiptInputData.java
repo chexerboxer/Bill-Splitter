@@ -13,5 +13,7 @@ public class UploadReceiptInputData {
         return this.receiptFileName;
     }
 
-    public int getBillId() {return this.billId;}
+    public int getBillId() {
+        return this.billId;
+    }
 }

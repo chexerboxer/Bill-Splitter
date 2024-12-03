@@ -1,59 +1,40 @@
 package view;
 
-import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.*;
+
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.table.*;
 
 import data_access.FileDAO;
 import entity.bill.Bill;
-import entity.bill.BillFactory;
 import entity.item.Item;
 import entity.item.ItemFactory;
 import entity.split.Split;
-import entity.split.SplitFactory;
-import entity.users.CommonUserFactory;
 import entity.users.User;
-// components
 import interface_adapter.bill_splitter.BillDisplayPresenter;
 import interface_adapter.bill_splitter.BillDisplayState;
 import interface_adapter.bill_splitter.BillDisplayViewModel;
-import view.components.*;
-
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.logout.LogoutController;
-
 import interface_adapter.split_management.ClearBillController;
 import interface_adapter.split_management.DistributeBillController;
 import interface_adapter.split_management.ModifySplitController;
-import interface_adapter.split_management.SplitManagementPresenter;
 import interface_adapter.upload_receipt.UploadReceiptController;
-import interface_adapter.upload_receipt.UploadReceiptPresenter;
-import use_case.split_management.SplitManagementOutputBoundary;
-import use_case.split_management.clear_bill.ClearBillInputBoundary;
-import use_case.split_management.clear_bill.ClearBillInteractor;
-import use_case.split_management.distribute_bill_even.DistributeBillEvenInputBoundary;
-import use_case.split_management.distribute_bill_even.DistributeBillEvenInteractor;
-import use_case.split_management.modify_split.ModifySplitInputBoundary;
-import use_case.split_management.modify_split.ModifySplitInteractor;
-import use_case.upload_receipt.UploadReceiptInputBoundary;
-import use_case.upload_receipt.UploadReceiptInteractor;
-import use_case.upload_receipt.UploadReceiptOutputBoundary;
+import view.components.*;
 
-
-// TODO refractor into JPanel though shouldnt be bad cuz I removed all the dialogue stuff its still JFrame so I can test it right now
-// TODO note: creating billdisplay viewmodel and viewstate shouldnt be bad jsut plug in the bill from the viewstate and the viewmodel stuff isnt long.
-public class BillDisplayView extends JPanel implements PropertyChangeListener{
+public class BillDisplayView extends JPanel implements PropertyChangeListener {
+    private static final String PLUS = "+"; 
+    private static final String ARIAL = "Arial";
+    
     private FileDAO userDataAccessObject;
     private Bill bill;
     private UploadReceiptController uploadReceiptController;
@@ -69,13 +50,10 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
     private final String viewName = "bill splitter";
     private final BillDisplayViewModel billDisplayViewModel;
 
-
     private JPanel membersPanel;
     private JPanel itemsPanel;
     private final JFileChooser fileChooser = new JFileChooser();
     private DefaultTableModel tableModel;
-
-
 
     public BillDisplayView(BillDisplayViewModel billDisplayViewModel) {
         this.billDisplayViewModel = billDisplayViewModel;
@@ -83,20 +61,35 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
     }
 
-    public void drawMainContent (){
-
+    /**
+     * This method is responsible for drawing the main content of the user interface.
+     * It sets the layout, retrieves the current bill information, and updates the
+     * main content and sidebar components accordingly.
+     * The method performs the following:
+     * 1. Sets the layout manager to BorderLayout for the main container.
+     * 2. Retrieves the current state of the bill display view model.
+     * 3. Fetches the bill associated with the current state.
+     * 4. Checks if the bill exists, and if so, updates the main content and sidebar panels.
+     * 5. Re-validates and repaints the container to reflect the updated UI components.
+     * 6. Adjusts the window size to a preset value (1200x700).
+     */
+    public void drawMainContent() {
 
         setLayout(new BorderLayout());
-        BillDisplayState currentState = billDisplayViewModel.getState();
+        final BillDisplayState currentState = billDisplayViewModel.getState();
         sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, currentState);
 
         bill = userDataAccessObject.getBill(currentState.getBillId());
 
-        if (bill != null){
+        if (bill != null) {
 
-            if (sidebarPanel != null) remove(sidebarPanel);
+            if (sidebarPanel != null) {
+                remove(sidebarPanel);
+            }
 
-            if (mainContentPanel != null) remove((mainContentPanel));
+            if (mainContentPanel != null) {
+                remove(mainContentPanel);
+            }
 
             createMainContent();
 
@@ -105,9 +98,8 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             revalidate();
             repaint();
 
-
             setSize(1200, 700);
-      }
+        }
 
     }
 
@@ -117,24 +109,20 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         mainContentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Header section
-        JPanel headerPanel = new JPanel();
+        final JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
+        final JLabel titleLabel = new JLabel(bill.getName());
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 24));
 
-        JLabel titleLabel = new JLabel(bill.getName());
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-
-
-
-
-        JLabel dateLabel = new JLabel("Total Cost: " + bill.getTotalAmount());
+        final JLabel dateLabel = new JLabel("Total Cost: " + bill.getTotalAmount());
         dateLabel.setForeground(Color.GRAY);
 
         headerPanel.add(titleLabel);
         headerPanel.add(dateLabel);
 
         // Upload receipt section
-        JButton uploadButton = new JButton("Upload a receipt");
+        final JButton uploadButton = new JButton("Upload a receipt");
         uploadButton.setForeground(Color.GRAY);
         uploadButton.setPreferredSize(new Dimension(mainContentPanel.getWidth(), 50));
         uploadButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
@@ -147,15 +135,14 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                         fileChooser.setDialogTitle("Select a Receipt Image");
                         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
                                 "Image files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png"));
-                        int returnValue = fileChooser.showOpenDialog(null);
+                        final int returnValue = fileChooser.showOpenDialog(null);
 
                         if (returnValue == JFileChooser.APPROVE_OPTION) {
-                            java.io.File selectedFile = fileChooser.getSelectedFile();
-                            String filepath = selectedFile.getAbsolutePath();
+                            final java.io.File selectedFile = fileChooser.getSelectedFile();
+                            final String filepath = selectedFile.getAbsolutePath();
                             try {
                                 JOptionPane.showMessageDialog(null, "File uploaded: " + filepath);
                                 uploadReceiptController.execute(filepath, bill.getId());
-
 
                                 // This part of the code makes the parent display redraw itself after updating the DAO.
                                 remove(mainContentPanel);
@@ -164,10 +151,12 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                                 repaint();
                                 revalidate();
 
-                            } catch (IOException e) {
-                                JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
                             }
-                        } else {
+                            catch (IOException ext) {
+                                JOptionPane.showMessageDialog(null, "Error: " + ext.getMessage());
+                            }
+                        }
+                        else {
                             JOptionPane.showMessageDialog(null, "File not uploaded");
                         }
                     }
@@ -196,21 +185,20 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         membersPanel = new JPanel();
         membersPanel.setLayout(new BoxLayout(membersPanel, BoxLayout.Y_AXIS));
 
-        JLabel membersLabel = new JLabel(String.format("All bill members (Code: %s)", bill.getId()));
-        membersLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        final JLabel membersLabel = new JLabel(String.format("All bill members (Code: %s)", bill.getId()));
+        membersLabel.setFont(new Font(ARIAL, Font.BOLD, 16));
 
-        JPanel memberButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JPanel memberButtonsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         // extract the names out of the list of users stored in the bill.
-        ArrayList<Integer> users = bill.getUsers();
-        String[] usernames = new String[users.size()];
-        for (int i = 0;i < users.size(); i++){
+        final ArrayList<Integer> users = bill.getUsers();
+        final String[] usernames = new String[users.size()];
+        for (int i = 0; i < users.size(); i++) {
             usernames[i] = userDataAccessObject.getUser(users.get(i)).getName();
         }
 
-
         for (String member : usernames) {
-            JButton memberButton = new JButton(member);
+            final JButton memberButton = new JButton(member);
             memberButton.setBackground(Color.BLACK);
             memberButton.setForeground(Color.WHITE);
             memberButton.setBorderPainted(false);
@@ -218,32 +206,28 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         }
 
         // Add Members
-        JLabel addMembersLabel = new JLabel("Add Member");
-        addMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        JButton addMembersButton = new JButton("+");
-        addMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        final JLabel addMembersLabel = new JLabel("Add Member");
+        addMembersLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
+        final JButton addMembersButton = new JButton(PLUS);
+        addMembersButton.setFont(new Font(ARIAL, Font.BOLD, 14));
         addMembersButton.setFocusPainted(false);
-        addMembersButton.addActionListener(e -> addMembersEvent(this));
-
-
+        addMembersButton.addActionListener(evt -> addMembersEvent(this));
 
         // Remove Members
-        JLabel removeMembersLabel = new JLabel("Remove Member");
-        removeMembersLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        JButton removeMembersButton = new JButton("+");
-        removeMembersButton.setFont(new Font("Arial", Font.BOLD, 14));
+        final JLabel removeMembersLabel = new JLabel("Remove Member");
+        removeMembersLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
+        final JButton removeMembersButton = new JButton(PLUS);
+        removeMembersButton.setFont(new Font(ARIAL, Font.BOLD, 14));
         removeMembersButton.setFocusPainted(false);
-        removeMembersButton.addActionListener(e -> removeMembersEvent(this));
+        removeMembersButton.addActionListener(evt -> removeMembersEvent(this));
 
         memberButtonsPanel.add(addMembersLabel);
         memberButtonsPanel.add(addMembersButton);
         memberButtonsPanel.add(removeMembersLabel);
         memberButtonsPanel.add(removeMembersButton);
 
-
         membersPanel.add(membersLabel);
         membersPanel.add(memberButtonsPanel);
-
 
     }
 
@@ -251,81 +235,75 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         itemsPanel = new JPanel(new BorderLayout());
 
         // Create header panel with title and add button
-        JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        JLabel addItemsLabel = new JLabel("Add Items");
-        addItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        final JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+        final JLabel addItemsLabel = new JLabel("Add Items");
+        addItemsLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
-        JButton addItemButton = new JButton("+");
-        addItemButton.setFont(new Font("Arial", Font.BOLD, 14));
+        final JButton addItemButton = new JButton(PLUS);
+        addItemButton.setFont(new Font(ARIAL, Font.BOLD, 14));
         addItemButton.setFocusPainted(false);
-        addItemButton.addActionListener(e -> showAddItemDialog(this));
+        addItemButton.addActionListener(evt -> showAddItemDialog(this));
 
         headerPanel.add(addItemsLabel);
         headerPanel.add(addItemButton);
 
+        final JLabel removeItemsLabel = new JLabel("Remove Items");
+        removeItemsLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
-        JLabel RemoveItemsLabel = new JLabel("Remove Items");
-        RemoveItemsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        final JButton removeItemButton = new JButton(PLUS);
+        removeItemButton.setFont(new Font(ARIAL, Font.BOLD, 14));
+        removeItemButton.setFocusPainted(false);
+        removeItemButton.addActionListener(evt -> showRemoveItemDialog(this));
 
-        JButton RemoveItemButton = new JButton("+");
-        RemoveItemButton.setFont(new Font("Arial", Font.BOLD, 14));
-        RemoveItemButton.setFocusPainted(false);
-        RemoveItemButton.addActionListener(e -> showRemoveItemDialog(this));
+        headerPanel.add(removeItemsLabel);
+        headerPanel.add(removeItemButton);
 
-        headerPanel.add(RemoveItemsLabel);
-        headerPanel.add(RemoveItemButton);
+        final JLabel modifySplitsLabel = new JLabel("Modify Splits");
+        modifySplitsLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
+        final JButton modifySplitsButton = new JButton(PLUS);
+        modifySplitsButton.setFont(new Font(ARIAL, Font.BOLD, 14));
+        modifySplitsButton.setFocusPainted(false);
+        modifySplitsButton.addActionListener(evt -> showModifySplitsDialog(this));
 
-        JLabel ModifySplitsLabel = new JLabel("Modify Splits");
-        ModifySplitsLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        headerPanel.add(modifySplitsLabel);
+        headerPanel.add(modifySplitsButton);
 
-        JButton ModifySplitsButton = new JButton("+");
-        ModifySplitsButton.setFont(new Font("Arial", Font.BOLD, 14));
-        ModifySplitsButton.setFocusPainted(false);
-        ModifySplitsButton.addActionListener(e -> showModifySplitsDialog(this));
+        final JLabel distributeBillLabel = new JLabel("Distribute Bill");
+        distributeBillLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
-        headerPanel.add(ModifySplitsLabel);
-        headerPanel.add(ModifySplitsButton);
+        final JButton distributeBillButton = new JButton(PLUS);
+        distributeBillButton.setFont(new Font(ARIAL, Font.BOLD, 14));
+        distributeBillButton.setFocusPainted(false);
+        distributeBillButton.addActionListener(evt -> showDistributeBillDialog(this));
 
-        JLabel DistributeBillLabel = new JLabel("Distribute Bill");
-        DistributeBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        headerPanel.add(distributeBillLabel);
+        headerPanel.add(distributeBillButton);
 
-        JButton DistributeBillButton = new JButton("+");
-        DistributeBillButton.setFont(new Font("Arial", Font.BOLD, 14));
-        DistributeBillButton.setFocusPainted(false);
-        DistributeBillButton.addActionListener(e -> showDistributeBillDialog(this));
+        final JLabel clearBillLabel = new JLabel("Clear Splits");
+        clearBillLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
-        headerPanel.add(DistributeBillLabel);
-        headerPanel.add(DistributeBillButton);
-
-        JLabel ClearBillLabel = new JLabel("Clear Splits");
-        ClearBillLabel.setFont(new Font("Arial", Font.BOLD, 14));
-
-        JButton ClearBillButton = new JButton("+");
-        ClearBillButton.setFont(new Font("Arial", Font.BOLD, 14));
-        ClearBillButton.setFocusPainted(false);
-        ClearBillButton.addActionListener(e -> ClearBillEvent(this));
+        final JButton clearBillButton = new JButton(PLUS);
+        clearBillButton.setFont(new Font(ARIAL, Font.BOLD, 14));
+        clearBillButton.setFocusPainted(false);
+        clearBillButton.addActionListener(evt -> clearBillEvent(this));
 
         // Edit price
-        JLabel EditPriceLabel = new JLabel("Edit Price of an Item");
-        EditPriceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        final JLabel editPriceLabel = new JLabel("Edit Price of an Item");
+        editPriceLabel.setFont(new Font(ARIAL, Font.BOLD, 14));
 
-        JButton EditPriceButton = new JButton("+");
-        EditPriceButton.setFont(new Font("Arial", Font.BOLD, 14));
-        EditPriceButton.setFocusPainted(false);
-        EditPriceButton.addActionListener(e -> EditPriceEvent(this));
+        final JButton editPriceButton = new JButton(PLUS);
+        editPriceButton.setFont(new Font(ARIAL, Font.BOLD, 14));
+        editPriceButton.setFocusPainted(false);
+        editPriceButton.addActionListener(evt -> editPriceEvent(this));
 
-
-
-        headerPanel.add(ClearBillLabel);
-        headerPanel.add(ClearBillButton);
-        headerPanel.add(EditPriceLabel);
-        headerPanel.add(EditPriceButton);
-
-
+        headerPanel.add(clearBillLabel);
+        headerPanel.add(clearBillButton);
+        headerPanel.add(editPriceLabel);
+        headerPanel.add(editPriceButton);
 
         // Create the table model
-        String[] columnNames = {"All Items", "Assigned Splits"};
+        final String[] columnNames = {"All Items", "Assigned Splits"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -333,18 +311,17 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             }
         };
 
-        for (int itemId : bill.getItems().keySet()){
-            Item item = bill.getItems().get(itemId);
-            String itemcolContent = item.getName() + ": " + item.getCost() + "$";
+        for (int itemId : bill.getItems().keySet()) {
+            final Item item = bill.getItems().get(itemId);
+            final String itemcolContent = item.getName() + ": " + item.getCost() + "$";
 
-            ArrayList<Integer> users = userDataAccessObject.usersSplittingItem(itemId, bill.getId());
+            final ArrayList<Integer> users = userDataAccessObject.usersSplittingItem(itemId, bill.getId());
 
-            ArrayList<String> usersStrings = new ArrayList<>();
-            for (int i = 0; i < users.size(); i++){
+            final ArrayList<String> usersStrings = new ArrayList<>();
+            for (int i = 0; i < users.size(); i++) {
                 // all of these users are returns of usersSplittingItem thus has some split in the item.
-                User user = userDataAccessObject.getUser(users.get(i));
-
-                    usersStrings.add(user.getName() + ": " + user.distributedAmount(itemId, bill.getId()) + "$");
+                final User user = userDataAccessObject.getUser(users.get(i));
+                usersStrings.add(user.getName() + ": " + user.distributedAmount(itemId, bill.getId()) + "$");
 
             }
             // This has to be the most scuffed solution ever lmao
@@ -353,19 +330,18 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             String usercolContent = String.join("<br>", usersStrings);
             usercolContent = "<html>" + usercolContent + "</html>";
 
-
             tableModel.addRow(new Object[]{itemcolContent, usercolContent});
 
         }
 
-        JTable table = new JTable(tableModel);
+        final JTable table = new JTable(tableModel);
 
         // Style the table
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 24));
+        table.getTableHeader().setFont(new Font(ARIAL, Font.BOLD, 24));
         table.setRowHeight(80);
 
         // Create a panel for the table with custom header
-        JPanel tablePanel = new JPanel(new BorderLayout());
+        final JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.add(headerPanel, BorderLayout.NORTH);
         tablePanel.add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -373,17 +349,17 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
     }
 
     private void addMembersEvent(JPanel parent) {
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        JLabel titleLabel = new JLabel("Add Member");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        final JLabel titleLabel = new JLabel("Add Member");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 22));
         mainPanel.add(titleLabel);
-        JTextField newMemberField = new JTextField(20);
+        final JTextField newMemberField = new JTextField(20);
         mainPanel.add(new JLabel("New Member: "));
         mainPanel.add(newMemberField);
 
-        int result = JOptionPane.showConfirmDialog(
+        final int result = JOptionPane.showConfirmDialog(
                 null,
                 mainPanel,
                 "Add a New Member",
@@ -391,20 +367,21 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 JOptionPane.PLAIN_MESSAGE
         );
 
-        if (result == JOptionPane.OK_OPTION){
-            String newUserName = newMemberField.getText();
-            Map<Integer, User> DAOUserMap = userDataAccessObject.getAllUsers();
-            Map<String, Integer> reverseUsers = new HashMap<>();
-            for (int key : DAOUserMap.keySet()){
-                String userName = DAOUserMap.get(key).getName();
+        if (result == JOptionPane.OK_OPTION) {
+            final String newUserName = newMemberField.getText();
+            final Map<Integer, User> dataAccessObjectUserMap = userDataAccessObject.getAllUsers();
+            final Map<String, Integer> reverseUsers = new HashMap<>();
+            for (int key : dataAccessObjectUserMap.keySet()) {
+                final String userName = dataAccessObjectUserMap.get(key).getName();
                 reverseUsers.put(userName, key);
             }
             if (reverseUsers.containsKey(newUserName)) {
-                int userid = reverseUsers.get(newUserName);
+                final int userid = reverseUsers.get(newUserName);
                 if (bill.getUsers().contains(userid)) {
                     JOptionPane.showMessageDialog(mainPanel, "Member already in bill.");
-                } else {
-                    int newuserId = reverseUsers.get(newUserName);
+                } 
+                else {
+                    final int newuserId = reverseUsers.get(newUserName);
                     bill.addUser(newuserId);
                     userDataAccessObject.setBill(bill.getId(), bill);
 
@@ -424,16 +401,16 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
     }
 
     private void removeMembersEvent(JPanel parent) {
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        JLabel titleLabel = new JLabel("Remove Member");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        final JLabel titleLabel = new JLabel("Remove Member");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 22));
         mainPanel.add(titleLabel);
 
-        Map<String, Integer> reverseUsers = new HashMap<>();
-        for(int userId : bill.getUsers()){
-            String userName = userDataAccessObject.getUser(userId).getName();
+        final Map<String, Integer> reverseUsers = new HashMap<>();
+        for (int userId : bill.getUsers()) {
+            final String userName = userDataAccessObject.getUser(userId).getName();
             reverseUsers.put(userName, userId);
         }
 
@@ -441,7 +418,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 new JComboBox<>(reverseUsers.keySet().toArray(new String[reverseUsers.size()]));
         mainPanel.add(userSelection);
 
-        int result = JOptionPane.showConfirmDialog(
+        final int result = JOptionPane.showConfirmDialog(
                 null,
                 mainPanel,
                 "Remove item",
@@ -449,25 +426,20 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 JOptionPane.PLAIN_MESSAGE
         );
 
-        if (result == JOptionPane.OK_OPTION){
-            int userId = reverseUsers.get(userSelection.getSelectedItem());
-            User user = userDataAccessObject.getUser(userId);
+        if (result == JOptionPane.OK_OPTION) {
+            final int userId = reverseUsers.get(userSelection.getSelectedItem());
+            final User user = userDataAccessObject.getUser(userId);
             for (Split split : new ArrayList<>(user.getSplits())) {
                 if (bill.getItems().containsKey(split.getItemId()) && split.getBillId() == bill.getId()) {
                     user.removeSplit(split.getItemId(), split.getBillId());
                 }
             }
 
-
             userDataAccessObject.setUser(userId, user);
 
             bill.removeUser(userId);
 
-
             userDataAccessObject.setBill(bill.getId(), bill);
-
-
-
 
             // the member section is created and called in the mainContent panel already so dont have to change.
             this.remove(mainContentPanel);
@@ -481,33 +453,33 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
     private void showRemoveItemDialog(JPanel parent) {
         // Create main panel with padding
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Add title
-        JLabel titleLabel = new JLabel("Select Items to remove");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 15));
+        final JLabel titleLabel = new JLabel("Select Items to remove");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 15));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         mainPanel.add(titleLabel);
 
         // generate an inverse items which maps the name of the item to its id.
-        Map<String, Integer> reverseItems = new HashMap<>();
-        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+        final Map<String, Integer> reverseItems = new HashMap<>();
+        for (Map.Entry<Integer, Item> entry : bill.getItems().entrySet()) {
             reverseItems.put(entry.getValue().getName(), entry.getKey());
         }
 
-        ArrayList<JCheckBox> checkBoxes =  new ArrayList<>();
-        for (String itemName : reverseItems.keySet()){
-            JCheckBox checkBox = new JCheckBox(itemName);
+        final ArrayList<JCheckBox> checkBoxes = new ArrayList<>();
+        for (String itemName : reverseItems.keySet()) {
+            final JCheckBox checkBox = new JCheckBox(itemName);
             mainPanel.add(checkBox);
             checkBoxes.add(checkBox);
         }
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton removeButton = new JButton("Remove!");
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JButton removeButton = new JButton("Remove!");
         removeButton.setBackground(Color.BLACK);
         removeButton.setForeground(Color.WHITE);
         removeButton.setFocusPainted(false);
@@ -515,19 +487,18 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         removeButton.setPreferredSize(new Dimension(100, 35));
 
         // Add action listener for create button
-        removeButton.addActionListener(e -> {
+        removeButton.addActionListener(evt -> {
             // goes through all that is selected then remove them from DAO then repain.
-
-            for (JCheckBox checkBox : checkBoxes){
-                if(checkBox.isSelected()){
+            for (JCheckBox checkBox : checkBoxes) {
+                if (checkBox.isSelected()) {
                     // remove item from bill
                     System.out.println(checkBox.getText());
                     bill.removeItem(reverseItems.get(checkBox.getText()));
                     userDataAccessObject.setBill(bill.getId(), bill);
 
                     // remove splits that use this item in this bill
-                    for (int userId : bill.getUsers()){
-                        User user = userDataAccessObject.getUser(userId);
+                    for (int userId : bill.getUsers()) {
+                        final User user = userDataAccessObject.getUser(userId);
                         user.removeSplit(reverseItems.get(checkBox.getText()), bill.getId());
                         userDataAccessObject.setUser(user.getId(), user);
                     }
@@ -542,23 +513,18 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             parent.repaint();
             parent.revalidate();
 
-
             JOptionPane.getRootFrame().dispose();
 
-                });
-
-
-
+        });
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         buttonPanel.add(removeButton);
         mainPanel.add(buttonPanel);
 
-
-        JOptionPane.showMessageDialog(null, mainPanel,"Remove Items", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mainPanel, "Remove Items", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void ClearBillEvent(JPanel parent) {
+    private void clearBillEvent(JPanel parent) {
 
         // change the values in DAO
         clearBillController.execute(bill.getId());
@@ -572,58 +538,55 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
     }
 
-
     private void showDistributeBillDialog(JPanel parent) {
         // Create main panel with padding
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Add title
-        JLabel titleLabel = new JLabel("Select people to distribute among");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        final JLabel titleLabel = new JLabel("Select people to distribute among");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         mainPanel.add(titleLabel);
 
-
         // Create input fields
         // generate an inverse users which maps the name of the user to its id.
-        Map<String, Integer> reverseUsers = new HashMap<>();
-        for(int userId : bill.getUsers()){
-            String userName = userDataAccessObject.getUser(userId).getName();
+        final Map<String, Integer> reverseUsers = new HashMap<>();
+        for (int userId : bill.getUsers()) {
+            final String userName = userDataAccessObject.getUser(userId).getName();
             reverseUsers.put(userName, userId);
         }
 
-        ArrayList<JCheckBox> checkBoxes =  new ArrayList<>();
-        for (String userName : reverseUsers.keySet()){
-            JCheckBox checkBox = new JCheckBox(userName);
+        final ArrayList<JCheckBox> checkBoxes = new ArrayList<>();
+        for (String userName : reverseUsers.keySet()) {
+            final JCheckBox checkBox = new JCheckBox(userName);
             mainPanel.add(checkBox);
             checkBoxes.add(checkBox);
         }
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton DistributeButton = new JButton("Distribute!");
-        DistributeButton.setBackground(Color.BLACK);
-        DistributeButton.setForeground(Color.WHITE);
-        DistributeButton.setFocusPainted(false);
-        DistributeButton.setBorderPainted(false);
-        DistributeButton.setPreferredSize(new Dimension(100, 35));
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JButton distributeButton = new JButton("Distribute!");
+        distributeButton.setBackground(Color.BLACK);
+        distributeButton.setForeground(Color.WHITE);
+        distributeButton.setFocusPainted(false);
+        distributeButton.setBorderPainted(false);
+        distributeButton.setPreferredSize(new Dimension(100, 35));
 
         // Add action listener for create button
-        DistributeButton.addActionListener(e -> {
+        distributeButton.addActionListener(evt -> {
             // goes through all that is selected then distribute to them then repaint.
 
-            ArrayList<Integer> usersSplitting = new ArrayList<>();
-            for (JCheckBox checkBox : checkBoxes){
-                if(checkBox.isSelected()){
+            final ArrayList<Integer> usersSplitting = new ArrayList<>();
+            for (JCheckBox checkBox : checkBoxes) {
+                if (checkBox.isSelected()) {
                     // if the user name is selected, add them to a list then call the controller for distribute.
 
                     usersSplitting.add(reverseUsers.get(checkBox.getText()));
                 }
             }
             distributeBillController.execute(bill.getId(), usersSplitting);
-
 
             // This part of the code makes the parent display redraw itself after updating the DAO.
             this.remove(mainContentPanel);
@@ -632,46 +595,40 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
             parent.repaint();
             parent.revalidate();
 
-
             JOptionPane.getRootFrame().dispose();
 
         });
 
-
-
-
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        buttonPanel.add(DistributeButton);
+        buttonPanel.add(distributeButton);
         mainPanel.add(buttonPanel);
 
-
-
-        JOptionPane.showMessageDialog(null, mainPanel,"Distribute Bill", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mainPanel, "Distribute Bill", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void EditPriceEvent(JPanel parent) {
-        JPanel mainPanel = new JPanel();
+    private void editPriceEvent(JPanel parent) {
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
 
-        JLabel titleLabel = new JLabel("Select item to edit price of");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
+        final JLabel titleLabel = new JLabel("Select item to edit price of");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 22));
         mainPanel.add(titleLabel);
-        Map<String, Integer> reverseItems = new HashMap<>();
-        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+        final Map<String, Integer> reverseItems = new HashMap<>();
+        for (Map.Entry<Integer, Item> entry : bill.getItems().entrySet()) {
             reverseItems.put(entry.getValue().getName(), entry.getKey());
         }
         final JComboBox<String> itemSelection =
                 new JComboBox<>(reverseItems.keySet().toArray(new String[reverseItems.size()]));
         mainPanel.add(itemSelection);
 
-        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField newPriceField = new JTextField(20);
+        final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JTextField newPriceField = new JTextField(20);
         inputPanel.add(new JLabel("New Price:"));
         inputPanel.add(newPriceField);
 
         mainPanel.add(inputPanel);
-        int result = JOptionPane.showConfirmDialog(
+        final int result = JOptionPane.showConfirmDialog(
                 null,
                 mainPanel,
                 "Edit Item Price",
@@ -679,11 +636,11 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 JOptionPane.PLAIN_MESSAGE
         );
 
-        if (result == JOptionPane.OK_OPTION){
+        if (result == JOptionPane.OK_OPTION) {
             try {
-                float newPrice = Float.valueOf(newPriceField.getText());
-                int itemId = reverseItems.get(itemSelection.getSelectedItem());
-                Item item = bill.getItems().get(itemId);
+                final float newPrice = Float.valueOf(newPriceField.getText());
+                final int itemId = reverseItems.get(itemSelection.getSelectedItem());
+                final Item item = bill.getItems().get(itemId);
                 bill.setItem(itemId, item);
                 item.setCost(newPrice);
                 userDataAccessObject.setBill(bill.getId(), bill);
@@ -693,22 +650,22 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 parent.repaint();
                 parent.revalidate();
 
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException evt) {
                 JOptionPane.showMessageDialog(parent, "Please enter a valid price.");
             }
         }
     }
 
-
     private void showModifySplitsDialog(JPanel parent) {
         // Create main panel with padding
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Add title
-        JLabel titleLabel = new JLabel("Select people to change split value by");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        final JLabel titleLabel = new JLabel("Select people to change split value by");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         mainPanel.add(titleLabel);
@@ -716,18 +673,17 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         // Create input fields
 
         // generate an inverse users which maps the name of the user to its id.
-        Map<String, Integer> reverseUsers = new HashMap<>();
-        for(int userId : bill.getUsers()){
-            String userName = userDataAccessObject.getUser(userId).getName();
+        final Map<String, Integer> reverseUsers = new HashMap<>();
+        for (int userId : bill.getUsers()) {
+            final String userName = userDataAccessObject.getUser(userId).getName();
             reverseUsers.put(userName, userId);
         }
 
         // generate an inverse items which maps the name of the item to its id.
-        Map<String, Integer> reverseItems = new HashMap<>();
-        for(Map.Entry<Integer, Item> entry : bill.getItems().entrySet()){
+        final Map<String, Integer> reverseItems = new HashMap<>();
+        for (Map.Entry<Integer, Item> entry : bill.getItems().entrySet()) {
             reverseItems.put(entry.getValue().getName(), entry.getKey());
         }
-
 
         // have drop down menu for which user to modify.
         final JComboBox<String> userSelection =
@@ -739,40 +695,40 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 new JComboBox<>(reverseItems.keySet().toArray(new String[reverseItems.size()]));
         mainPanel.add(itemSelection);
 
-
         // have amount modified by
-        JTextField AmountModifiedField = new JTextField("Please enter how much the split is modified here");
-        AmountModifiedField.setPreferredSize(new Dimension(300, 30));
-        AmountModifiedField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
-                AmountModifiedField.setText("");
+        final JTextField amountModifiedField = new JTextField("Please enter how much the split is modified here");
+        amountModifiedField.setPreferredSize(new Dimension(300, 30));
+        amountModifiedField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent evt) {
+                amountModifiedField.setText("");
             }
-            public void focusLost(FocusEvent e) {
-                if(AmountModifiedField.getText().isEmpty())
-                    AmountModifiedField.setText("Please enter item cost here");
+
+            public void focusLost(FocusEvent evt) {
+                if (amountModifiedField.getText().isEmpty()) {
+                    amountModifiedField.setText("Please enter item cost here");
+                }
             }
         });
 
-        mainPanel.add(AmountModifiedField);
+        mainPanel.add(amountModifiedField);
 
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton ModifyButton = new JButton("Modify!");
-        ModifyButton.setBackground(Color.BLACK);
-        ModifyButton.setForeground(Color.WHITE);
-        ModifyButton.setFocusPainted(false);
-        ModifyButton.setBorderPainted(false);
-        ModifyButton.setPreferredSize(new Dimension(100, 35));
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JButton modifyButton = new JButton("Modify!");
+        modifyButton.setBackground(Color.BLACK);
+        modifyButton.setForeground(Color.WHITE);
+        modifyButton.setFocusPainted(false);
+        modifyButton.setBorderPainted(false);
+        modifyButton.setPreferredSize(new Dimension(100, 35));
 
         // Add action listener for create button
-        ModifyButton.addActionListener(e -> {
-            int userId = reverseUsers.get(userSelection.getSelectedItem());
-            int itemId = reverseItems.get(itemSelection.getSelectedItem());
+        modifyButton.addActionListener(evt -> {
+            final int userId = reverseUsers.get(userSelection.getSelectedItem());
+            final int itemId = reverseItems.get(itemSelection.getSelectedItem());
 
-            try{
-                float amountModified = Float.valueOf(AmountModifiedField.getText());
+            try {
+                final float amountModified = Float.valueOf(amountModifiedField.getText());
 
                 modifySplitController.execute(amountModified, bill.getId(), itemId, userId);
-
 
                 // This part of the code makes the parent display redraw itself after updating the DAO.
                 this.remove(mainContentPanel);
@@ -781,86 +737,82 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                 parent.repaint();
                 parent.revalidate();
 
-
                 JOptionPane.getRootFrame().dispose();
-            } catch (NumberFormatException ex){
+            }
+            catch (NumberFormatException ex) {
                 // This catches when the user input something that is not a float, thus have a pop up saying they
                 // gotta input a float.
                 JOptionPane.showMessageDialog(parent, "The amount modified is not a number. Try again.");
 
             }
 
-
-
             JOptionPane.getRootFrame().dispose();
 
         });
 
-
-
-
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-        buttonPanel.add(ModifyButton);
+        buttonPanel.add(modifyButton);
         mainPanel.add(buttonPanel);
 
-
-        JOptionPane.showMessageDialog(null, mainPanel,"Modify Split", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mainPanel, "Modify Split", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showAddItemDialog(JPanel parent) {
 
         // Create main panel with padding
-        JPanel mainPanel = new JPanel();
+        final JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         // Add title
-        JLabel titleLabel = new JLabel("Add a new item...");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        final JLabel titleLabel = new JLabel("Add a new item...");
+        titleLabel.setFont(new Font(ARIAL, Font.BOLD, 24));
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Create input fields
-        JTextField itemNameField = new JTextField("Please enter item name here");
+        final JTextField itemNameField = new JTextField("Please enter item name here");
         itemNameField.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(15),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         itemNameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         itemNameField.setPreferredSize(new Dimension(300, 40));
-        itemNameField.setFont(new Font("Arial", Font.PLAIN, 14));
+        itemNameField.setFont(new Font(ARIAL, Font.PLAIN, 14));
         itemNameField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            public void focusGained(FocusEvent evt) {
                 itemNameField.setText("");
             }
-            public void focusLost(FocusEvent e) {
-                if(itemNameField.getText().isEmpty())
-                    itemNameField.setText("Please enter item name here");
 
+            public void focusLost(FocusEvent evt) {
+                if (itemNameField.getText().isEmpty()) {
+                    itemNameField.setText("Please enter item name here");
+                }
             }
         });
 
-
-        JTextField itemCostField = new JTextField("Please enter item cost here");
+        final JTextField itemCostField = new JTextField("Please enter item cost here");
         itemCostField.setBorder(BorderFactory.createCompoundBorder(
                 new RoundedBorder(15),
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         itemCostField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
         itemCostField.setPreferredSize(new Dimension(300, 40));
-        itemCostField.setFont(new Font("Arial", Font.PLAIN, 14));
+        itemCostField.setFont(new Font(ARIAL, Font.PLAIN, 14));
         itemCostField.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e) {
+            public void focusGained(FocusEvent evt) {
                 itemCostField.setText("");
             }
-            public void focusLost(FocusEvent e) {
-                if(itemCostField.getText().isEmpty())
+
+            public void focusLost(FocusEvent evt) {
+                if (itemCostField.getText().isEmpty()) {
                     itemCostField.setText("Please enter item cost here");
+                }
             }
         });
 
         // Create button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton createButton = new JButton("Create!");
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        final JButton createButton = new JButton("Create!");
         createButton.setBackground(Color.BLACK);
         createButton.setForeground(Color.WHITE);
         createButton.setFocusPainted(false);
@@ -871,7 +823,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 
 //        // Add close button to top-right corner
 //        JButton closeButton = new JButton("×");
-//        closeButton.setFont(new Font("Arial", Font.BOLD, 20));
+//        closeButton.setFont(new Font(ARIAL, Font.BOLD, 20));
 //        closeButton.setBorderPainted(false);
 //        closeButton.setContentAreaFilled(false);
 //        closeButton.setFocusPainted(false);
@@ -881,14 +833,14 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
 //        closePanel.add(closeButton);
 
         // Add action listener for create button
-        createButton.addActionListener(e -> {
-            String itemName = itemNameField.getText().trim();
-            String itemCost = itemCostField.getText().trim();
+        createButton.addActionListener(evt -> {
+            final String itemName = itemNameField.getText().trim();
+            final String itemCost = itemCostField.getText().trim();
             if (!itemName.isEmpty() && !itemCost.isEmpty()) {
-                try{
-                    float itemCostFloat = Float.valueOf(itemCost);
+                try {
+                    final float itemCostFloat = Float.valueOf(itemCost);
 
-                    ItemFactory itemFactory = new ItemFactory();
+                    final ItemFactory itemFactory = new ItemFactory();
                     bill.addItem(itemFactory.create(itemName, itemCostFloat));
                     userDataAccessObject.setBill(bill.getId(), bill);
 
@@ -899,9 +851,9 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
                     parent.repaint();
                     parent.revalidate();
 
-
                     JOptionPane.getRootFrame().dispose();
-                } catch (NumberFormatException ex){
+                }
+                catch (NumberFormatException ex) {
                     // This catches when the user input something that is not a float, thus have a pop up saying they
                     // gotta input a float.
                     JOptionPane.showMessageDialog(parent, "The cost is not a number. Try again.");
@@ -926,8 +878,7 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         buttonPanel.add(createButton);
         mainPanel.add(buttonPanel);
 
-
-        JOptionPane.showMessageDialog(null, mainPanel,"Add Items", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, mainPanel, "Add Items", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
@@ -944,9 +895,20 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         this.modifySplitController = controller;
     }
 
+    /**
+     * Sets the data access object (DAO) for accessing user data.
+     * This method assigns the provided FileDAO to the userDataAccessObject.
+     * It also triggers the `drawMainContent()` method to initialize and display
+     * the main content of the view, but it is important to note that the DAO
+     * should be set before any operations are performed.
+     * It is strongly recommended to call this method only during the initialization
+     * of the view, as the DAO must be set before any other actions take place. 
+     * Calling this method after the system has been initialized may lead to
+     * unexpected behavior.
+     * @param fileDAO the FileDAO instance used to access user data
+     */
     public void setDAO(FileDAO fileDAO) {
         this.userDataAccessObject = fileDAO;
-
 
         // very very horrible coding practice this the DAO must be set before everything is actaully ran
         // so this method has to be called before everything is ran, PLEASAE dont call this unless you are initializing
@@ -954,18 +916,17 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         drawMainContent();
     }
 
-    public void setUploadReceiptController(UploadReceiptController controller){this.uploadReceiptController = controller;}
+    public void setUploadReceiptController(UploadReceiptController controller) {
+        this.uploadReceiptController = controller;
+    }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         System.out.println("property changed now displaying bill display");
         if (evt.getPropertyName().equals("state")) {
             this.remove(sidebarPanel);
-            sidebarPanel = new Sidebar(billDisplayPresenter, changePasswordController, logoutController, this.billDisplayViewModel.getState());
-
-
-
-
+            sidebarPanel = new Sidebar(billDisplayPresenter, 
+                    changePasswordController, logoutController, this.billDisplayViewModel.getState());
 
             drawMainContent();
         }
@@ -992,51 +953,5 @@ public class BillDisplayView extends JPanel implements PropertyChangeListener{
         this.billDisplayPresenter = billDisplayPresenter;
     }
 
-
 }
 
-class RoundedBorder extends AbstractBorder {
-    private int radius;
-
-    RoundedBorder(int radius) {
-        this.radius = radius;
-    }
-
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(Color.LIGHT_GRAY);
-        g2.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        g2.dispose();
-    }
-
-    @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(this.radius/2, this.radius/2, this.radius/2, this.radius/2);
-    }
-}
-
-class DashBorderRect extends AbstractBorder {
-    private int thickness;
-
-    public DashBorderRect(int thickness) {
-        this.thickness = thickness;
-    }
-
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g.create();
-
-        g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_BUTT,
-                BasicStroke.JOIN_MITER, 10.0f,
-                new float[]{5.0f}, 0.0f));
-        g2d.drawRect(x, y, width - 1, height - 1);
-        g2d.dispose();
-    }
-
-    @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(thickness, thickness, thickness, thickness);
-    }
-}

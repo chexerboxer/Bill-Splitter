@@ -17,9 +17,9 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
     public ChangePasswordPresenter(ViewManagerModel viewManagerModel,
                                    ChangePasswordViewModel changePasswordViewModel,
                                    LoginViewModel loginViewModel) {
-       this.changePasswordViewModel = changePasswordViewModel;
-       this.viewManagerModel = viewManagerModel;
-       this.loginViewModel = loginViewModel;
+        this.changePasswordViewModel = changePasswordViewModel;
+        this.viewManagerModel = viewManagerModel;
+        this.loginViewModel = loginViewModel;
     }
 
     @Override
@@ -37,6 +37,13 @@ public class ChangePasswordPresenter implements ChangePasswordOutputBoundary {
         // note: this use case currently can't fail
     }
 
+    /**
+     * Switches the application view to the login screen.
+     *
+     * This method invokes the necessary logic to update the current application view
+     * to the login screen, typically after completing the password change process or
+     * when the user opts to navigate back to the login screen.
+     */
     public void switchToLoginView() {
         viewManagerModel.setState(loginViewModel.getViewName());
         viewManagerModel.firePropertyChanged();

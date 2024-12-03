@@ -7,18 +7,6 @@ public class DistributeBillEvenInputData {
     private final ArrayList<Integer> usersSplitting;
     private final int bill_id;
 
-    public ArrayList<Integer> getUserssplitting() {
-        return usersSplitting;
-    }
-
-
-
-
-    public int getBill_id() {
-        return bill_id;
-    }
-
-
     public DistributeBillEvenInputData(int billId, ArrayList<Integer> usersSplitting) {
 
         bill_id = billId;
@@ -26,5 +14,12 @@ public class DistributeBillEvenInputData {
         this.usersSplitting = usersSplitting;
     }
 
+    public ArrayList<Integer> getUserssplitting() {
+        return usersSplitting;
+    }
+
+    public int getBill_id() {
+        return bill_id;
+    }
 
 }

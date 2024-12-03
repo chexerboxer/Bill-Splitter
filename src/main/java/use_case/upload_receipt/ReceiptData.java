@@ -1,8 +1,8 @@
 package use_case.upload_receipt;
 
-import entity.item.Item;
-
 import java.util.List;
+
+import entity.item.Item;
 
 public class ReceiptData {
     private List<Item> items;

@@ -1,33 +1,48 @@
 package use_case.upload_receipt;
 
+import static app.Constants.API_KEY;
+import static app.Constants.BASE_URL;
+import static app.Constants.CLIENT_ID;
+import static app.Constants.OCR_URI;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 
 import data_access.FileDAO;
 import entity.bill.Bill;
 import entity.item.Item;
-import okhttp3.*;
-import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-
-import static app.Constants.*;
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
  */
 public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
-    private final FileDAO userDataAccessObject;
-    private final UploadReceiptOutputBoundary uploadReceiptPresenter;
+    private static final String CREATED_DATE_KEY = "date";
+    private static final String CURRENCY_TYPE_KEY = "currency_code";
+//     private final FileDAO userDataAccessObject;
+//     private final UploadReceiptOutputBoundary uploadReceiptPresenter;
 
     private static final String ITEM_LIST_KEY = "line_items";
     private static final String ITEM_NAME_KEY = "description";
     private static final String ITEM_QUANTITY_KEY = "quantity";
     private static final String ITEM_PRICE_KEY = "total";
-    public static final String FILE_DATA = "file_data";
+    private static final String FILE_DATA = "file_data";
+
+    private final FileDAO userDataAccessObject;
+    private final UploadReceiptOutputBoundary uploadReceiptPresenter;
 
     public UploadReceiptInteractor(FileDAO userDataAccessInterface,
                                    UploadReceiptOutputBoundary uploadReceiptOutputBoundary) {
@@ -44,14 +59,14 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     @Override
     public void execute(UploadReceiptInputData uploadReceiptInputData) throws IOException {
 
-        String fileName = uploadReceiptInputData.getReceiptFileName();
+        final String fileName = uploadReceiptInputData.getReceiptFileName();
         final String data = readReceipt(fileName);
-        OkHttpClient client = new OkHttpClient();
-        Map<String, String> dataRequest = new HashMap<>();
+        final OkHttpClient client = new OkHttpClient();
+        final Map<String, String> dataRequest = new HashMap<>();
         dataRequest.put(FILE_DATA, data);
 
-        JSONObject jo = new JSONObject(dataRequest);
-        String json = jo.toString();
+        final JSONObject jo = new JSONObject(dataRequest);
+        final String json = jo.toString();
 
         RequestBody body = RequestBody.create(
                 MediaType.parse("application/json"), json);
@@ -79,23 +94,23 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
 
     }
 
-
     /**
-     * Reads the inputted receipt and converts it into a base 64 encoded String
+     * Reads the inputted receipt and converts it into a base 64 encoded String.
      *
      * @param filename the file name of the image
      * @return the file encoded into a base 64 String
+     * @throws IOException when abd reading happen
      */
     private String readReceipt(String filename) throws IOException {
         byte[] fileContent = null;
         fileContent = FileUtils.readFileToByteArray(new File(filename));
 
-        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+        final String encodedString = Base64.getEncoder().encodeToString(fileContent);
         return encodedString;
     }
 
     /**
-     * Private helper method for retrieveOcrData
+     * Private helper method for retrieveOcrData.
      *
      * @param jo the JsonObject created by the API call
      * @return ReceiptData object with relevant info taken from jo

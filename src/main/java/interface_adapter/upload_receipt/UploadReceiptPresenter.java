@@ -1,8 +1,8 @@
 package interface_adapter.upload_receipt;
 
-import use_case.upload_receipt.UploadReceiptOutputBoundary;
+import javax.swing.JOptionPane;
 
-import javax.swing.*;
+import use_case.upload_receipt.UploadReceiptOutputBoundary;
 
 public class UploadReceiptPresenter implements UploadReceiptOutputBoundary {
 

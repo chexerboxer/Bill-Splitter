@@ -1,11 +1,10 @@
 package use_case.login;
 
-import data_access.FileDAO;
-import entity.bill.Bill;
-import entity.users.User;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import entity.bill.Bill;
+import entity.users.User;
 
 /**
  * The Login Interactor.

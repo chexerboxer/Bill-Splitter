@@ -15,8 +15,10 @@ public class ChangePasswordController {
 
     /**
      * Executes the Change Password Use Case.
-     * @param password the new password
-     * @param username the user whose password to change
+     *
+     * @param password The new password.
+     * @param username The user whose password to change.
+     * @return true if the password change was successful; false otherwise.
      */
     public boolean execute(String password, String username) {
         final ChangePasswordInputData changePasswordInputData = new ChangePasswordInputData(username, password);
@@ -24,6 +26,13 @@ public class ChangePasswordController {
         return userChangePasswordUseCaseInteractor.execute(changePasswordInputData);
     }
 
+    /**
+     * Switches the application view to the login screen.
+     *
+     * This method invokes the necessary logic to update the current application view
+     * to the login screen, typically after completing the password change process or
+     * when the user opts to navigate back to the login screen.
+     */
     public void switchToLoginView() {
         userChangePasswordUseCaseInteractor.switchToLoginView();
     }

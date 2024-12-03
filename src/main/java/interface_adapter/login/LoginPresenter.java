@@ -1,10 +1,10 @@
 package interface_adapter.login;
 
 import interface_adapter.ViewManagerModel;
+import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
 import interface_adapter.signup.SignupViewModel;
-import interface_adapter.change_password.ChangePasswordViewModel;
 import use_case.login.LoginOutputBoundary;
 import use_case.login.LoginOutputData;
 
@@ -18,7 +18,6 @@ public class LoginPresenter implements LoginOutputBoundary {
     private final ViewManagerModel viewManagerModel;
     private final SignupViewModel signupViewModel;
     private final ChangePasswordViewModel changePasswordViewModel;
-
 
     public LoginPresenter(ViewManagerModel viewManagerModel,
                           DashboardViewModel dashboardViewModel,
