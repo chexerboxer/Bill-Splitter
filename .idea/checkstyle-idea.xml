@@ -7,13 +7,13 @@
     <copyLibs>true</copyLibs>
     <option name="thirdPartyClasspath" />
     <option name="activeLocationIds">
-      <option value="aff0459d-ed74-4bbd-843d-f39444ee4dd3" />
+      <option value="34cfdd2b-7205-4445-9504-f22f270c574e" />
     </option>
     <option name="locations">
       <list>
         <ConfigurationLocation id="bundled-sun-checks" type="BUNDLED" scope="All" description="Sun Checks">(bundled)</ConfigurationLocation>
         <ConfigurationLocation id="bundled-google-checks" type="BUNDLED" scope="All" description="Google Checks">(bundled)</ConfigurationLocation>
-        <ConfigurationLocation id="aff0459d-ed74-4bbd-843d-f39444ee4dd3" type="LOCAL_FILE" scope="All" description="I want to be sane">$PROJECT_DIR$/mystyle.xml</ConfigurationLocation>
+        <ConfigurationLocation id="34cfdd2b-7205-4445-9504-f22f270c574e" type="LOCAL_FILE" scope="All" description="CSC207Checks">$PROJECT_DIR$/mystyle.xml</ConfigurationLocation>
       </list>
     </option>
   </component>

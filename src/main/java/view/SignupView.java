@@ -1,6 +1,8 @@
 package view;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -24,8 +26,12 @@ import interface_adapter.signup.SignupViewModel;
  * The View for the Signup Use Case.
  */
 public class SignupView extends JPanel implements ActionListener, PropertyChangeListener {
+    private static final Dimension INPUT_FIELD_DIMENSIONS = new Dimension(100, 25);
+    private static final Dimension BUTTON_DIMENSIONS = new Dimension(100, 30);
+    private static final Dimension LOGIN_BUTTON_DIMENSIONS = new Dimension(300, 30);
+    private static final int TITLE_FONT_SIZE = 50;
+    
     private final String viewName = "sign up";
-
     private final SignupViewModel signupViewModel;
     private final JTextField usernameInputField = new JTextField(15);
     private final JPasswordField passwordInputField = new JPasswordField(15);
@@ -41,36 +47,38 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         signupViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
-        title.setFont(new Font("Arial",Font.BOLD, 50));
+        title.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.setSize(1000, 700);
 
-        usernameInputField.setPreferredSize(new Dimension(100, 25));
-        passwordInputField.setPreferredSize(new Dimension(100, 25));
-        repeatPasswordInputField.setPreferredSize(new Dimension(100, 25));
+        usernameInputField.setPreferredSize(INPUT_FIELD_DIMENSIONS);
+        passwordInputField.setPreferredSize(INPUT_FIELD_DIMENSIONS);
+        repeatPasswordInputField.setPreferredSize(INPUT_FIELD_DIMENSIONS);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.USERNAME_LABEL), usernameInputField);
-        usernameInfo.setPreferredSize(new Dimension(100, 25));
+        usernameInfo.setPreferredSize(INPUT_FIELD_DIMENSIONS);
         final LabelTextPanel passwordInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.PASSWORD_LABEL), passwordInputField);
-        passwordInfo.setPreferredSize(new Dimension(100, 25));
+        passwordInfo.setPreferredSize(INPUT_FIELD_DIMENSIONS);
         final LabelTextPanel repeatInfo = new LabelTextPanel(
                 new JLabel(SignupViewModel.REPEAT_PASSWORD_LABEL), repeatPasswordInputField
         );
-        repeatInfo.setPreferredSize(new Dimension(100, 25));
+        repeatInfo.setPreferredSize(INPUT_FIELD_DIMENSIONS);
 
         final JPanel loginButtons = new JPanel();
         final JPanel buttons = new JPanel();
 
         signUp = new JButton(SignupViewModel.SIGNUP_BUTTON_LABEL);
         buttons.add(signUp);
-        signUp.setPreferredSize(new Dimension(100, 30));
+        signUp.setPreferredSize(BUTTON_DIMENSIONS);
+        
         cancel = new JButton(SignupViewModel.CANCEL_BUTTON_LABEL);
-        cancel.setPreferredSize(new Dimension(100, 30));
+        cancel.setPreferredSize(BUTTON_DIMENSIONS);
+        
         buttons.add(cancel);
         toLogin = new JButton(SignupViewModel.TO_LOGIN_BUTTON_LABEL);
-        toLogin.setPreferredSize(new Dimension(300, 30));
+        
+        toLogin.setPreferredSize(LOGIN_BUTTON_DIMENSIONS);
         loginButtons.add(toLogin);
 
         signUp.addActionListener(
@@ -100,7 +108,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
         cancel.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(ActionEvent evt) {
                         usernameInputField.setText("");
                         passwordInputField.setText("");
                         repeatPasswordInputField.setText("");
@@ -113,7 +121,6 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         addRepeatPasswordListener();
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        this.setPreferredSize(new Dimension(700, 400)); // Set your desired dimensions
 
         this.add(title);
         this.add(usernameInfo);

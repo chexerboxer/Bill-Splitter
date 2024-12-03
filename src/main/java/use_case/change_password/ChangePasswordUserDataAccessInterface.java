@@ -18,5 +18,5 @@ public interface ChangePasswordUserDataAccessInterface {
      * @param username the username to search for
      * @return the user associated with the given username
      */
-    User getByUsername(String username);
+    User get(String username);
 }

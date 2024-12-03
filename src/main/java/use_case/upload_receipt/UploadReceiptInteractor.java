@@ -32,6 +32,9 @@ import okhttp3.Response;
 public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     private static final String CREATED_DATE_KEY = "date";
     private static final String CURRENCY_TYPE_KEY = "currency_code";
+//     private final FileDAO userDataAccessObject;
+//     private final UploadReceiptOutputBoundary uploadReceiptPresenter;
+
     private static final String ITEM_LIST_KEY = "line_items";
     private static final String ITEM_NAME_KEY = "description";
     private static final String ITEM_QUANTITY_KEY = "quantity";
@@ -118,9 +121,6 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
         if (jo == null) {
             return receiptData;
         }
-
-        receiptData.setDate(jo.getString(CREATED_DATE_KEY));
-        receiptData.setCurrencyType(jo.getString(CURRENCY_TYPE_KEY));
         List<Item> itemList = new ArrayList<>();
 
         if (jo.getJSONArray(ITEM_LIST_KEY) != null) {
