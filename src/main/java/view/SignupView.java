@@ -103,6 +103,7 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                     public void actionPerformed(ActionEvent e) {
                         usernameInputField.setText("");
                         passwordInputField.setText("");
+                        repeatPasswordInputField.setText("");
                     }
                 }
         );

@@ -107,8 +107,7 @@ public class Sidebar extends JPanel {
                    BillDisplayState currentState) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//        setBackground(new Color(230, 230, 230));
-        setBackground(Color.CYAN);
+        setBackground(new Color(230, 230, 230));
         setPreferredSize(new Dimension(200, getHeight()));
 
         // User profile section at the top
@@ -120,7 +119,7 @@ public class Sidebar extends JPanel {
 
         JPanel userInfoPanel = new JPanel();
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
-//        userInfoPanel.setBackground(new Color(230, 230, 230));
+        userInfoPanel.setBackground(new Color(230, 230, 230));
 
         JLabel usernameLabel = new JLabel(currentState.getUsername());
         userInfoPanel.add(usernameLabel);
