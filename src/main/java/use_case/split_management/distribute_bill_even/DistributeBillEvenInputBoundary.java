@@ -1,6 +1,5 @@
 package use_case.split_management.distribute_bill_even;
 
-
 public interface DistributeBillEvenInputBoundary {
 
     /**
@@ -8,8 +7,5 @@ public interface DistributeBillEvenInputBoundary {
      * @param addSplitInputData the input data for this use case
      */
     void execute(DistributeBillEvenInputData addSplitInputData);
-
-
-    // TODO switch view stuff.
 
 }

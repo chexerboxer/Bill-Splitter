@@ -1,9 +1,9 @@
 package use_case.dashboard;
 
+import java.util.HashMap;
+
 import entity.bill.Bill;
 import entity.users.User;
-
-import java.util.HashMap;
 
 public class DashboardInteractor implements DashboardInputBoundary {
     private final DashboardUserDataAccessInterface userDataAccessObject;
@@ -28,8 +28,8 @@ public class DashboardInteractor implements DashboardInputBoundary {
             newUserBillsData.remove(billId);
             final DashboardOutputData dashboardOutputData = new DashboardOutputData(newUserBillsData,false);
             dashboardPresenter.prepareSuccessView(dashboardOutputData);
-            }
         }
+    }
 
     @Override
     public void switchtoSignUpView() {
@@ -43,7 +43,7 @@ public class DashboardInteractor implements DashboardInputBoundary {
 
     @Override
     public void switchToBillView(String username, int billId) {
-        dashboardPresenter.switchToBillView(username,billId);
+        dashboardPresenter.switchToBillView(username, billId);
 
     }
 

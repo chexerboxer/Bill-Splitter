@@ -2,13 +2,11 @@ package interface_adapter.dashboard;
 
 import interface_adapter.ViewManagerModel;
 import interface_adapter.bill_splitter.BillDisplayState;
-import interface_adapter.change_password.ChangePasswordViewModel;
-import interface_adapter.login.LoginState;
-import interface_adapter.login.LoginViewModel;
-import interface_adapter.signup.SignupViewModel;
 import interface_adapter.bill_splitter.BillDisplayViewModel;
-import use_case.dashboard.*;
-import use_case.dashboard.DashboardInputBoundary;
+import interface_adapter.change_password.ChangePasswordViewModel;
+import interface_adapter.signup.SignupViewModel;
+import use_case.dashboard.DashboardOutputBoundary;
+import use_case.dashboard.DashboardOutputData;
 
 public class DashboardPresenter implements DashboardOutputBoundary {
     private final DashboardViewModel dashboardViewModel;
@@ -16,7 +14,6 @@ public class DashboardPresenter implements DashboardOutputBoundary {
     private final SignupViewModel signupViewModel;
     private final ChangePasswordViewModel changePasswordViewModel;
     private final BillDisplayViewModel billDisplayViewModel;
-
 
     public DashboardPresenter(ViewManagerModel viewManagerModel,
                           DashboardViewModel dashboardViewModel,
@@ -63,6 +60,7 @@ public class DashboardPresenter implements DashboardOutputBoundary {
         viewManagerModel.setState(changePasswordViewModel.getViewName());
         viewManagerModel.firePropertyChanged();
     }
+
     @Override
     public void switchToBillView(String username, int billId) {
         final BillDisplayState billDisplayState = billDisplayViewModel.getState();

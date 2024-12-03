@@ -1,7 +1,5 @@
 package use_case.login;
 
-import entity.bill.Bill;
-
 /**
  * The output boundary for the Login Use Case.
  */

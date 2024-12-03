@@ -7,7 +7,7 @@ public class DashboardOutputData {
     private final boolean useCaseFailed;
 
     public DashboardOutputData(
-                              HashMap<Integer,String> userBillsData,
+                              HashMap<Integer, String> userBillsData,
                               boolean useCaseFailed) {
         this.userBillsData = userBillsData;
         this.useCaseFailed = useCaseFailed;
@@ -16,6 +16,5 @@ public class DashboardOutputData {
     public HashMap<Integer, String> getUserBillsData() {
         return userBillsData;
     }
-
 
 }

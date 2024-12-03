@@ -1,8 +1,8 @@
 package use_case.change_password;
 
-import interface_adapter.change_password.ChangePasswordPresenter;
 import entity.users.User;
 import entity.users.UserFactory;
+import interface_adapter.change_password.ChangePasswordPresenter;
 
 /**
  * The Change Password Interactor.
@@ -25,7 +25,7 @@ public class ChangePasswordInteractor implements ChangePasswordInputBoundary {
 
     @Override
     public boolean execute(ChangePasswordInputData changePasswordInputData) {
-        User user = userDataAccessObject.getByUsername(changePasswordInputData.getUsername());
+        final User user = userDataAccessObject.getByUsername(changePasswordInputData.getUsername());
 
         if (user == null) {
             userPresenter.prepareFailView("User not found");
@@ -34,7 +34,6 @@ public class ChangePasswordInteractor implements ChangePasswordInputBoundary {
 
         user.setPassword(changePasswordInputData.getPassword());
         userDataAccessObject.changePassword(user);
-
 
         final ChangePasswordOutputData changePasswordOutputData = new ChangePasswordOutputData(user.getName(),
                                                                                   false);

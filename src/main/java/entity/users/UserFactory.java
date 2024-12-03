@@ -1,8 +1,8 @@
 package entity.users;
 
-import entity.split.Split;
-
 import java.util.ArrayList;
+
+import entity.split.Split;
 
 /**
  * Factory for creating users.

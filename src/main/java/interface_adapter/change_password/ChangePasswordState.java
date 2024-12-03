@@ -1,6 +1,5 @@
 package interface_adapter.change_password;
 
-
 public class ChangePasswordState {
     private String newPassword = "";
     private String confirmPassword = "";
@@ -10,8 +9,8 @@ public class ChangePasswordState {
         return newPassword;
     }
 
-    public void setCurrentPassword(String newPassword) {
-        this.newPassword = newPassword;
+    public void setCurrentPassword(String newPassword2) {
+        this.newPassword = newPassword2;
     }
 
     public String getConfirmPassword() {

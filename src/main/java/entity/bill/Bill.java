@@ -1,26 +1,26 @@
 package entity.bill;
 
-import entity.GenerateId;
-import entity.item.Item;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+
+import entity.GenerateId;
+import entity.item.Item;
 
 /**
  *  The representation of a bill in our program.
  */
 public class Bill implements GenerateId {
 
+    // set bounds when generating an ID so it'll always be 6 digits
+    private static final int START_ID_RANGE = 100000;
+    private static final int END_ID_RANGE = 999999;
+
     private String name;
     private final int id;
     private ArrayList<Integer> users = new ArrayList<>();
     private HashMap<Integer, Item> items = new HashMap<>();
-    private float totalAmount = 0;
-
-    // set bounds when generating an ID so it'll always be 6 digits
-    private static final int START_ID_RANGE = 100000;
-    private static final int END_ID_RANGE = 999999;
+    private float totalAmount;
 
     public Bill(String name) {
         this.name = name;
@@ -30,7 +30,7 @@ public class Bill implements GenerateId {
     public Bill(String name, int creatorId) {
         this.name = name;
         this.id = generateId();
-        ArrayList<Integer> users = new ArrayList<>();
+        final ArrayList<Integer> users = new ArrayList<>();
         users.add(creatorId);
         this.users = users;
     }
@@ -45,19 +45,24 @@ public class Bill implements GenerateId {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
 
-        Bill bill = (Bill) obj;
+        final Bill bill = (Bill) obj;
 
         // Check fields for equality
         return this.id == bill.id
                 && Float.compare(this.totalAmount, bill.totalAmount) == 0
                 && this.name.equals(bill.name)
-                && this.users.equals(bill.users) // Compares contents of the lists
-                && this.items.equals(bill.items); // Compares contents of the map
+                // Compares contents of the lists
+                && this.users.equals(bill.users)
+                // Compares contents of the map
+                && this.items.equals(bill.items);
     }
-
 
     public void setName(String name) {
         this.name = name;
@@ -65,8 +70,8 @@ public class Bill implements GenerateId {
 
     @Override
     public int generateId() {
-        Random random = new Random();
-        int idBound = END_ID_RANGE - START_ID_RANGE + 1;
+        final Random random = new Random();
+        final int idBound = END_ID_RANGE - START_ID_RANGE + 1;
         return random.nextInt(idBound) + START_ID_RANGE;
     }
 
@@ -90,42 +95,73 @@ public class Bill implements GenerateId {
         return totalAmount;
     }
 
+    /**
+     * Adds a user to the bill if not already present.
+     *
+     * @param id The user ID to add.
+     */
     public void addUser(int id) {
-        if (!users.contains(id)) { // Prevent duplicate users
+        // Prevent duplicate users
+        if (!users.contains(id)) {
             users.add(id);
         }
     }
 
+    /**
+     * Removes a user from the bill.
+     *
+     * @param userId The user ID to remove.
+     */
     public void removeUser(int userId) {
-        users.removeIf(user -> user == userId); // Simplified and handles non-existent users gracefully
+        // Simplified and handles non-existent users gracefully
+        users.removeIf(user -> user == userId);
     }
 
+    /**
+     * Adds a new item to the bill. If the item already exists, a new ID is generated for it.
+     * The total amount of the bill is updated accordingly.
+     *
+     * @param newItem The new item to add.
+     * @throws IllegalArgumentException If the item is null.
+     */
     public void addItem(Item newItem) {
         if (newItem == null) {
-            throw new IllegalArgumentException("Item cannot be null"); // Optional: You can also silently return or log
+            // Optional: You can also silently return or log
+            throw new IllegalArgumentException("Item cannot be null");
         }
 
         if (items.containsKey(newItem.getId())) {
             // Generate a new ID and re-add the item
             newItem.setId(newItem.generateId());
             addItem(newItem);
-        } else {
+        }
+        else {
             // Add the new item and update the total amount
             items.put(newItem.getId(), newItem);
             totalAmount += newItem.getCost();
         }
     }
 
-
-
+    /**
+     * Removes an item from the bill by its ID. The total amount is updated accordingly.
+     *
+     * @param oldItemId The ID of the item to remove.
+     */
     public void removeItem(int oldItemId) {
-        Item oldItem = items.get(oldItemId);
-        if (oldItem != null) { // Check if the item exists
+        final Item oldItem = items.get(oldItemId);
+        // Check if the item exists
+        if (oldItem != null) {
             totalAmount -= oldItem.getCost();
             items.remove(oldItemId);
         }
     }
 
+    /**
+     * Sets an item in the bill by its ID.
+     *
+     * @param itemId The ID of the item to set.
+     * @param item The new item to associate with the given ID.
+     */
     public void setItem(int itemId, Item item) {
         items.put(itemId, item);
     }

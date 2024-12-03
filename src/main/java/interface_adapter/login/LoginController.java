@@ -10,7 +10,6 @@ public class LoginController {
 
     private final LoginInputBoundary loginUseCaseInteractor;
 
-
     public LoginController(LoginInputBoundary loginUseCaseInteractor) {
         this.loginUseCaseInteractor = loginUseCaseInteractor;
     }
@@ -34,6 +33,12 @@ public class LoginController {
         loginUseCaseInteractor.switchtoSignUpView();
     }
 
+    /**
+     * Switches the application view to the change password screen.
+     *
+     * This method invokes the logic to update the application's state to display
+     * the change password view.
+     */
     public void switchToChangePasswordView() {
         loginUseCaseInteractor.switchtoChangePasswordView();
     }
