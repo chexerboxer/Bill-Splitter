@@ -1,27 +1,41 @@
 package view;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.dashboard.DashboardController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.dashboard.DashboardViewModel;
-import interface_adapter.login.LoginState;
 import interface_adapter.logout.LogoutController;
-
-//components
 import view.components.Sidebar;
 
 /**
  * The View for when the user is logged into the program.
  */
 public class DashboardView extends JPanel implements PropertyChangeListener {
+    private static final int PADDING = 20;
+    private static final int BILL_CARD_PADDING = 10;
+    private static final int BILL_CARD_MAX_SIZE = 100;
+    private static final int SPACING = 10;
+
+    private static final int SCROLL_BAR_UNIT_INC = 10;
+    private static final int SCROLL_BAR_BLOCK_INC = 30;
+
+    private static final int TITLE_FONT_SIZE = 30;
+
+    private static final int COLUMNS_NUM = 3;
 
     private final String viewName = "dashboard";
     private final DashboardViewModel dashboardViewModel;
@@ -34,13 +48,11 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
     private JPanel mainContentPanel;
     private JPanel allBillsPanel = new JPanel();
 
-    private final int COLUMNS_NUM = 3;
-
     public DashboardView(DashboardViewModel dashboardViewModel) {
         // connect view to interface adapters
         this.dashboardViewModel = dashboardViewModel;
         this.dashboardViewModel.addPropertyChangeListener(this);
-        DashboardState currentState = dashboardViewModel.getState();
+        final DashboardState currentState = dashboardViewModel.getState();
 
         // styling
         setLayout(new BorderLayout());
@@ -56,37 +68,36 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
     private void createMainContent(DashboardState currentState) {
         mainContentPanel = new JPanel();
         mainContentPanel.setLayout(new BoxLayout(mainContentPanel, BoxLayout.Y_AXIS));
-        mainContentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        mainContentPanel.setBorder(BorderFactory.createEmptyBorder(PADDING, PADDING, PADDING, PADDING));
 
         // title
-        JPanel headerPanel = new JPanel();
+        final JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
-        JLabel titleLabel = new JLabel("All Your Bills");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        final JLabel titleLabel = new JLabel("All Your Bills");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
 
         headerPanel.add(titleLabel);
 
-
         // based on the bills the user is logged as being a member of,
-            // make a unique card panel for each and add them to the grid layout
+        // make a unique card panel for each and add them to the grid layout
+
         // set rows to 0 to make row number flexible
-        allBillsPanel.setLayout(new GridLayout(0, COLUMNS_NUM, 10, 10));
+        allBillsPanel.setLayout(new GridLayout(0, COLUMNS_NUM, BILL_CARD_PADDING, BILL_CARD_PADDING));
 
         // create bill panels depending on what bills the user is a part of
         settingBills(currentState);
 
         // nest bill grid into scrollable pane
-        JScrollPane scrollAllBills = new JScrollPane(allBillsPanel);
+        final JScrollPane scrollAllBills = new JScrollPane(allBillsPanel);
 
         // hide scrollbar + adjust speed
         scrollAllBills.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        scrollAllBills.getVerticalScrollBar().setUnitIncrement(10);
-        scrollAllBills.getVerticalScrollBar().setBlockIncrement(30);
-
+        scrollAllBills.getVerticalScrollBar().setUnitIncrement(SCROLL_BAR_UNIT_INC);
+        scrollAllBills.getVerticalScrollBar().setBlockIncrement(SCROLL_BAR_BLOCK_INC);
 
         // add all panels to the main panel
         mainContentPanel.add(headerPanel);
-        mainContentPanel.add(Box.createVerticalStrut(10));
+        mainContentPanel.add(Box.createVerticalStrut(SPACING));
         mainContentPanel.add(scrollAllBills);
     }
 
@@ -95,12 +106,12 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
 
         if (currentState.getUserBillsData() != null) {
             for (int billId: currentState.getUserBillsData().keySet()) {
-                BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId),
+                final BillCardPanel billCard = new BillCardPanel(currentState.getUserBillsData().get(billId),
                         currentState.getUserBillsData(),
                         billId,
                         currentState.getUsername(),
                         dashboardController);
-                billCard.setMaximumSize(new Dimension(getWidth(),100));
+                billCard.setMaximumSize(new Dimension(getWidth(), BILL_CARD_MAX_SIZE));
 
                 allBillsPanel.add(billCard);
             }
@@ -116,8 +127,14 @@ public class DashboardView extends JPanel implements PropertyChangeListener {
             this.settingBills(this.dashboardViewModel.getState());
 
             remove(sidebarPanel);
-            sidebarPanel = new Sidebar(dashboardController, changePasswordController, logoutController, this.dashboardViewModel.getState());
+            sidebarPanel = new Sidebar(dashboardController,
+                    changePasswordController,
+                    logoutController,
+                    this.dashboardViewModel.getState());
             add(sidebarPanel, BorderLayout.WEST);
+
+            revalidate();
+            repaint();
 
         }
 

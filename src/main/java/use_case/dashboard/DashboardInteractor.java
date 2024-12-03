@@ -26,10 +26,11 @@ public class DashboardInteractor implements DashboardInputBoundary {
         else {
             final HashMap<Integer, String> newUserBillsData = dashboardInputData.getUserBillsData();
             newUserBillsData.remove(billId);
-            final DashboardOutputData dashboardOutputData = new DashboardOutputData(newUserBillsData,false);
+            final DashboardOutputData dashboardOutputData = new DashboardOutputData(newUserBillsData,
+                    false);
             dashboardPresenter.prepareSuccessView(dashboardOutputData);
-            }
         }
+    }
 
     @Override
     public void switchtoSignUpView() {
@@ -43,7 +44,7 @@ public class DashboardInteractor implements DashboardInputBoundary {
 
     @Override
     public void switchToBillView(String username, int billId) {
-        dashboardPresenter.switchToBillView(username,billId);
+        dashboardPresenter.switchToBillView(username, billId);
 
     }
 
