@@ -72,7 +72,7 @@ class ChangePasswordInteractorTest {
         }
 
         @Override
-        public User getByUsername(String username) {
+        public User get(String username) {
             return users.get(username);
         }
     }

@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ChangePasswordInteractorTest {
+class MockChangePasswordInteractorTest {
     private ChangePasswordInteractor interactor;
     private MockDASHBOARDUserDataAccess userDataAccess;
     private MockDASHBOARDOutputBoundary outputBoundary;
@@ -91,7 +91,7 @@ public class MockDASHBOARDUserDataAccess implements ChangePasswordUserDataAccess
     }
 
     @Override
-    public CommonUser getByUsername(String username) {
+    public User get(String username) {
         return users.get(username);
     }
 

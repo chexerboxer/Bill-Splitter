@@ -32,8 +32,6 @@ import okhttp3.Response;
 public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     private static final String CREATED_DATE_KEY = "date";
     private static final String CURRENCY_TYPE_KEY = "currency_code";
-//     private final FileDAO userDataAccessObject;
-//     private final UploadReceiptOutputBoundary uploadReceiptPresenter;
 
     private static final String ITEM_LIST_KEY = "line_items";
     private static final String ITEM_NAME_KEY = "description";
