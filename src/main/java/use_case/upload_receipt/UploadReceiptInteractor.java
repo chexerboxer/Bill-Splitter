@@ -116,17 +116,12 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     private ReceiptData generateData(JSONObject jo) {
         ReceiptData receiptData = new ReceiptData();
 
-        if (jo == null) {
-            return receiptData;
-        }
         List<Item> itemList = new ArrayList<>();
 
-        if (jo.getJSONArray(ITEM_LIST_KEY) != null) {
-            for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
-                JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
-                Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY) * joItem.getFloat(ITEM_QUANTITY_KEY));
-                itemList.add(convertedItem);
-            }
+        for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
+            JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
+            Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY) * joItem.getFloat(ITEM_QUANTITY_KEY));
+            itemList.add(convertedItem);
         }
         receiptData.setItems(itemList);
         return receiptData;
