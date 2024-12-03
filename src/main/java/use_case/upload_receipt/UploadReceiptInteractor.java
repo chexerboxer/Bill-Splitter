@@ -17,7 +17,7 @@ import java.util.*;
 import static app.Constants.*;
 
 /**
- *Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
+ * Receipt Processor for the Upload Receipt Use Case. Take's in an image as input and returns a ReceiptData Object
  */
 public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
     private final FileDAO userDataAccessObject;
@@ -37,84 +37,81 @@ public class UploadReceiptInteractor implements UploadReceiptInputBoundary {
 
     /**
      * Calls the receiptsOCR API and retrieves the data from the encoded base 64 String.
+     *
      * @param uploadReceiptInputData input data for the Upload Receipt Use Case
      * @throws IOException if the API request failed
      */
     @Override
-    public void execute(UploadReceiptInputData uploadReceiptInputData)  {
-        try {
-            String fileName = uploadReceiptInputData.getReceiptFileName();
-            final String data = readReceipt(fileName);
-            OkHttpClient client = new OkHttpClient();
-            Map<String, String> dataRequest = new HashMap<>();
-            dataRequest.put(FILE_DATA, data);
+    public void execute(UploadReceiptInputData uploadReceiptInputData) throws IOException {
 
-            JSONObject jo = new JSONObject(dataRequest);
-            String json = jo.toString();
+        String fileName = uploadReceiptInputData.getReceiptFileName();
+        final String data = readReceipt(fileName);
+        OkHttpClient client = new OkHttpClient();
+        Map<String, String> dataRequest = new HashMap<>();
+        dataRequest.put(FILE_DATA, data);
 
-            RequestBody body = RequestBody.create(
-                    MediaType.parse("application/json"), json);
+        JSONObject jo = new JSONObject(dataRequest);
+        String json = jo.toString();
 
-            Request request = new Request.Builder()
-                    .url(BASE_URL + OCR_URI)
-                    .addHeader("Content-Type", "application/json")
-                    .addHeader("Accept", "application/json")
-                    .addHeader("Authorization", "apikey " + API_KEY)
-                    .addHeader("Client-Id", CLIENT_ID)
-                    .post(body)
-                    .build();
+        RequestBody body = RequestBody.create(
+                MediaType.parse("application/json"), json);
 
-            Call call = client.newCall(request);
-            Response response = call.execute();
-            JSONObject responseJson = new JSONObject(response.body().string());
-            ReceiptData extractedData = generateData(responseJson);
+        Request request = new Request.Builder()
+                .url(BASE_URL + OCR_URI)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Accept", "application/json")
+                .addHeader("Authorization", "apikey " + API_KEY)
+                .addHeader("Client-Id", CLIENT_ID)
+                .post(body)
+                .build();
 
-            Bill bill = userDataAccessObject.getBill(uploadReceiptInputData.getBillId());
+        Call call = client.newCall(request);
+        Response response = call.execute();
+        JSONObject responseJson = new JSONObject(response.body().string());
+        ReceiptData extractedData = generateData(responseJson);
 
-            for (Item item : extractedData.getItems()) {
-                bill.addItem(item);
-            }
-            userDataAccessObject.setBill(uploadReceiptInputData.getBillId(), bill);
+        Bill bill = userDataAccessObject.getBill(uploadReceiptInputData.getBillId());
 
-        }catch (IOException e){
-            uploadReceiptPresenter.prepareFailView("Not valid File path");
+        for (Item item : extractedData.getItems()) {
+            bill.addItem(item);
         }
+        userDataAccessObject.setBill(uploadReceiptInputData.getBillId(), bill);
+
     }
 
 
     /**
      * Reads the inputted receipt and converts it into a base 64 encoded String
+     *
      * @param filename the file name of the image
      * @return the file encoded into a base 64 String
      */
-    private String readReceipt(String filename){
+    private String readReceipt(String filename) throws IOException {
         byte[] fileContent = null;
-        try {
-            fileContent = FileUtils.readFileToByteArray(new File(filename));
-        } catch (IOException e) {
-            System.out.println("File Read Error: "+ e.getMessage());
-        }
+        fileContent = FileUtils.readFileToByteArray(new File(filename));
+
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
         return encodedString;
     }
 
     /**
      * Private helper method for retrieveOcrData
+     *
      * @param jo the JsonObject created by the API call
      * @return ReceiptData object with relevant info taken from jo
      */
     private ReceiptData generateData(JSONObject jo) {
         ReceiptData receiptData = new ReceiptData();
 
-        if(jo == null){
+        if (jo == null) {
             return receiptData;
         }
         List<Item> itemList = new ArrayList<>();
 
-        if(jo.getJSONArray(ITEM_LIST_KEY) != null){
+        if (jo.getJSONArray(ITEM_LIST_KEY) != null) {
             for (int i = 0; i < jo.getJSONArray(ITEM_LIST_KEY).length(); i++) {
                 JSONObject joItem = jo.getJSONArray(ITEM_LIST_KEY).getJSONObject(i);
-                Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY)*joItem.getFloat(ITEM_QUANTITY_KEY));
+                Item convertedItem = new Item(joItem.getString(ITEM_NAME_KEY), joItem.getFloat(ITEM_PRICE_KEY) * joItem.getFloat(ITEM_QUANTITY_KEY));
                 itemList.add(convertedItem);
             }
         }

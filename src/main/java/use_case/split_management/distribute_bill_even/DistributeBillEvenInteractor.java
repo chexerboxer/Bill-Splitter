@@ -21,24 +21,10 @@ public class DistributeBillEvenInteractor implements DistributeBillEvenInputBoun
         final int bill_id = distributeBillEvenInputData.getBill_id();
         final ArrayList<Integer> usersSplitting = distributeBillEvenInputData.getUserssplitting();
 
-        // check whether usersSplitting is a subset of existing users.
-        boolean usersSplittingContained = true;
 
-        for (int user : usersSplitting){
-            if (!userDataAccessObject.getAllUsers().containsKey(user)){
-                usersSplittingContained = false;
-                break;
-            }
-        }
-        if (!userDataAccessObject.getAllBills().containsKey(bill_id)){
+        if (!userDataAccessObject.getAllBills().containsKey(bill_id)) {
             splitManagementPresenter.prepareFailView("bill not found.");
-
-        }else if (!usersSplittingContained){
-            splitManagementPresenter.prepareFailView("user not splitting this item.");
-
-        }
-
-        else{
+        }else{
             userDataAccessObject.distributeBill(bill_id, usersSplitting);
 
         }

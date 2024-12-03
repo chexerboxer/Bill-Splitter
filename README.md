@@ -92,6 +92,6 @@ member on the item:\
 Any Feedback you would like to provide for the Bill-Splitter application can be submitted via this google form:\
 [Feedback Form](https://docs.google.com/forms/d/e/1FAIpQLSdhQkbslCObdcHdzTV_-tmUa0HwA37-zPpn5HtptvxHJnFTOw/viewform?usp=sf_link)
 ## About Contributions
-You can contribute to Bill-Splitter by [forking the github repository](#insforking-the-github-repositoryins) and pushing changes to it.\
+You can contribute to Bill-Splitter by [forking the github repository](#installation) and pushing changes to it.\
 Then, if you allow us to, we can make changes to the main Bill-Splitter repository and add your name to the list of \
 contributors.

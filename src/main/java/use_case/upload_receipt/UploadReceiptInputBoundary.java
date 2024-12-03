@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public interface UploadReceiptInputBoundary {
 
-    void execute(UploadReceiptInputData uploadReceiptInputData);
+    void execute(UploadReceiptInputData uploadReceiptInputData) throws IOException;
 
 }

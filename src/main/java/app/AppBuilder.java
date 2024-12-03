@@ -1,6 +1,6 @@
 package app;
 
-import java.awt.*;
+import java.awt.CardLayout;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -18,10 +18,10 @@ import interface_adapter.bill_splitter.BillDisplayPresenter;
 import interface_adapter.bill_splitter.BillDisplayViewModel;
 import interface_adapter.change_password.ChangePasswordController;
 import interface_adapter.change_password.ChangePasswordPresenter;
+import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.dashboard.DashboardController;
 import interface_adapter.dashboard.DashboardPresenter;
 import interface_adapter.dashboard.DashboardViewModel;
-import interface_adapter.change_password.ChangePasswordViewModel;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -61,13 +61,15 @@ import use_case.split_management.modify_split.ModifySplitInteractor;
 import use_case.upload_receipt.UploadReceiptInputBoundary;
 import use_case.upload_receipt.UploadReceiptInteractor;
 import use_case.upload_receipt.UploadReceiptOutputBoundary;
-import view.*;
+import view.BillDisplayView;
+import view.ChangePasswordView;
+import view.DashboardView;
+import view.LoginView;
+import view.SignupView;
+import view.ViewManager;
 
 /**
- * The AppBuilder class is responsible for putting together the pieces of
- * our CA architecture; piece by piece.
- * <p/>
- * This is done by adding each View and then adding related Use Cases.
+ * The AppBuilder class to initialize all the views and controllers needed for the program.
  */
 public class AppBuilder {
     private final JPanel cardPanel = new JPanel();
@@ -83,7 +85,11 @@ public class AppBuilder {
     private final SplitFactory splitFactory = new SplitFactory();
     private final String filePath = "src/main/java/data_access/test.csv";
 
-    private final FileDAO userDataAccessObject = new FileDAO(filePath, billFactory, userFactory, itemFactory, splitFactory);
+    private final FileDAO userDataAccessObject = new FileDAO(filePath,
+            billFactory,
+            userFactory,
+            itemFactory,
+            splitFactory);
 
     private SignupView signupView;
     private SignupViewModel signupViewModel;
@@ -95,7 +101,6 @@ public class AppBuilder {
     private ChangePasswordViewModel changePasswordViewModel;
     private BillDisplayView billDisplayView;
     private BillDisplayViewModel billDisplayViewModel;
-
 
     public AppBuilder() throws IOException {
         cardPanel.setLayout(cardLayout);
@@ -123,6 +128,10 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Change Password View to the application, a unique view for the usecase when a user first opens the app.
+     * @return this builder
+     */
     public AppBuilder addChangePasswordView() {
         changePasswordViewModel = new ChangePasswordViewModel();
         changePasswordView = new ChangePasswordView(changePasswordViewModel);
@@ -131,10 +140,9 @@ public class AppBuilder {
     }
 
     /**
-     * Adds the LoggedIn View to the application.
+     * Adds the Dashboard View to the application.
      * @return this builder
      */
-
     public AppBuilder addDashboardView() {
         dashboardViewModel = new DashboardViewModel();
         dashboardView = new DashboardView(dashboardViewModel);
@@ -142,6 +150,10 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Bill Display View to the application.
+     * @return this builder
+     */
     public AppBuilder addBillDisplayView() {
         billDisplayViewModel = new BillDisplayViewModel();
 
@@ -221,6 +233,10 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Dashboard Use Cases to the application.
+     * @return this builder
+     */
     public AppBuilder addDashboardUseCase() {
         final DashboardOutputBoundary dashboardOutputBoundary = new DashboardPresenter(viewManagerModel,
                 dashboardViewModel,
@@ -235,17 +251,20 @@ public class AppBuilder {
         return this;
     }
 
+    /**
+     * Adds the Bill Display Use Cases to the application.
+     * @return this builder
+     */
     public AppBuilder addBillDisplayUseCase() {
         // set up controllers
-
-        UploadReceiptOutputBoundary uploadReceiptOutputBoundary = new UploadReceiptPresenter();
+        final UploadReceiptOutputBoundary uploadReceiptOutputBoundary = new UploadReceiptPresenter();
 
         final UploadReceiptInputBoundary uploadReceiptInteractor =
                 new UploadReceiptInteractor(userDataAccessObject, uploadReceiptOutputBoundary);
 
         final UploadReceiptController uploadReceiptController1 = new UploadReceiptController(uploadReceiptInteractor);
 
-        SplitManagementOutputBoundary splitManagementOutputBoundary = new SplitManagementPresenter();
+        final SplitManagementOutputBoundary splitManagementOutputBoundary = new SplitManagementPresenter();
 
         final ClearBillInputBoundary clearBillInteractor =
                 new ClearBillInteractor(userDataAccessObject, splitManagementOutputBoundary);
@@ -255,7 +274,9 @@ public class AppBuilder {
         final DistributeBillEvenInputBoundary distributeBillInteractor =
                 new DistributeBillEvenInteractor(userDataAccessObject, splitManagementOutputBoundary);
 
-        final DistributeBillController distributeBillController1 = new DistributeBillController(distributeBillInteractor);
+        final DistributeBillController distributeBillController1 = new DistributeBillController(
+                distributeBillInteractor
+        );
 
         final ModifySplitInputBoundary modifySplitInterator =
                 new ModifySplitInteractor(userDataAccessObject, splitManagementOutputBoundary);
@@ -288,19 +309,13 @@ public class AppBuilder {
         final BillDisplayPresenter billDisplayPresenter = new BillDisplayPresenter(viewManagerModel,
                 dashboardViewModel, userDataAccessObject);
 
-
         billDisplayView.setBillDisplayPresenter(billDisplayPresenter);
 
         billDisplayView.setChangePasswordController(changePasswordController);
-
         billDisplayView.setLogoutController(logoutController);
-
         billDisplayView.setClearBillController(clearBillController1);
-
         billDisplayView.setDistributeBillController(distributeBillController1);
-
         billDisplayView.setModifySplitController(modifySplitController1);
-
         billDisplayView.setUploadReceiptController(uploadReceiptController1);
 
         return this;
