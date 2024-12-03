@@ -1,6 +1,8 @@
 package view;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -23,7 +25,9 @@ import interface_adapter.login.LoginViewModel;
  * The View for when the user is logging into the program.
  */
 public class LoginView extends JPanel implements ActionListener, PropertyChangeListener {
-
+    private static final Dimension INPUT_FIELD_DIMENSIONS = new Dimension(150, 30);
+    private static final int TITLE_FONT_SIZE = 50;
+    
     private final String viewName = "log in";
     private final LoginViewModel loginViewModel;
 
@@ -45,7 +49,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         this.loginViewModel.addPropertyChangeListener(this);
 
         final JLabel title = new JLabel("Login");
-        title.setFont(new Font("Arial", Font.BOLD, 50));
+        title.setFont(new Font("Arial", Font.BOLD, TITLE_FONT_SIZE));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         final LabelTextPanel usernameInfo = new LabelTextPanel(
@@ -66,8 +70,8 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
         buttons.add(logIn);
         cancel = new JButton("cancel");
         buttons.add(cancel);
-        usernameInputField.setPreferredSize(new Dimension(150, 30));
-        passwordInputField.setPreferredSize(new Dimension(150, 30));
+        usernameInputField.setPreferredSize(INPUT_FIELD_DIMENSIONS);
+        passwordInputField.setPreferredSize(INPUT_FIELD_DIMENSIONS);
         logIn.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -83,7 +87,6 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 }
         );
 
-
         cancel.addActionListener(
                 new ActionListener() {
                     @Override
@@ -96,7 +99,7 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
 
         forgotPass.addActionListener(
                 new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(ActionEvent evt) {
                         loginController.switchToChangePasswordView();
                     }
                 }
@@ -176,7 +179,6 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
      * @param evt the ActionEvent to react to
      */
     public void actionPerformed(ActionEvent evt) {
-        System.out.println("Click " + evt.getActionCommand());
     }
 
     @Override

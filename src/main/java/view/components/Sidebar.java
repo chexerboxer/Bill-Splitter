@@ -1,5 +1,21 @@
 package view.components;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+
 import interface_adapter.bill_splitter.BillDisplayPresenter;
 import interface_adapter.bill_splitter.BillDisplayState;
 import interface_adapter.change_password.ChangePasswordController;
@@ -7,64 +23,72 @@ import interface_adapter.dashboard.DashboardController;
 import interface_adapter.dashboard.DashboardState;
 import interface_adapter.logout.LogoutController;
 
-import javax.swing.*;
-import java.awt.*;
-
+/**
+ * Initializes Sidebar panel for Dashboard and Bill Display views.
+ */
 public class Sidebar extends JPanel {
-
+    
+    private static final Color BACKGROUND_COLOUR = new Color(230, 230, 230);
+    private static final int SIDEBAR_WIDTH = 200;
+    private static final int BUTTON_HEIGHT = 40;
+    private static final int BORDER_SPACING = 10;
+    private static final int BUTTON_SPACING = 5;
+    
+    private static final int USERNAME_FONT_SIZE = 24;
+    private static final int BUTTON_FONT_SIZE = 14;
+    private static final String FONT = "Arial";
+    
     // sidebar will be the same among all logged in views
-    // TODO: add dashboard controller and add bill usecase to necessary buttons
     public Sidebar(DashboardController dashboardController,
                    ChangePasswordController changePasswordController,
                    LogoutController logoutController,
                    DashboardState currentState) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(230, 230, 230));
-        setPreferredSize(new Dimension(200, getHeight()));
+        setBackground(BACKGROUND_COLOUR);
+        setPreferredSize(new Dimension(SIDEBAR_WIDTH, getHeight()));
 
         // User profile section at the top
-        JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        profilePanel.setBackground(new Color(230, 230, 230));
+        final JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        profilePanel.setBackground(BACKGROUND_COLOUR);
 
-        JLabel avatarLabel = new JLabel("☺");
-        avatarLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        final JLabel avatarLabel = new JLabel("☺");
 
-        JPanel userInfoPanel = new JPanel();
+        avatarLabel.setFont(new Font(FONT, Font.PLAIN, USERNAME_FONT_SIZE));
+
+        final JPanel userInfoPanel = new JPanel();
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
-        userInfoPanel.setBackground(new Color(230, 230, 230));
+        userInfoPanel.setBackground(BACKGROUND_COLOUR);
 
-        JLabel usernameLabel = new JLabel(currentState.getUsername());
+        final JLabel usernameLabel = new JLabel(currentState.getUsername());
         userInfoPanel.add(usernameLabel);
 
         profilePanel.add(avatarLabel);
         profilePanel.add(userInfoPanel);
 
         // Navigation buttons
-        JPanel navigationPanel = new JPanel();
+        final JPanel navigationPanel = new JPanel();
         navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.Y_AXIS));
-        navigationPanel.setBackground(new Color(230, 230, 230));
-        navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        navigationPanel.setBackground(BACKGROUND_COLOUR);
+        navigationPanel.setBorder(BorderFactory.createEmptyBorder(BORDER_SPACING, BORDER_SPACING, 0, BORDER_SPACING));
 
-        JButton dashboardBtn = createSidebarButton("Dashboard");
+        final JButton dashboardBtn = createSidebarButton("Dashboard");
 
-
-        JButton createBillBtn = createSidebarButton("Create new bill");
-        createBillBtn.addActionListener(e -> {
-            String newBillName = JOptionPane.showInputDialog("New bill name:", "");
-            if (e.getSource().equals(createBillBtn)) {
+        final JButton createBillBtn = createSidebarButton("Create new bill");
+        createBillBtn.addActionListener(evt -> {
+            final String newBillName = JOptionPane.showInputDialog("New bill name:", "");
+            if (evt.getSource().equals(createBillBtn)) {
                 if (newBillName != null) {
                     dashboardController.addBill(currentState.getUserBillsData(),
-                            currentState.getUsername(),
-                            newBillName);
+                            currentState.getUsername(), newBillName);
                 }
             }
 
         });
 
-        JButton changePwBtn = createSidebarButton("Change password");
+        final JButton changePwBtn = createSidebarButton("Change password");
         changePwBtn.addActionListener(evt -> {
-            String toPassword = JOptionPane.showInputDialog(
+            final String toPassword = JOptionPane.showInputDialog(
                     "New Password:", "");
             if (evt.getSource().equals(changePwBtn)) {
                 changePasswordController.execute(
@@ -74,7 +98,7 @@ public class Sidebar extends JPanel {
             }
         });
 
-        JButton logoutBtn = createSidebarButton("Logout");
+        final JButton logoutBtn = createSidebarButton("Logout");
         logoutBtn.addActionListener(evt -> {
             if (evt.getSource().equals(logoutBtn)) {
                 logoutController.execute(
@@ -89,11 +113,11 @@ public class Sidebar extends JPanel {
         add(new JSeparator());
         // create stack of buttons
         navigationPanel.add(dashboardBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING))); 
         navigationPanel.add(createBillBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING)));
         navigationPanel.add(changePwBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING)));
         navigationPanel.add(logoutBtn);
         add(navigationPanel);
 
@@ -107,53 +131,53 @@ public class Sidebar extends JPanel {
                    BillDisplayState currentState) {
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(new Color(230, 230, 230));
-        setPreferredSize(new Dimension(200, getHeight()));
+        setBackground(BACKGROUND_COLOUR);
+        setPreferredSize(new Dimension(SIDEBAR_WIDTH, getHeight()));
 
         // User profile section at the top
-        JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        profilePanel.setBackground(new Color(230, 230, 230));
+        final JPanel profilePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        profilePanel.setBackground(BACKGROUND_COLOUR);
 
-        JLabel avatarLabel = new JLabel("☺");
-        avatarLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        final JLabel avatarLabel = new JLabel("☺");
+        avatarLabel.setFont(new Font(FONT, Font.PLAIN, USERNAME_FONT_SIZE));
 
-        JPanel userInfoPanel = new JPanel();
+        final JPanel userInfoPanel = new JPanel();
         userInfoPanel.setLayout(new BoxLayout(userInfoPanel, BoxLayout.Y_AXIS));
-        userInfoPanel.setBackground(new Color(230, 230, 230));
+        userInfoPanel.setBackground(BACKGROUND_COLOUR);
 
-        JLabel usernameLabel = new JLabel(currentState.getUsername());
+        final JLabel usernameLabel = new JLabel(currentState.getUsername());
         userInfoPanel.add(usernameLabel);
 
         profilePanel.add(avatarLabel);
         profilePanel.add(userInfoPanel);
 
         // Navigation buttons
-        JPanel navigationPanel = new JPanel();
+        final JPanel navigationPanel = new JPanel();
         navigationPanel.setLayout(new BoxLayout(navigationPanel, BoxLayout.Y_AXIS));
-        navigationPanel.setBackground(new Color(230, 230, 230));
-        navigationPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        navigationPanel.setBackground(BACKGROUND_COLOUR);
+        navigationPanel.setBorder(BorderFactory.createEmptyBorder(BORDER_SPACING, BORDER_SPACING, 0, BORDER_SPACING));
 
-        JButton dashboardBtn = createSidebarButton("Dashboard");
-        dashboardBtn.addActionListener(e -> {
-            if (e.getSource().equals(dashboardBtn)) {
+        final JButton dashboardBtn = createSidebarButton("Dashboard");
+        dashboardBtn.addActionListener(evt -> {
+            if (evt.getSource().equals(dashboardBtn)) {
                 billDisplayPresenter.switchToDashboardView(currentState.getUsername());
 
             }
         });
 
-        JButton createBillBtn = createSidebarButton("Create new bill");
-        createBillBtn.addActionListener(e -> {
-            String newBillName = JOptionPane.showInputDialog("New bill name:", "");
-            if (e.getSource().equals(createBillBtn)) {
+        final JButton createBillBtn = createSidebarButton("Create new bill");
+        createBillBtn.addActionListener(evt -> {
+            final String newBillName = JOptionPane.showInputDialog("New bill name:", "");
+            if (evt.getSource().equals(createBillBtn)) {
                 if (newBillName != null) {
                     billDisplayPresenter.addBill(currentState.getUsername(), newBillName);
                 }
             }
         });
 
-        JButton changePwBtn = createSidebarButton("Change password");
+        final JButton changePwBtn = createSidebarButton("Change password");
         changePwBtn.addActionListener(evt -> {
-            String toPassword = JOptionPane.showInputDialog(
+            final String toPassword = JOptionPane.showInputDialog(
                     "New Password:", "");
             if (evt.getSource().equals(changePwBtn)) {
                 changePasswordController.execute(
@@ -163,7 +187,7 @@ public class Sidebar extends JPanel {
             }
         });
 
-        JButton logoutBtn = createSidebarButton("Logout");
+        final JButton logoutBtn = createSidebarButton("Logout");
         logoutBtn.addActionListener(evt -> {
             if (evt.getSource().equals(logoutBtn)) {
                 logoutController.execute(
@@ -178,11 +202,11 @@ public class Sidebar extends JPanel {
         add(new JSeparator());
         // create stack of buttons
         navigationPanel.add(dashboardBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING))); 
         navigationPanel.add(createBillBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING))); 
         navigationPanel.add(changePwBtn);
-        navigationPanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spacing between buttons
+        navigationPanel.add(Box.createRigidArea(new Dimension(0, BUTTON_SPACING))); 
         navigationPanel.add(logoutBtn);
         add(navigationPanel);
 
@@ -190,14 +214,14 @@ public class Sidebar extends JPanel {
         add(Box.createVerticalGlue());
     }
 
-    private static JButton createSidebarButton(String text){
-        JButton button = new JButton(text);
+    private static JButton createSidebarButton(String text) {
+        final JButton button = new JButton(text);
         button.setAlignmentX(Component.LEFT_ALIGNMENT);
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
-        button.setMaximumSize(new Dimension(200, 40));
+        button.setMaximumSize(new Dimension(SIDEBAR_WIDTH, BUTTON_HEIGHT));
         button.setHorizontalAlignment(SwingConstants.LEFT);
-        button.setFont(new Font("Arial", Font.PLAIN, 14));
+        button.setFont(new Font(FONT, Font.PLAIN, BUTTON_FONT_SIZE));
         return button;
     }
 }
